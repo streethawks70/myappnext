@@ -1,4 +1,5 @@
 'use client';
+
 import { useState, useEffect } from 'react';
 import DistrettoSelector from '../components/DistrettoSelector';
 import SquadraSelector from '../components/SquadraSelector';
@@ -84,79 +85,91 @@ const Home = () => {
       resetForm();
     } catch (error) {
       console.error('Errore:', error);
-      alert('Errore nell\'invio dei dati.');
+      alert("Errore nell'invio dei dati.");
     }
   };
 
   return (
-    <div style={{ padding: '2rem', fontFamily: 'Arial' }}>
-      <h1>Gestione Presenze</h1>
-      <DistrettoSelector setDistretto={setDistretto} />
+    <div className="min-h-screen bg-gray-100 flex flex-col items-center p-4 text-gray-800">
+      <h1 className="text-3xl font-bold mb-6">Gestione Presenze</h1>
 
-      {distretto && (
-        <>
-          <SquadraSelector
-            distretto={distretto}
-            setSelectedName={setSelectedName}
-            selectedName={selectedName}
-          />
-          <MenuPresenza onSelect={setTipoPresenza} selected={tipoPresenza} />
+      <div className="bg-white p-6 rounded-xl shadow-md w-full max-w-xl">
+        <DistrettoSelector setDistretto={setDistretto} />
 
-          {selectedName && tipoPresenza && (
-            <form onSubmit={handleSubmit} style={{ marginTop: '1rem' }}>
-              {tipoPresenza === 'Presenza' && (
-                <>
+        {distretto && (
+          <>
+            <SquadraSelector
+              distretto={distretto}
+              setSelectedName={setSelectedName}
+              selectedName={selectedName}
+            />
+            <MenuPresenza onSelect={setTipoPresenza} selected={tipoPresenza} />
+
+            {selectedName && tipoPresenza && (
+              <form onSubmit={handleSubmit} className="space-y-4 mt-4">
+                {tipoPresenza === 'Presenza' && (
+                  <>
+                    <input
+                      type="text"
+                      placeholder="Targa"
+                      value={targa}
+                      onChange={(e) => setTarga(e.target.value)}
+                      required
+                      className="w-full p-2 border rounded-lg"
+                    />
+                    <input
+                      type="number"
+                      placeholder="Chilometri"
+                      value={chilometri}
+                      onChange={(e) => setChilometri(e.target.value)}
+                      required
+                      className="w-full p-2 border rounded-lg"
+                    />
+                  </>
+                )}
+
+                {(tipoPresenza === 'Ferie' || tipoPresenza === 'Malattia') && (
+                  <>
+                    <input
+                      type="date"
+                      value={dataInizio}
+                      onChange={(e) => setDataInizio(e.target.value)}
+                      required
+                      className="w-full p-2 border rounded-lg"
+                      autoFocus
+                    />
+                    <input
+                      type="date"
+                      value={dataFine}
+                      onChange={(e) => setDataFine(e.target.value)}
+                      required
+                      className="w-full p-2 border rounded-lg"
+                    />
+                  </>
+                )}
+
+                {tipoPresenza === 'Permessi Vari' && (
                   <input
                     type="text"
-                    placeholder="Targa"
-                    value={targa}
-                    onChange={(e) => setTarga(e.target.value)}
+                    placeholder="Tipo di permesso"
+                    value={permesso}
+                    onChange={(e) => setPermesso(e.target.value)}
                     required
+                    className="w-full p-2 border rounded-lg"
                   />
-                  <input
-                    type="number"
-                    placeholder="Chilometri"
-                    value={chilometri}
-                    onChange={(e) => setChilometri(e.target.value)}
-                    required
-                  />
-                </>
-              )}
+                )}
 
-              {(tipoPresenza === 'Ferie' || tipoPresenza === 'Malattia') && (
-                <>
-                  <input
-                    type="date"
-                    value={dataInizio}
-                    onChange={(e) => setDataInizio(e.target.value)}
-                    required
-                  />
-                  <input
-                    type="date"
-                    value={dataFine}
-                    onChange={(e) => setDataFine(e.target.value)}
-                    required
-                  />
-                </>
-              )}
-
-              {tipoPresenza === 'Permessi Vari' && (
-                <input
-                  type="text"
-                  placeholder="Tipo di permesso"
-                  value={permesso}
-                  onChange={(e) => setPermesso(e.target.value)}
-                  required
-                />
-              )}
-
-              <button type="submit" style={{ marginTop: '10px' }}>
-                Invia Dati
-              </button>
-            </form>
-          )}
-        </>
-      )}
+                <button
+                  type="submit"
+                  className="w-full bg-blue-600 text-white p-2 rounded-lg hover:bg-blue-700 transition"
+                >
+                  Invia Dati
+                </button>
+              </form>
+            )}
+          </>
+        )}
+      </div>
     </div>
   );
 };
