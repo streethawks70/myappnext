@@ -82,4 +82,16 @@ body {
     background-color: #28a745;
     color: white;
   }
+  /* Migliora la visibilità degli input di tipo date */
+input[type="date"] {
+    padding: 10px 40px 10px 10px; /* spazio interno più grande */
+    border: 2px solid #ccc;
+    border-radius: 8px;
+    font-size: 16px;
+    background: #fff url('https://upload.wikimedia.org/wikipedia/commons/3/3c/Icon_Calendar.svg') no-repeat right 10px center;
+    background-size: 24px 24px;
+    appearance: none;
+    -webkit-appearance: none; /* compatibilità iOS */
+    -moz-appearance: none;
+  }
   
