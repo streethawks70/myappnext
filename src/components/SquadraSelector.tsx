@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from 'react';
 
 interface Squadra {
@@ -41,7 +42,7 @@ const SquadraSelector = ({
   };
 
   return (
-    <div>
+    <div className="form-group">
       <h3>Seleziona Squadra</h3>
       <select onChange={handleCapoChange} value={capoSquadra}>
         <option value="">-- Seleziona Caposquadra --</option>
@@ -51,7 +52,7 @@ const SquadraSelector = ({
       </select>
 
       {capoSquadra && (
-        <>
+        <div className="radio-group">
           <p>Seleziona Persona:</p>
           <label>
             <input
@@ -62,18 +63,16 @@ const SquadraSelector = ({
             {capoSquadra} (Caposquadra)
           </label>
           {squadre.find(s => s.nome === capoSquadra)?.operai.map((op, i) => (
-            <div key={i}>
-              <label>
-                <input
-                  type="radio"
-                  checked={selectedName === op}
-                  onChange={() => handlePersonaSelect(op)}
-                />
-                {op}
-              </label>
-            </div>
+            <label key={i}>
+              <input
+                type="radio"
+                checked={selectedName === op}
+                onChange={() => handlePersonaSelect(op)}
+              />
+              {op}
+            </label>
           ))}
-        </>
+        </div>
       )}
     </div>
   );

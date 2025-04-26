@@ -1,3 +1,4 @@
+
 const distretti = [
     { nome: 'Distretto 1', file: 'distretto1.txt' },
     { nome: 'Distretto 2', file: 'distretto2.txt' },
@@ -14,7 +15,7 @@ const distretti = [
   
   const DistrettoSelector = ({ setDistretto }: { setDistretto: (d: string) => void }) => {
     return (
-      <div>
+      <div className="form-group">
         <h3>Seleziona Distretto</h3>
         <select onChange={(e) => setDistretto(e.target.value)} defaultValue="">
           <option value="" disabled>-- Seleziona --</option>
@@ -25,6 +26,5 @@ const distretti = [
       </div>
     );
   };
-  
   export default DistrettoSelector;
   

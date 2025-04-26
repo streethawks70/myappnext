@@ -1,3 +1,4 @@
+
 const opzioni = [
     'Presenza',
     'Assenza',
@@ -21,21 +22,14 @@ const opzioni = [
     selected: string;
   }) => {
     return (
-      <div style={{ marginTop: '1rem' }}>
+      <div className="form-group">
         <h3>Tipo di Presenza</h3>
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
+        <div className="button-group">
           {opzioni.map((op, i) => (
             <button
               key={i}
               onClick={() => onSelect(op)}
-              style={{
-                backgroundColor: selected === op ? '#4caf50' : '#f0f0f0',
-                color: selected === op ? 'white' : 'black',
-                padding: '0.5rem 1rem',
-                borderRadius: '5px',
-                border: '1px solid #ccc',
-                cursor: 'pointer',
-              }}
+              className={selected === op ? 'selected' : ''}
             >
               {op}
             </button>
