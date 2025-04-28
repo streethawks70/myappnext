@@ -120,6 +120,16 @@ const Home = () => {
       const sheetUrls: Record<string, string> = {
         'Distretto 1': 'https://script.google.com/macros/s/AKfycbxB6KtREvG7JhEHKZZ09PrBpswE6b-NRUh5BAflzf2T_gLJnJw1AeCREEQyA7k86xyquA/exec',
         'Distretto 2': 'URL_2',
+        'Distretto 3': 'URL3',
+        'Distretto 4': 'URL4',
+        'Distretto 5': 'URL5',
+        'Distretto 6': 'URL6',
+        'Distretto 7': 'URL7',
+        'Distretto 8': 'URL8',
+        'Distretto 9': 'URL9',
+        'Distretto 10': 'URL10',
+        'Distretto 11': 'https://script.google.com/macros/s/AKfycbxivmpJtQJFt7zTpoolK_xkW8BRunCl9_tz3jOx99gBF2umvcB63tcmdgUaN118qdPK/exec',
+
         // Aggiungi gli altri distretti
       };
 

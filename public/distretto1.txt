@@ -1,4 +1,3 @@
-squadra 1/Pippo Franco/Gino Bramieri/Mimmo Terzi/
-squadra 2/giovanni pino/bruno ferri/giuseppe sacco/
-squadra 3/giovanni pino/mimmo gino/peppe zoppo/
-squadra 4/pasquale terzi/mimmo sgro/lello arena/
+matricola 123456 squadra 1/Pippo Franco/Gino Bramieri/Mimmo Terzi/
+matricola 789012 squadra 2/Giovanni Pino/Bruno Ferri/Giuseppe Sacco/
+matricola 345678 squadra 3/Giovanni Pluto/Mimmo Gino/Peppe Zoppo/
