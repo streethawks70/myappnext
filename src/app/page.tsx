@@ -42,7 +42,8 @@ const Home = () => {
   const [dataFine, setDataFine] = useState('');
   const [permesso, setPermesso] = useState('');
   const [posizione, setPosizione] = useState('');
-  const [presenze, setPresenze] = useState<any[]>([]); // Lista delle presenze
+  const [presenze, setPresenze] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(false); // NUOVO stato per bottone
 
   useEffect(() => {
     if (navigator.geolocation) {
@@ -57,13 +58,12 @@ const Home = () => {
       );
     }
 
-    // Reset giornaliero
-    const currentDate = new Date().toISOString().split('T')[0]; // formato yyyy-mm-dd
-    const lastSavedDate = localStorage.getItem('lastPresenzeDate'); // Controlla se è già stato salvato il giorno
+    const currentDate = new Date().toISOString().split('T')[0];
+    const lastSavedDate = localStorage.getItem('lastPresenzeDate');
 
     if (lastSavedDate !== currentDate) {
-      setPresenze([]); // Reset della lista se è cambiato il giorno
-      localStorage.setItem('lastPresenzeDate', currentDate); // Salva la nuova data
+      setPresenze([]);
+      localStorage.setItem('lastPresenzeDate', currentDate);
     }
   }, []);
 
@@ -79,16 +79,7 @@ const Home = () => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
-    // Verifica se il nome e il tipo di presenza sono già stati registrati
-    const esisteGia = presenze.some(
-      (presenza) => presenza.nome === selectedName && presenza.tipo === tipoPresenza
-    );
-
-    if (esisteGia) {
-      alert('Questo nome è già stato registrato per questa presenza.');
-      return; // Non aggiungere il nome se è già presente con lo stesso tipo
-    }
+    setIsLoading(true); // Avvia caricamento
 
     let permessoFinale = permesso;
     if (tipoPresenza === 'Permessi Vari') {
@@ -106,16 +97,6 @@ const Home = () => {
     formData.append('tipoPermesso', permessoFinale);
     formData.append('posizione', posizione);
 
-    // Aggiungi la nuova presenza
-    const nuovaPresenza = {
-      nome: selectedName,
-      tipo: tipoPresenza,
-      data: new Date().toLocaleDateString(),
-    };
-
-    setPresenze([...presenze, nuovaPresenza]);
-
-    // Chiamata al backend per inviare i dati
     try {
       const sheetUrls: Record<string, string> = {
         'Distretto 1': 'https://script.google.com/macros/s/AKfycbxB6KtREvG7JhEHKZZ09PrBpswE6b-NRUh5BAflzf2T_gLJnJw1AeCREEQyA7k86xyquA/exec',
@@ -129,8 +110,6 @@ const Home = () => {
         'Distretto 9': 'URL9',
         'Distretto 10': 'URL10',
         'Distretto 11': 'https://script.google.com/macros/s/AKfycbxivmpJtQJFt7zTpoolK_xkW8BRunCl9_tz3jOx99gBF2umvcB63tcmdgUaN118qdPK/exec',
-
-        // Aggiungi gli altri distretti
       };
 
       const response = await fetch(sheetUrls[distretto], {
@@ -141,16 +120,27 @@ const Home = () => {
 
       const text = await response.text();
       alert(text);
+
+      // Solo se il server risponde correttamente, aggiorniamo la tabella
+      const nuovaPresenza = {
+        nome: selectedName,
+        tipo: tipoPresenza,
+        data: new Date().toLocaleDateString(),
+      };
+
+      setPresenze((prevPresenze) => [...prevPresenze, nuovaPresenza]);
       resetForm();
     } catch (error) {
       console.error('Errore:', error);
       alert("Errore nell'invio dei dati.");
+    } finally {
+      setIsLoading(false); // Fine caricamento
     }
   };
 
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col items-center p-4 text-gray-800">
-      <h1>Gestione Presenze</h1>
+      <h1 className="text-2xl font-bold mb-4">Gestione Presenze</h1>
 
       <div className="bg-white p-6 rounded-xl shadow-md w-full max-w-xl">
         <DistrettoSelector setDistretto={setDistretto} />
@@ -165,7 +155,7 @@ const Home = () => {
             <MenuPresenza onSelect={setTipoPresenza} selected={tipoPresenza} />
 
             {selectedName && tipoPresenza && (
-              <form onSubmit={handleSubmit}>
+              <form onSubmit={handleSubmit} className="flex flex-col gap-4 mt-4">
                 {tipoPresenza === 'Presenza' && (
                   <>
                     <input
@@ -174,6 +164,7 @@ const Home = () => {
                       value={targa}
                       onChange={(e) => setTarga(e.target.value)}
                       required
+                      className="border rounded p-2"
                     />
                     <input
                       type="number"
@@ -181,6 +172,7 @@ const Home = () => {
                       value={chilometri}
                       onChange={(e) => setChilometri(e.target.value)}
                       required
+                      className="border rounded p-2"
                     />
                   </>
                 )}
@@ -192,12 +184,14 @@ const Home = () => {
                       value={dataInizio}
                       onChange={(e) => setDataInizio(e.target.value)}
                       required
+                      className="border rounded p-2"
                     />
                     <input
                       type="date"
                       value={dataFine}
                       onChange={(e) => setDataFine(e.target.value)}
                       required
+                      className="border rounded p-2"
                     />
                   </>
                 )}
@@ -209,17 +203,24 @@ const Home = () => {
                     value={permesso}
                     onChange={(e) => setPermesso(e.target.value)}
                     required
+                    className="border rounded p-2"
                   />
                 )}
 
-                <button type="submit">Invia Dati</button>
+                <button
+                  type="submit"
+                  disabled={isLoading}
+                  className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition"
+                >
+                  {isLoading ? 'Invio...' : 'Invia Dati'}
+                </button>
               </form>
             )}
           </>
         )}
 
-        {/* Tabella live delle presenze */}
         <TabellaPresenze presenze={presenze} />
+        
       </div>
     </div>
   );
