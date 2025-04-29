@@ -43,7 +43,7 @@ const Home = () => {
   const [permesso, setPermesso] = useState('');
   const [posizione, setPosizione] = useState('');
   const [presenze, setPresenze] = useState<any[]>([]);
-  const [isLoading, setIsLoading] = useState(false); // NUOVO stato per bottone
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     if (navigator.geolocation) {
@@ -79,7 +79,7 @@ const Home = () => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setIsLoading(true); // Avvia caricamento
+    setIsLoading(true);
 
     let permessoFinale = permesso;
     if (tipoPresenza === 'Permessi Vari') {
@@ -90,8 +90,7 @@ const Home = () => {
     const formData = new URLSearchParams();
     formData.append('nome', selectedName.trim());
     formData.append('stato', tipoPresenza);
-    formData.append('targa', targa);
-    formData.append('chilometri', chilometri);
+    formData.append('targa', `${targa} / ${chilometri}`);
     formData.append('dataInizio', dataInizio);
     formData.append('dataFine', dataFine);
     formData.append('tipoPermesso', permessoFinale);
@@ -121,7 +120,6 @@ const Home = () => {
       const text = await response.text();
       alert(text);
 
-      // Solo se il server risponde correttamente, aggiorniamo la tabella
       const nuovaPresenza = {
         nome: selectedName,
         tipo: tipoPresenza,
@@ -134,7 +132,7 @@ const Home = () => {
       console.error('Errore:', error);
       alert("Errore nell'invio dei dati.");
     } finally {
-      setIsLoading(false); // Fine caricamento
+      setIsLoading(false);
     }
   };
 
@@ -149,32 +147,38 @@ const Home = () => {
           <>
             <SquadraSelector
               distretto={distretto}
-              setSelectedName={setSelectedName}
               selectedName={selectedName}
+              setSelectedName={setSelectedName}
             />
-            <MenuPresenza onSelect={setTipoPresenza} selected={tipoPresenza} />
+            <MenuPresenza selected={tipoPresenza} onSelect={setTipoPresenza} />
 
             {selectedName && tipoPresenza && (
               <form onSubmit={handleSubmit} className="flex flex-col gap-4 mt-4">
                 {tipoPresenza === 'Presenza' && (
-                  <>
-                    <input
-                      type="text"
-                      placeholder="Targa"
-                      value={targa}
-                      onChange={(e) => setTarga(e.target.value)}
-                      required
-                      className="border rounded p-2"
-                    />
-                    <input
-                      type="number"
-                      placeholder="Chilometri"
-                      value={chilometri}
-                      onChange={(e) => setChilometri(e.target.value)}
-                      required
-                      className="border rounded p-2"
-                    />
-                  </>
+                  <div className="flex gap-4">
+                    <div className="flex-1">
+                      <label className="block text-sm font-medium mb-1">Targa</label>
+                      <input
+                        type="text"
+                        placeholder="AB123CD"
+                        value={targa}
+                        onChange={(e) => setTarga(e.target.value)}
+                        required
+                        className="w-full border rounded p-2"
+                      />
+                    </div>
+                    <div className="flex-1">
+                      <label className="block text-sm font-medium mb-1">Chilometri</label>
+                      <input
+                        type="number"
+                        placeholder="20450"
+                        value={chilometri}
+                        onChange={(e) => setChilometri(e.target.value)}
+                        required
+                        className="w-full border rounded p-2"
+                      />
+                    </div>
+                  </div>
                 )}
 
                 {(tipoPresenza === 'Ferie' || tipoPresenza === 'Malattia') && (
@@ -220,7 +224,6 @@ const Home = () => {
         )}
 
         <TabellaPresenze presenze={presenze} />
-        
       </div>
     </div>
   );
