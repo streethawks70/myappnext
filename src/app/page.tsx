@@ -5,7 +5,6 @@ import DistrettoSelector from '../components/DistrettoSelector';
 import SquadraSelector from '../components/SquadraSelector';
 import MenuPresenza from '../components/MenuPresenza';
 
-// Componente TabellaPresenze
 const TabellaPresenze = ({ presenze }: { presenze: any[] }) => {
   return (
     <div className="mt-6">
@@ -42,6 +41,7 @@ const Home = () => {
   const [dataFine, setDataFine] = useState('');
   const [permesso, setPermesso] = useState('');
   const [posizione, setPosizione] = useState('');
+  const [altitude, setAltitude] = useState('');
   const [presenze, setPresenze] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -50,11 +50,16 @@ const Home = () => {
       navigator.geolocation.getCurrentPosition(
         (pos) => {
           const coords = `${pos.coords.latitude},${pos.coords.longitude}`;
+          const altitudeVal = pos.coords.altitude !== null
+            ? pos.coords.altitude.toFixed(2)
+            : 'n.d.';
+          setAltitude(altitudeVal);
           setPosizione(coords);
         },
         (err) => {
           console.warn('Errore posizione:', err);
-        }
+        },
+        { enableHighAccuracy: true }
       );
     }
 
@@ -90,7 +95,7 @@ const Home = () => {
     const formData = new URLSearchParams();
     formData.append('nome', selectedName.trim());
     formData.append('stato', tipoPresenza);
-    formData.append('targa', `${targa} / ${chilometri}`);
+    formData.append('targa', `${targa} / ${chilometri} km / ${altitude} m`);
     formData.append('dataInizio', dataInizio);
     formData.append('dataFine', dataFine);
     formData.append('tipoPermesso', permessoFinale);
@@ -126,7 +131,7 @@ const Home = () => {
         data: new Date().toLocaleDateString(),
       };
 
-      setPresenze((prevPresenze) => [...prevPresenze, nuovaPresenza]);
+      setPresenze((prev) => [...prev, nuovaPresenza]);
       resetForm();
     } catch (error) {
       console.error('Errore:', error);
@@ -176,6 +181,16 @@ const Home = () => {
                         onChange={(e) => setChilometri(e.target.value)}
                         required
                         className="w-full border rounded p-2"
+                      />
+                    </div>
+                    <div className="flex-1">
+                      <label className="block text-sm font-medium mb-1">Quota (m)</label>
+                      <input
+                        type="text"
+                        placeholder="Quota"
+                        value={altitude}
+                        readOnly
+                        className="w-full border rounded p-2 bg-gray-100"
                       />
                     </div>
                   </div>
