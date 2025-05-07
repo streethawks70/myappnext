@@ -82,13 +82,20 @@ const Home = () => {
     setSelectedName('');
   };
 
+  const getOraFormattata = () => {
+    const now = new Date();
+    const ore = now.getHours().toString().padStart(2, '0');
+    const minuti = now.getMinutes().toString().padStart(2, '0');
+    return `${ore}.${minuti}`;
+  };
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsLoading(true);
 
     let permessoFinale = permesso;
     if (tipoPresenza === 'Permessi Vari') {
-      const ora = new Date().toLocaleTimeString();
+      const ora = getOraFormattata(); // Formato corretto es. 18.56
       permessoFinale += ` - ${ora}`;
     }
 
