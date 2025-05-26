@@ -1,6 +1,7 @@
 'use client';
 import '../styles/global.css';
 import { useState, useEffect } from 'react';
+import Link from 'next/link'; // ⬅️ IMPORT NECESSARIO
 import DistrettoSelector from '../components/DistrettoSelector';
 import SquadraSelector from '../components/SquadraSelector';
 import MenuPresenza from '../components/MenuPresenza';
@@ -95,7 +96,7 @@ const Home = () => {
 
     let permessoFinale = permesso;
     if (tipoPresenza === 'Permessi Vari') {
-      const ora = getOraFormattata(); // Formato corretto es. 18.56
+      const ora = getOraFormattata();
       permessoFinale += ` - ${ora}`;
     }
 
@@ -121,6 +122,7 @@ const Home = () => {
         'Distretto 9': 'URL9',
         'Distretto 10': 'https://script.google.com/macros/s/AKfycbyOHZ6oHE-SJAZLPdgSyio1Zfm2iG1nEkdeDPGH9Rhofw8FUX666ax49R6Pf28y_ig/exec',
         'Distretto 11': 'https://script.google.com/macros/s/AKfycbxivmpJtQJFt7zTpoolK_xkW8BRunCl9_tz3jOx99gBF2umvcB63tcmdgUaN118qdPK/exec',
+        'Distretto 12':  'https://script.google.com/macros/s/AKfycby3fuDsAYPQI5ulosjgDF2v360_FxGeKqzEkax8Yp-MwCrLoZ2qKTzdcaekE4Kb3hO0/exec'
       };
 
       const response = await fetch(sheetUrls[distretto], {
@@ -149,7 +151,17 @@ const Home = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 flex flex-col items-center p-4 text-gray-800">
+   // <div className="min-h-screen bg-gray-100 flex flex-col items-center p-4 text-gray-800">
+   //   {/* ✅ BOTTONE RESOCONTO */}
+   //   <div className="w-full max-w-xl mb-4 flex justify-end">
+    //    <Link href="/resoconto">
+     //     <button className="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded transition">
+     //       Vai al Resoconto
+      //    </button>
+      //  </Link>
+      //</div>
+     
+      <div className="min-h-screen bg-gray-100 flex flex-col items-center p-4 text-gray-800">
       <h1 className="text-2xl font-bold mb-4">Gestione Presenze</h1>
 
       <div className="bg-white p-6 rounded-xl shadow-md w-full max-w-xl">
@@ -248,6 +260,7 @@ const Home = () => {
         <TabellaPresenze presenze={presenze} />
       </div>
     </div>
+    
   );
 };
 

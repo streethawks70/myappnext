@@ -11,6 +11,7 @@ const distretti = [
     { nome: 'Distretto 9', file: 'distretto9.txt' },
     { nome: 'Distretto 10', file: 'distretto10.txt' },
     { nome: 'Distretto 11', file: 'distretto11.txt' },
+    { nome: 'Distretto 12', file: 'distretto11.txt' },
   ];
   
   const DistrettoSelector = ({ setDistretto }: { setDistretto: (d: string) => void }) => {
