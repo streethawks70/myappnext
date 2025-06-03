@@ -236,16 +236,26 @@ const Home = () => {
                   </>
                 )}
 
-                {tipoPresenza === 'Permessi Vari' && (
-                  <input
-                    type="text"
-                    placeholder="Tipo di permesso"
-                    value={permesso}
-                    onChange={(e) => setPermesso(e.target.value)}
-                    required
-                    className="border rounded p-2"
-                  />
-                )}
+{tipoPresenza === 'Permessi Vari' && (
+  <div>
+    <label className="block text-sm font-medium mb-1">Seleziona Tipo di Permesso</label>
+    <select
+      value={permesso}
+      onChange={(e) => setPermesso(e.target.value)}
+      required
+      className="border rounded p-2 w-full"
+    >
+      <option value="" disabled>-- Seleziona un permesso --</option>
+      <option value="PERMESSO RETRIBUITO">PERMESSO RETRIBUITO</option>
+      <option value="LEGGE 104">LEGGE 104</option>
+      <option value="ART.9">ART.9</option>
+      <option value="PERMESSO BANCA">PERMESSO BANCA</option>
+      <option value="DISTACCAMENTO AIB">DISTACCAMENTO AIB</option>
+      <option value="DISTACCAMENTO-CONVENZIONE">DISTACCAMENTO-CONVENZIONE</option>
+      <option value="PERMESSO LUTTO">PERMESSO LUTTO</option>
+    </select>
+  </div>
+)}
 
                 <button
                   type="submit"
