@@ -115,7 +115,7 @@ const Home = () => {
         'Distretto 2': 'URL_2',
         'Distretto 3': 'URL3',
         'Distretto 4': 'URL4',
-        'Distretto 5': 'https://script.google.com/macros/s/AKfycbyd3emfY_jLZ3yUfS-nDY9xQ8MwQDSrh2uSFs4vPtoMwiTSkVUm-ygg13ZWpBZ6AUcV/exec',
+        'Distretto 5': 'https://script.google.com/macros/s/AKfycbwp3BC4DCF0o-dKyQpemZXf5rCj0gyG1IrAIlt_31aIQwgedSTPcW6fsW2Qhm7eLnko/exec',
         'Distretto 6': 'URL6',
         'Distretto 7': 'URL7',
         'Distretto 8': 'URL8',
@@ -253,6 +253,11 @@ const Home = () => {
       <option value="DISTACCAMENTO AIB">DISTACCAMENTO AIB</option>
       <option value="DISTACCAMENTO-CONVENZIONE">DISTACCAMENTO-CONVENZIONE</option>
       <option value="PERMESSO LUTTO">PERMESSO LUTTO</option>
+      <option value="VISITA MEDICA">VISITA MEDICA</option>
+      <option value="PERMESSO ELETTORALE">PERMESSO ELETTORALE</option>
+      <option value="ART 51">ART 51</option>
+      <option value="PERMESSO CAUSA PIOGGIA">PERMESSO CAUSA PIOGGIA</option>
+      <option value="ATTIVABILE">ATTIVABILE</option>
     </select>
   </div>
 )}
