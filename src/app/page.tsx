@@ -163,8 +163,11 @@ const Home = () => {
       //  </Link>
       //</div>
      
-      <div className="min-h-screen bg-gray-100 flex flex-col items-center p-4 text-gray-800">
+      <div className="min-h-screen bg-green-50 flex flex-col items-center p-4 text-gray-800">
+
       <h1 className="text-2xl font-bold mb-4">Gestione Presenze</h1>
+      <h2 className='text-2xl font-bold mb-4'> Azienda</h2>
+      <h1 className='text-5xl font-bold mb-4'>Calabria Verde</h1>
 
       <div className="bg-white p-6 rounded-xl shadow-md w-full max-w-xl">
         <DistrettoSelector setDistretto={setDistretto} />
