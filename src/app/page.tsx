@@ -254,7 +254,7 @@ const Home = () => {
       <option value="ART.9">ART.9</option>
       <option value="PERMESSO BANCA">PERMESSO BANCA</option>
       <option value="DISTACCAMENTO AIB">DISTACCAMENTO AIB</option>
-      <option value="DISTACCAMENTO-CONVENZIONE">DISTACCAMENTO-CONVENZIONE</option>
+      <option value="DISTACCAMENTO CONVENZIONE">DISTACCAMENTO-CONVENZIONE</option>
       <option value="PERMESSO LUTTO">PERMESSO LUTTO</option>
       <option value="VISITA MEDICA">VISITA MEDICA</option>
       <option value="PERMESSO ELETTORALE">PERMESSO ELETTORALE</option>
