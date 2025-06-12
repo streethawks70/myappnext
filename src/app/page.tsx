@@ -111,7 +111,7 @@ const Home = () => {
 
     try {
       const sheetUrls: Record<string, string> = {
-        'Distretto 1': 'https://script.google.com/macros/s/AKfycbxB6KtREvG7JhEHKZZ09PrBpswE6b-NRUh5BAflzf2T_gLJnJw1AeCREEQyA7k86xyquA/exec',
+        'Distretto 1': 'https://script.google.com/macros/s/AKfycbwVh85z71xuxLP6KlX6scVhnNIUP-DQ2OjcDsRP1NkZanlr3HoeEJbkMg5WQ5M9RxHWGA/exec',
         'Distretto 2': 'URL_2',
         'Distretto 3': 'URL3',
         'Distretto 4': 'URL4',
