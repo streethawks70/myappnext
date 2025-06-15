@@ -70,6 +70,7 @@ const Home = () => {
     if (lastSavedDate !== currentDate) {
       setPresenze([]);
       localStorage.setItem('lastPresenzeDate', currentDate);
+      localStorage.removeItem('statiPresenze'); // ✅ reset dello stato di tutti
     }
   }, []);
 
@@ -93,6 +94,20 @@ const Home = () => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsLoading(true);
+    // 1️⃣ Recupera gli stati salvati
+  const statiSalvati = JSON.parse(localStorage.getItem('statiPresenze') || '{}');
+  const statoPrecedente = statiSalvati[selectedName];
+
+  // 2️⃣ Controlli logici di coerenza
+  const erroreLogico =
+    (statoPrecedente === 'Presenza' && ['Ferie', 'Malattia', 'Infortunio', 'Assenza'].includes(tipoPresenza)) ||
+    (['Ferie', 'Malattia', 'Permessi Vari', 'Donazione sangue', 'Cassa integrazione'].includes(statoPrecedente) && tipoPresenza === 'Uscita');
+
+  if (erroreLogico) {
+    alert(`❌ Operazione non consentita.\n\nDopo "${statoPrecedente}" non puoi inserire "${tipoPresenza}" per ${selectedName}.`);
+    setIsLoading(false);
+    return;
+  }
 
     let permessoFinale = permesso;
     if (tipoPresenza === 'Permessi Vari') {
@@ -135,6 +150,10 @@ const Home = () => {
 
       const text = await response.text();
       alert(text);
+      
+    // 5️⃣ Salva stato aggiornato nel localStorage
+    statiSalvati[selectedName] = tipoPresenza;
+    localStorage.setItem('statiPresenze', JSON.stringify(statiSalvati));
 
       const nuovaPresenza = {
         nome: selectedName,
@@ -261,6 +280,8 @@ const Home = () => {
       <option value="ART 51">ART 51</option>
       <option value="PERMESSO CAUSA PIOGGIA">PERMESSO CAUSA PIOGGIA</option>
       <option value="ATTIVABILE">ATTIVABILE</option>
+      <option value="ASPETTATIVA ">ASPETTATIVA</option>
+      <option value="LAVORI DISAGIATI ">LAVORI DISAGIATI</option>
     </select>
   </div>
 )}

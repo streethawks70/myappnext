@@ -58,13 +58,14 @@ const SquadraSelector = ({
     <div className="form-group">
       <h3>Inserisci Matricola Caposquadra</h3>
       <div className="flex gap-2">
-        <input
-          type="text"
-          placeholder="Inserisci matricola"
+        <input 
+          type="text" 
+          placeholder ="Inserisci matricola"
           value={matricolaInput}
           onChange={(e) => setMatricolaInput(e.target.value)}
+           className="placeholder-red-500 border border-gray-300 p-2"
         />
-        <button type="button" onClick={handleMatricolaSubmit}>
+        <button className="bg-blue-600 text-white px-4 py-2 rounded-none hover:bg-blue-700"type="button" onClick={handleMatricolaSubmit}>
           Verifica
         </button>
       </div>
