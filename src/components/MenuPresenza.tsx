@@ -2,6 +2,7 @@
 const opzioni = [
     'Presenza',
     'Assenza',
+    'Sospeso',
     'Ferie',
     'Malattia',
     'Infortunio',
