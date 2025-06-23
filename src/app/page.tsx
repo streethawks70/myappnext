@@ -131,7 +131,7 @@ const Home = () => {
         'Distretto 3': 'https://script.google.com/macros/s/AKfycbyFvxxSsL-7houYS-h4UtpNiK6dH05lHXiPIB1yVQvuj-8iCbKR9QjbBvADi3ROIWgE/exec',
         'Distretto 4': 'URL4',
         'Distretto 5': 'https://script.google.com/macros/s/AKfycbwp3BC4DCF0o-dKyQpemZXf5rCj0gyG1IrAIlt_31aIQwgedSTPcW6fsW2Qhm7eLnko/exec',
-        'Distretto 6': 'URL6',
+        'Distretto 6': 'https://script.google.com/macros/s/AKfycbxcxQ5WqcsD_UmARccxuglj7kfs1OMgrU1k14pCiMvRMIJGTy21sujR806wHmPKwBEtAA/exec',
         'Distretto 7': 'URL7',
         'Distretto 8': 'URL8',
         'Distretto 9': 'https://script.google.com/macros/s/AKfycbzLL0VM0DtGTVRIpYQGcoX3VSuBHOKX0iaoul199WnX56m_mBhEgS1H8JXiPU_61OKkHA/exec',
