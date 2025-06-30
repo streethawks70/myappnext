@@ -4,20 +4,20 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import MenuPresenza from '../../components/MenuPresenza';
 
-const FIRMA_URL = 'https://script.google.com/macros/s/AKfycbzmwGbvEM85qVVsGw3akTumdalcFcr_7hivgsebzsxv3iIcpT72gWwAbgi_Q-Q1bSTBxg/exec';
+const FIRMA_URL = 'https://script.google.com/macros/s/AKfycbzNrn2Ze2h1pSz5Kioybyl3U4irNJmasrqLfozErxo6SpCNIyPQahtiw9kfYEhXzC40/exec';
 
 const DISTRETTO_URLS: { [key: string]: string } = {
-  'Distretto Nord': 'https://script.google.com/macros/s/AKfycbzPQLWz2NuF9NBakDGKW_QFpMfL-xhyhZk4ngFQHJXMY0r3dCpgaqsRxJDRRwA4FOR5/exec',
-  'Distretto Sud': 'https://script.google.com/macros/s/URL_SUD/exec',
-  'Distretto Est': 'https://script.google.com/macros/s/URL_EST/exec',
-  'Distretto Ovest': 'https://script.google.com/macros/s/URL_OVEST/exec',
-  'Distretto Centro': 'https://script.google.com/macros/s/URL_CENTRO/exec',
-  'Distretto 6': 'https://script.google.com/macros/s/URL_6/exec',
-  'Distretto 7': 'https://script.google.com/macros/s/URL_7/exec',
-  'Distretto 8': 'https://script.google.com/macros/s/URL_8/exec',
-  'Distretto 9': 'https://script.google.com/macros/s/URL_9/exec',
+  'Distretto 1': 'https://script.google.com/macros/s/AKfycbzPQLWz2NuF9NBakDGKW_QFpMfL-xhyhZk4ngFQHJXMY0r3dCpgaqsRxJDRRwA4FOR5/exec',
+  'Distretto 2': 'https://script.google.com/macros/s/URL_SUD/exec',
+  'Distretto 3': 'https://script.google.com/macros/s/URL_EST/exec',
+  'Distretto 4': 'https://script.google.com/macros/s/URL_OVEST/exec',
+  'Distretto 5':  'https://script.google.com/macros/s/AKfycbyiFstun8TO_ZM1e512O87HYcK23C7EnQ6pRAHspEhkvBaTrrN5HxsvfOfBSaivUeA/exec',
+  'Distretto 6':  'https://script.google.com/macros/s/URL_6/exec',
+  'Distretto 7':  'https://script.google.com/macros/s/URL_7/exec',
+  'Distretto 8':  'https://script.google.com/macros/s/URL_8/exec',
+  'Distretto 9':  'https://script.google.com/macros/s/URL_9/exec',
   'Distretto 10': 'https://script.google.com/macros/s/URL_10/exec',
-  'Distretto 11': 'https://script.google.com/macros/s/AKfycbzHq76MdqZCv8OienhFZDYEstKlVYeDlpsFn6JlVP9yjRqW6qVxoR97YJ6sgFtCMDE5/exec',
+  'Distretto 11': 'https://script.google.com/macros/s/AKfycby3m6uuiv-HzbhXFSThPN2xQYdKEgDcFartDieVNh7lr1t8rmI_sZSeDzN7e2mq_jbd/exec',
 };
 
 export default function CapoCantierePage() {
