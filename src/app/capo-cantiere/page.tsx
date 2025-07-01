@@ -7,7 +7,7 @@ import MenuPresenza from '../../components/MenuPresenza';
 const FIRMA_URL = 'https://script.google.com/macros/s/AKfycbzNrn2Ze2h1pSz5Kioybyl3U4irNJmasrqLfozErxo6SpCNIyPQahtiw9kfYEhXzC40/exec';
 
 const DISTRETTO_URLS: { [key: string]: string } = {
-  'Distretto 1': 'https://script.google.com/macros/s/AKfycbzPQLWz2NuF9NBakDGKW_QFpMfL-xhyhZk4ngFQHJXMY0r3dCpgaqsRxJDRRwA4FOR5/exec',
+  'Distretto 1': 'https://script.google.com/macros/s/AKfycbz8CLYKisFcKXgyR2Dj80Z35nGbCrnJKhoGLeb-A64726faOJfHTgfOp_H51ZKee1yVOA/exec',
   'Distretto 2': 'https://script.google.com/macros/s/URL_SUD/exec',
   'Distretto 3': 'https://script.google.com/macros/s/URL_EST/exec',
   'Distretto 4': 'https://script.google.com/macros/s/URL_OVEST/exec',

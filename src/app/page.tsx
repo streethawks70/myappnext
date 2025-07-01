@@ -126,7 +126,7 @@ const Home = () => {
 
     try {
       const sheetUrls: Record<string, string> = {
-        'Distretto 1': 'https://script.google.com/macros/s/AKfycbwVh85z71xuxLP6KlX6scVhnNIUP-DQ2OjcDsRP1NkZanlr3HoeEJbkMg5WQ5M9RxHWGA/exec',
+        'Distretto 1': 'https://script.google.com/macros/s/AKfycbz8CLYKisFcKXgyR2Dj80Z35nGbCrnJKhoGLeb-A64726faOJfHTgfOp_H51ZKee1yVOA/exec',
         'Distretto 2': 'https://script.google.com/macros/s/AKfycbypH8yFYfN8anr5S_cswx1nl9Nutp6vjIPV-CSiYlTzuA6j5hOqZlcjHxcpOez_ss8M5A/exec',
         'Distretto 3': 'https://script.google.com/macros/s/AKfycbyFvxxSsL-7houYS-h4UtpNiK6dH05lHXiPIB1yVQvuj-8iCbKR9QjbBvADi3ROIWgE/exec',
         'Distretto 4': 'https://script.google.com/macros/s/AKfycbzz_Zm8ezcdA0TkgaNt4OLVvMseC4TD8-mi0ExVgcmGsk9L70XFRcMcJ6zMS6dXnWj7AQ/exec',
