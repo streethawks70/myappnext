@@ -17,6 +17,7 @@ const distretti = [
   { nome: 'Distretto 12', file: 'distretto12.txt' },
   { nome: 'Distretto 13', file: 'distretto13.txt' },
   { nome: 'Capo Cantiere', file: '' }, // ✅ Aggiunta opzione speciale
+  {nome:'Servizio-custodia',file:''}
 ];
 
 const DistrettoSelector = ({ setDistretto }: { setDistretto: (d: string) => void }) => {
@@ -26,7 +27,9 @@ const DistrettoSelector = ({ setDistretto }: { setDistretto: (d: string) => void
     const selected = e.target.value;
     if (selected === 'Capo Cantiere') {
       router.push('/capo-cantiere'); // ✅ Vai alla pagina dedicata
-    } else {
+    } else if(selected === 'Servizio-custodia') {
+      router.push('./Servizio-custodia');
+    }else{
       setDistretto(selected); // ✅ Funziona normalmente per gli altri
     }
   };
