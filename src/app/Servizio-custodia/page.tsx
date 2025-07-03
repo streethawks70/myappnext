@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 
-const CUSTODIA_URL = 'https://script.google.com/macros/s/AKfycbyQr3ijbv3Dvs-oS_Y67hfIcSxPwrjh4aHplePN3-13N8Gl3yMWvr7D0ulUKKICeerO/exec';
+const CUSTODIA_URL = 'https://script.google.com/macros/s/AKfycbyKmCypu6ZVDL9wpeG-WKqQHdIDeZffn8Z68K1VzzaUXBcUgSpseifa02TTSAIkhxVs/exec';
 
 export default function ServizioCustodiaPage() {
   const [matricola, setMatricola] = useState('');
@@ -79,7 +79,7 @@ export default function ServizioCustodiaPage() {
       return;
     }
   
-    if (tipoPresenza === 'Presenza' && (!targa.trim() || !chilometri.trim())) {
+    if (tipoPresenza === 'Uscita' && (!targa.trim() || !chilometri.trim())) {
       alert('Inserisci targa e chilometri');
       return;
     }
@@ -102,7 +102,7 @@ export default function ServizioCustodiaPage() {
     }
   
     const posizione = `${coords.latitude.toFixed(6)},${coords.longitude.toFixed(6)}`;
-    const veicolo = tipoPresenza === 'Presenza' ? `${targa}/${chilometri}` : '';
+    //const veicolo = tipoPresenza === 'Uscita' ? `${targa}/${chilometri}` : '';
   
     const fd = new URLSearchParams({
         matricola,
@@ -113,8 +113,9 @@ export default function ServizioCustodiaPage() {
         dataInizio,
         dataFine,
         posizione,
-        targa: tipoPresenza === 'Presenza' ? `${targa}/${chilometri} km` : '',
+        targa: tipoPresenza === 'Uscita' ? `${targa}/${chilometri} Km` : '',
       });
+      
       
   
     try {
@@ -198,10 +199,11 @@ export default function ServizioCustodiaPage() {
               <option>Malattia</option>
               <option>Infortunio</option>
               <option>Permessi Vari</option>
+              <option>Uscita</option>
             </select>
           </div>
 
-          {tipoPresenza === 'Presenza' && (
+          {tipoPresenza === 'Uscita' && (
             <div className="mt-4 grid gap-4 md:grid-cols-2">
               <div>
                 <label className="block mb-1 font-semibold">Targa veicolo</label>
