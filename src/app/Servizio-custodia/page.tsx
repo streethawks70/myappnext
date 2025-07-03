@@ -17,6 +17,8 @@ export default function ServizioCustodiaPage() {
   const [dataFine, setDataFine] = useState('');
 
   const [isLoading, setIsLoading] = useState(false);
+  const [targa, setTarga] = useState('');
+  const [chilometri, setChilometri] = useState('');
 
   async function handleVerifica() {
     if (!matricola.trim()) {
@@ -45,7 +47,7 @@ export default function ServizioCustodiaPage() {
 
       setSquadra(squadraNome);
       setComponenti(membri);
-      setSelezionato(membri[0]); // default: capo
+      setSelezionato(membri[0]);
       setVerificato(true);
     } catch (err) {
       console.error(err);
@@ -53,7 +55,6 @@ export default function ServizioCustodiaPage() {
     }
   }
 
-  // Funzione per ottenere la posizione GPS
   function getPosizioneUtente(): Promise<GeolocationCoordinates> {
     return new Promise((resolve, reject) => {
       if (!navigator.geolocation) {
@@ -72,12 +73,17 @@ export default function ServizioCustodiaPage() {
       alert('Seleziona uno stato di presenza');
       return;
     }
-
+  
     if (!selezionato) {
       alert('Seleziona un nominativo');
       return;
     }
-
+  
+    if (tipoPresenza === 'Presenza' && (!targa.trim() || !chilometri.trim())) {
+      alert('Inserisci targa e chilometri');
+      return;
+    }
+  
     let coords;
     try {
       coords = await getPosizioneUtente();
@@ -85,7 +91,7 @@ export default function ServizioCustodiaPage() {
       alert('Impossibile recuperare la posizione: ' + err.message);
       return;
     }
-
+  
     let tipoPermesso = '';
     if (tipoPresenza === 'Permessi Vari') {
       if (!permesso) {
@@ -94,20 +100,23 @@ export default function ServizioCustodiaPage() {
       }
       tipoPermesso = permesso;
     }
-
+  
     const posizione = `${coords.latitude.toFixed(6)},${coords.longitude.toFixed(6)}`;
-
+    const veicolo = tipoPresenza === 'Presenza' ? `${targa}/${chilometri}` : '';
+  
     const fd = new URLSearchParams({
-      matricola,
-      squadra,
-      nome: selezionato,
-      stato: tipoPresenza,
-      tipoPermesso,
-      dataInizio,
-      dataFine,
-      posizione,
-    });
-
+        matricola,
+        squadra,
+        nome: selezionato,
+        stato: tipoPresenza,
+        tipoPermesso,
+        dataInizio,
+        dataFine,
+        posizione,
+        targa: tipoPresenza === 'Presenza' ? `${targa}/${chilometri} km` : '',
+      });
+      
+  
     try {
       setIsLoading(true);
       const res = await fetch(CUSTODIA_URL, {
@@ -115,7 +124,7 @@ export default function ServizioCustodiaPage() {
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
         body: fd.toString(),
       });
-
+  
       const msg = await res.text();
       alert(`✅ ${msg}`);
     } catch (err) {
@@ -125,7 +134,7 @@ export default function ServizioCustodiaPage() {
       setIsLoading(false);
     }
   }
-
+  
   return (
     <div className="max-w-xl mx-auto p-6">
       <h1 className="text-2xl font-bold mb-6 text-center">🛡️ Servizio di Custodia, Guarnigione e Vigilanza</h1>
@@ -164,7 +173,8 @@ export default function ServizioCustodiaPage() {
                       selezionato === nome ? 'bg-blue-200 border-blue-500' : 'hover:bg-blue-50'
                     }`}
                   >
-                    {index === 0 ? `🧑‍💼 Capo: ${nome}` : `👷 Operaio: ${nome}`}
+                   {index === 0 ? `👮‍♂️ Guardia: ${nome}` : `🚓 Agente: ${nome}`}
+
                   </button>
                 </li>
               ))}
@@ -191,6 +201,31 @@ export default function ServizioCustodiaPage() {
             </select>
           </div>
 
+          {tipoPresenza === 'Presenza' && (
+            <div className="mt-4 grid gap-4 md:grid-cols-2">
+              <div>
+                <label className="block mb-1 font-semibold">Targa veicolo</label>
+                <input
+                  type="text"
+                  value={targa}
+                  onChange={e => setTarga(e.target.value)}
+                  className="border p-2 rounded w-full"
+                  placeholder="es. AB123CD"
+                />
+              </div>
+              <div>
+                <label className="block mb-1 font-semibold">Chilometri</label>
+                <input
+                  type="number"
+                  value={chilometri}
+                  onChange={e => setChilometri(e.target.value)}
+                  className="border p-2 rounded w-full"
+                  placeholder="es. 123456"
+                />
+              </div>
+            </div>
+          )}
+
           {tipoPresenza === 'Permessi Vari' && (
             <div className="mt-4">
               <label className="block mb-1 font-semibold">Tipo Permesso</label>
@@ -201,12 +236,12 @@ export default function ServizioCustodiaPage() {
               >
                 <option value="">-- Seleziona tipo permesso --</option>
                 <option>PERMESSO RETRIBUITO</option>
-                <option>LEGGE 104</option>
+                <option>LEGGE 104</option>
                 <option>ART.9</option>
                 <option>PERMESSO BANCA</option>
                 <option>VISITA MEDICA</option>
                 <option>PERMESSO LUTTO</option>
-                <option>ART 51</option>
+                <option>ART 51</option>
                 <option>ATTIVABILE</option>
                 <option>LAVORI DISAGIATI</option>
               </select>
