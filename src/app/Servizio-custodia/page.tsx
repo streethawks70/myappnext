@@ -138,7 +138,7 @@ export default function ServizioCustodiaPage() {
   
   return (
     <div className="max-w-xl mx-auto p-6">
-      <h1 className="text-2xl font-bold mb-6 text-center">🛡️ Servizio di Custodia, Guarnigione e Vigilanza</h1>
+      <h1 className="text-2xl font-bold mb-6 text-center">🛡️ Servizio di Custodia, Guardania e Vigilanza</h1>
 
       <div className="mb-4">
         <label className="block mb-1 font-semibold">Inserisci Matricola</label>
