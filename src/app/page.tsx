@@ -50,12 +50,28 @@ const Home = () => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (pos) => {
-          const coords = `${pos.coords.latitude},${pos.coords.longitude}`;
-          const altitudeVal = pos.coords.altitude !== null
-            ? pos.coords.altitude.toFixed(2)
-            : 'n.d.';
-          setAltitude(altitudeVal);
+          const { latitude, longitude, altitude } = pos.coords;
+          const coords = `${latitude},${longitude}`;
           setPosizione(coords);
+  
+          if (altitude !== null) {
+            setAltitude(altitude.toFixed(2));
+          } else {
+            // Fallback: chiamata all'API Open Elevation
+            fetch(`https://api.open-elevation.com/api/v1/lookup?locations=${latitude},${longitude}`)
+              .then(res => res.json())
+              .then(data => {
+                const elevation = data.results?.[0]?.elevation;
+                if (elevation !== undefined) {
+                  setAltitude(elevation.toFixed(2));
+                } else {
+                  setAltitude('n.d.');
+                }
+              })
+              .catch(() => {
+                setAltitude('n.d.');
+              });
+          }
         },
         (err) => {
           console.warn('Errore posizione:', err);
@@ -63,17 +79,17 @@ const Home = () => {
         { enableHighAccuracy: true }
       );
     }
-
+  
     const currentDate = new Date().toISOString().split('T')[0];
     const lastSavedDate = localStorage.getItem('lastPresenzeDate');
-
+  
     if (lastSavedDate !== currentDate) {
       setPresenze([]);
       localStorage.setItem('lastPresenzeDate', currentDate);
-      localStorage.removeItem('statiPresenze'); // ✅ reset dello stato di tutti
+      localStorage.removeItem('statiPresenze');
     }
   }, []);
-
+  
   const resetForm = () => {
     setTipoPresenza('');
     setTarga('');
