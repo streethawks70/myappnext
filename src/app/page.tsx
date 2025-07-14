@@ -271,7 +271,6 @@ const Home = () => {
       <option value="PERMESSO RETRIBUITO">PERMESSO RETRIBUITO</option>
       <option value="LEGGE 104">LEGGE 104</option>
       <option value="ART.9">ART.9</option>
-      <option value="PERMESSO BANCA">PERMESSO BANCA</option>
       <option value="DISTACCAMENTO AIB">DISTACCAMENTO AIB</option>
       <option value="DISTACCAMENTO CONVENZIONE">DISTACCAMENTO-CONVENZIONE</option>
       <option value="PERMESSO LUTTO">PERMESSO LUTTO</option>
