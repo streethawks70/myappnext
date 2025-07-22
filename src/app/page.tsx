@@ -154,7 +154,7 @@ const Home = () => {
         'Distretto 8': 'URL8',
         'Distretto 9': 'https://script.google.com/macros/s/AKfycbzLL0VM0DtGTVRIpYQGcoX3VSuBHOKX0iaoul199WnX56m_mBhEgS1H8JXiPU_61OKkHA/exec',
         'Distretto 10': 'https://script.google.com/macros/s/AKfycbyOHZ6oHE-SJAZLPdgSyio1Zfm2iG1nEkdeDPGH9Rhofw8FUX666ax49R6Pf28y_ig/exec',
-        'Distretto 11': 'https://script.google.com/macros/s/AKfycby3m6uuiv-HzbhXFSThPN2xQYdKEgDcFartDieVNh7lr1t8rmI_sZSeDzN7e2mq_jbd/exec',
+        'Distretto 11': 'https://script.google.com/macros/s/AKfycbyZB3pHtE32pkHiUR5vcFormHXmR2BY7TELWGpwVaKjAG0JHYL9kYH3goYLwxaa5HUC/exec',
         'Distretto 12':  'https://script.google.com/macros/s/AKfycby3fuDsAYPQI5ulosjgDF2v360_FxGeKqzEkax8Yp-MwCrLoZ2qKTzdcaekE4Kb3hO0/exec',
         'Distretto 13': 'https://script.google.com/macros/s/AKfycbzmwGbvEM85qVVsGw3akTumdalcFcr_7hivgsebzsxv3iIcpT72gWwAbgi_Q-Q1bSTBxg/exec',
 
@@ -205,6 +205,15 @@ const Home = () => {
       <h1 className="text-2xl font-bold mb-4">Gestione Presenze</h1>
       <h2 className='text-2xl font-bold mb-4'> Azienda</h2>
       <h1 className='text-5xl font-bold mb-4'>Calabria Verde</h1>
+
+<div className="mb-6">
+  <Link href="/ddl">
+    <button className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded transition">
+      Accesso Direttori dei Lavori
+    </button>
+  </Link>
+</div>
+
 
       <div className="bg-white p-6 rounded-xl shadow-md w-full max-w-xl">
         <DistrettoSelector setDistretto={setDistretto} />
