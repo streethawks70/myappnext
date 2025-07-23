@@ -17,7 +17,7 @@ export async function GET(request: Request) {
         );
       }
   
-      const url = `https://script.google.com/macros/s/AKfycby2Xv5Oa_t9DIrglpqVMS8yjZtX4pejIamTeH0AoabFSIPEdIU51cuO0hpSVXUC9l5X/exec?email=${encodeURIComponent(
+      const url = `https://script.google.com/macros/s/AKfycbwabhdIRsbs09ioW2ug_hMpUUbD2fwkx_p6Wi85pdmYUKxcOKW9T_u0WieOLr3y0Glm/exec?email=${encodeURIComponent(
         email
       )}&password=${encodeURIComponent(password)}`;
   

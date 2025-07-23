@@ -8,61 +8,43 @@ export default function DirettorePage() {
   const [loggedIn, setLoggedIn] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  // Funzione che converte la data ISO in numero decimale ore + aggiunge 1h di fuso
-  function isoStringToDecimalHours(isoString: string) {
-    if (!isoString) return 0;
-    const date = new Date(isoString);
-    const baseDate = new Date('1899-12-30T00:00:00.000Z');
-    let diffMs = date.getTime() - baseDate.getTime();
-
-    // Aggiungi 1 ora (3600000 ms) per correggere il fuso orario
-    diffMs += 3600000;
-
-    const diffHours = diffMs / (1000 * 60 * 60);
-    return diffHours;
-  }
-
   const handleLogin = async () => {
     if (!email || !password) {
       alert('Inserisci email e password.');
       return;
     }
-
     setLoading(true);
-
     try {
       const res = await fetch(
         `/api/login?email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`
       );
-
       const text = await res.text();
-
       if (text === 'Unauthorized') {
         alert('Accesso negato: email o password errata.');
-      } else {
-        let json;
-        try {
-          json = JSON.parse(text);
-        } catch (err) {
-          console.error('Errore nel parsing della risposta JSON:', err);
-          alert('Risposta non valida dal server.');
-          return;
-        }
+        setLoading(false);
+        return;
+      }
 
-        if (Array.isArray(json)) {
-          setDati(json);
-          setLoggedIn(true);
-        } else {
-          console.warn('Formato risposta non previsto:', json);
-          alert('Errore: risposta inattesa dal server.');
-        }
+      const json = JSON.parse(text);
+
+      if (json.error) {
+        alert(json.error);
+        setLoggedIn(false);
+        setDati([]);
+      } else if (Array.isArray(json) && json.length > 0) {
+        setDati(json);
+        setLoggedIn(true);
+      } else {
+        alert('Nessun dato trovato.');
+        setLoggedIn(false);
+        setDati([]);
       }
     } catch (err) {
-      console.error('Errore nel recupero dati:', err);
-      alert('Errore nel recupero dati.');
-    } finally {
-      setLoading(false);
+      alert('Errore durante il recupero dati.');
+      setLoggedIn(false);
+      setDati([]);
     }
+    setLoading(false);
   };
 
   if (!loggedIn) {
@@ -122,33 +104,23 @@ export default function DirettorePage() {
           </tr>
         </thead>
         <tbody>
-          {Array.isArray(dati) &&
-            dati.map((riga, idx) => (
-              <tr key={idx}>
-                <td className="border px-2 py-1">{riga.nominativo}</td>
-                <td className="border px-2 py-1">{riga.matricola}</td>
-                <td className="border px-2 py-1">{riga.targa}</td>
-
-                {/* Qui converto presenza da ISO string a decimale con +1 ora */}
-                <td className="border px-2 py-1">
-                  {isoStringToDecimalHours(riga.presenze).toFixed(2)}
-                </td>
-
-                <td className="border px-2 py-1">{riga.assenze}</td>
-                <td className="border px-2 py-1">{riga.ferie}</td>
-                <td className="border px-2 py-1">{riga.malattia}</td>
-                <td className="border px-2 py-1">{riga.infortunio}</td>
-                <td className="border px-2 py-1">{riga.cig}</td>
-                <td className="border px-2 py-1">{riga.permessi}</td>
-                <td className="border px-2 py-1">{riga.rientro}</td>
-                <td className="border px-2 py-1">{riga.festivita}</td>
-
-                {/* Anche per uscita */}
-                <td className="border px-2 py-1">
-                  {isoStringToDecimalHours(riga.uscita).toFixed(2)}
-                </td>
-              </tr>
-            ))}
+          {dati.map((riga, idx) => (
+            <tr key={idx}>
+              <td className="border px-2 py-1">{riga.nominativo}</td>
+              <td className="border px-2 py-1">{riga.matricola}</td>
+              <td className="border px-2 py-1">{riga.targa}</td>
+              <td className="border px-2 py-1">{riga.presenze}</td>
+              <td className="border px-2 py-1">{riga.assenze}</td>
+              <td className="border px-2 py-1">{riga.ferie}</td>
+              <td className="border px-2 py-1">{riga.malattia}</td>
+              <td className="border px-2 py-1">{riga.infortunio}</td>
+              <td className="border px-2 py-1">{riga.cig}</td>
+              <td className="border px-2 py-1">{riga.permessi}</td>
+              <td className="border px-2 py-1">{riga.rientro}</td>
+              <td className="border px-2 py-1">{riga.festivita}</td>
+              <td className="border px-2 py-1">{riga.uscita}</td>
+            </tr>
+          ))}
         </tbody>
       </table>
     </div>
