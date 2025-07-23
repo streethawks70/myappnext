@@ -5,6 +5,7 @@ import Link from 'next/link'; // ⬅️ IMPORT NECESSARIO
 import DistrettoSelector from '../components/DistrettoSelector';
 import SquadraSelector from '../components/SquadraSelector';
 import MenuPresenza from '../components/MenuPresenza';
+import ComunicazioniComponent from '../components/ComunicazioniComponent';
 
 const TabellaPresenze = ({ presenze }: { presenze: any[] }) => {
   return (
@@ -322,6 +323,9 @@ const Home = () => {
                 </button>
               </form>
             )}
+             {tipoPresenza === 'Comunicazioni' && (
+      <ComunicazioniComponent nome={selectedName} />
+    )}
           </>
         )}
 
