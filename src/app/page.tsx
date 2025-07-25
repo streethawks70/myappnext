@@ -323,9 +323,18 @@ const Home = () => {
                 </button>
               </form>
             )}
-             {tipoPresenza === 'Comunicazioni' && (
-      <ComunicazioniComponent nome={selectedName} />
-    )}
+            {tipoPresenza === 'Comunicazioni' && (
+  <ComunicazioniComponent
+    nome={selectedName}
+    distretto={distretto}
+    onClose={() => setTipoPresenza('')}
+  />
+)}
+
+
+
+
+
           </>
         )}
 

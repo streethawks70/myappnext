@@ -1,41 +1,79 @@
 'use client';
 import { useEffect, useState } from 'react';
 
-type ComunicazioniProps = {
+interface ComunicazioniProps {
+  distretto: string;
+  nome?: string;
+  onClose: () => void; // 👈 nuova prop per chiudere il componente
+}
+
+type MessaggioSquadra = {
   nome: string;
+  matricola: string;
+  messaggio: string;
 };
 
+const scriptUrl = 'https://script.google.com/macros/s/AKfycbyYp39XkdvzkNBlVE0PlK8h20cD5dtUZ8Ofjkb6MHQ7hE1MjS5njD_KyyI-xsl9D2B1/exec';
 const PASSWORD_CORRETTA = '12345678';
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyqyi38Pe0LimJvpU1Cx0Djd8oRXzr60XGcjAeBZl_smUEitHPwqx1vcsuo_3B63ryq/exec';
 
-const ComunicazioniComponent = ({ nome }: ComunicazioniProps) => {
+const ComunicazioniComponent = ({ nome, distretto, onClose }: ComunicazioniProps) => {
   const [password, setPassword] = useState('');
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [messaggio, setMessaggio] = useState('');
   const [matricola, setMatricola] = useState('');
-  const [messaggiLetti, setMessaggiLetti] = useState<string[]>([]);
-  const [notificaPresente, setNotificaPresente] = useState(false);
-
-  // Nuovi stati per gestire visibilità form e messaggi
-  const [showInvia, setShowInvia] = useState(true);
-  const [showMessaggiLetti, setShowMessaggiLetti] = useState(false);
+  const [messaggioRicevuto, setMessaggioRicevuto] = useState('');
+  const [messaggioEsistente, setMessaggioEsistente] = useState(false);
+  const [showMessaggioManuale, setShowMessaggioManuale] = useState(false);
+  const [messaggiSquadra, setMessaggiSquadra] = useState<MessaggioSquadra[]>([]);
 
   useEffect(() => {
-    const fetchMatricola = async () => {
-      try {
-        const res = await fetch(`${SCRIPT_URL}?action=getMatricola&nome=${encodeURIComponent(nome)}`);
-        const data = await res.json();
-        if (data.matricola) {
-          setMatricola(data.matricola);
-          checkMessaggi(data.matricola);
+    if (nome) {
+      const fetchMatricola = async () => {
+        try {
+          const res = await fetch(`${scriptUrl}?action=getMatricola&nome=${encodeURIComponent(nome)}&distretto=${encodeURIComponent(distretto)}`);
+          const data = await res.json();
+          if (data.matricola) {
+            setMatricola(data.matricola);
+            checkMessaggi(data.matricola);
+          }
+        } catch (error) {
+          console.error('Errore nel recupero della matricola', error);
         }
-      } catch (error) {
-        console.error('Errore nel recupero della matricola', error);
-      }
-    };
+      };
+      fetchMatricola();
+    } else {
+      leggiMessaggiSquadra();
+    }
+  }, [nome, distretto]);
 
-    fetchMatricola();
-  }, [nome]);
+  const checkMessaggi = async (mat: string) => {
+    try {
+      const res = await fetch(`${scriptUrl}?action=getMessaggi&matricola=${mat}&distretto=${encodeURIComponent(distretto)}`);
+      const data = await res.json();
+      if (Array.isArray(data) && data.length > 0) {
+        setMessaggioRicevuto(data[0]);
+        setMessaggioEsistente(true);
+      } else {
+        setMessaggioRicevuto('');
+        setMessaggioEsistente(false);
+      }
+    } catch (error) {
+      console.error('Errore nel controllo messaggi', error);
+    }
+  };
+
+  const leggiMessaggiSquadra = async () => {
+    try {
+      const res = await fetch(`${scriptUrl}?action=getMessaggiSquadra&distretto=${encodeURIComponent(distretto)}`);
+      const data = await res.json();
+      if (Array.isArray(data)) {
+        setMessaggiSquadra(data);
+        setShowMessaggioManuale(true);
+      }
+    } catch (error) {
+      console.error('Errore recupero messaggi squadra', error);
+    }
+  };
 
   const handleLogin = () => {
     if (password === PASSWORD_CORRETTA) {
@@ -52,63 +90,50 @@ const ComunicazioniComponent = ({ nome }: ComunicazioniProps) => {
       alert('Inserisci un messaggio');
       return;
     }
-
+  
     try {
-      const url = `${SCRIPT_URL}?action=invia&matricola=${encodeURIComponent(matricola)}&messaggio=${encodeURIComponent(messaggio)}`;
+      const url = `${scriptUrl}?action=invia&matricola=${encodeURIComponent(matricola)}&messaggio=${encodeURIComponent(messaggio)}&distretto=${encodeURIComponent(distretto)}`;
       const res = await fetch(url);
       const text = await res.text();
       alert(text);
       setMessaggio('');
       checkMessaggi(matricola);
+  
+      if (text === 'Messaggio inviato correttamente') {
+        onClose(); // ✅ Chiude il form dopo invio
+      }
+  
     } catch (error) {
       console.error('Errore invio messaggio', error);
       alert('Errore invio messaggio');
     }
   };
+  
 
-  const checkMessaggi = async (mat: string) => {
+  const eliminaMessaggio = async () => {
     try {
-      const res = await fetch(`${SCRIPT_URL}?action=getMessaggi&matricola=${mat}`);
-      const data = await res.json();
-      if (Array.isArray(data) && data.length > 0) {
-        setNotificaPresente(true);
-      } else {
-        setNotificaPresente(false);
-      }
-    } catch (error) {
-      console.error('Errore caricamento messaggi', error);
-      setNotificaPresente(false);
-    }
-  };
+      const res = await fetch(`${scriptUrl}?action=cancellaMessaggio&matricola=${encodeURIComponent(matricola)}&distretto=${encodeURIComponent(distretto)}`);
+      const text = await res.text();
+      alert(text);
 
-  const caricaMessaggi = async () => {
-    try {
-      const res = await fetch(`${SCRIPT_URL}?action=getMessaggi&matricola=${matricola}`);
-      const data = await res.json();
-      setMessaggiLetti(Array.isArray(data) ? data : []);
-      setNotificaPresente(false);
-      setShowMessaggiLetti(true);
-      setShowInvia(false); // Nascondi form invio messaggio quando carichi messaggi
-    } catch (error) {
-      console.error('Errore caricamento messaggi', error);
-    }
-  };
+      // Reset stati locali
+      setMessaggio('');
+      setMessaggioRicevuto('');
+      setMessaggioEsistente(false);
+      setShowMessaggioManuale(false);
 
-  const handleFine = () => {
-    setMessaggiLetti([]);
-    setShowMessaggiLetti(false);
-    setShowInvia(false); // Nascondi anche form invio messaggio
+      // Chiudi il form
+      onClose(); // 👈 torna alla schermata iniziale
+    } catch (error) {
+      console.error('Errore eliminazione messaggio', error);
+    }
   };
 
   return (
     <div className="bg-white p-4 rounded shadow mt-4">
-      <h2 className="text-xl font-bold mb-2">Comunicazioni per {nome}</h2>
-
-      {notificaPresente && (
-        <div className="bg-yellow-200 text-yellow-800 font-semibold p-2 rounded mb-3">
-          🔔 Hai un nuovo messaggio! Inserisci la password per leggerlo.
-        </div>
-      )}
+      <h2 className="text-xl font-bold mb-2">
+        Comunicazioni {nome ? `per ${nome}` : `per la squadra ${distretto}`}
+      </h2>
 
       {!isLoggedIn ? (
         <>
@@ -120,63 +145,68 @@ const ComunicazioniComponent = ({ nome }: ComunicazioniProps) => {
             onChange={(e) => setPassword(e.target.value)}
             className="border p-2 rounded w-full mb-2"
           />
-          <button
-            onClick={handleLogin}
-            className="bg-blue-600 text-white py-2 px-4 rounded"
-          >
-            Accedi
-          </button>
-        </>
-      ) : (
-        <>
-          {showInvia && (
-            <div>
-              <h3 className="mt-4">Invia Messaggio</h3>
-              <textarea
-                rows={4}
-                value={messaggio}
-                onChange={(e) => setMessaggio(e.target.value)}
-                className="border p-2 rounded w-full mb-2"
-                placeholder="Scrivi il messaggio qui..."
-              />
-              <button
-                onClick={inviaMessaggio}
-                className="bg-green-600 text-white py-2 px-4 rounded mb-4"
-              >
-                Invia Messaggio
-              </button>
-            </div>
-          )}
-
-          <hr className="my-4" />
-
-          <h3>Messaggi Ricevuti</h3>
-          {!showMessaggiLetti && (
-            <button
-              onClick={caricaMessaggi}
-              className="bg-indigo-600 text-white py-2 px-4 rounded mb-2"
-            >
-              Carica Messaggi
+          <div className="flex gap-2 flex-wrap">
+            <button onClick={handleLogin} className="bg-blue-600 text-white py-2 px-4 rounded">
+              Accedi
             </button>
-          )}
-
-          {showMessaggiLetti && (
-            <div>
-              {messaggiLetti.length === 0 && <p>Nessun messaggio.</p>}
-              {messaggiLetti.map((msg, i) => (
-                <div key={i} className="border p-2 rounded mb-1 bg-yellow-100">
-                  {msg}
-                </div>
-              ))}
+            {nome && (
               <button
-                onClick={handleFine}
-                className="bg-red-600 text-white py-2 px-4 rounded mt-4"
+                onClick={() => {
+                  checkMessaggi(matricola);
+                  setShowMessaggioManuale(true);
+                }}
+                className="bg-yellow-500 text-white py-2 px-4 rounded"
               >
-                Fine
+                📩 Leggi Messaggio
               </button>
-            </div>
-          )}
+            )}
+            <button onClick={leggiMessaggiSquadra} className="bg-purple-600 text-white py-2 px-4 rounded">
+              🧑‍🤝‍🧑 Messaggi Squadra
+            </button>
+          </div>
         </>
+      ) : null}
+
+      {(messaggioEsistente || showMessaggioManuale) && messaggioRicevuto && (
+        <div className="bg-yellow-200 p-3 rounded mt-4">
+          <p className="font-semibold">📢 Messaggio ricevuto:</p>
+          <p className="mt-2">{messaggioRicevuto}</p>
+          <button onClick={eliminaMessaggio} className="bg-red-600 text-white py-1 px-3 rounded mt-3">
+            Elimina Messaggio
+          </button>
+        </div>
+      )}
+
+      {messaggiSquadra.length > 0 && (
+        <div className="bg-gray-100 p-3 rounded mt-4">
+          <h3 className="font-semibold mb-2">📢 Messaggi dalla Squadra</h3>
+          <ul className="list-disc ml-4">
+            {messaggiSquadra.map((m, i) => (
+              <li key={i}>
+                <strong>{m.nome}</strong>: {m.messaggio}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      {isLoggedIn && nome && !messaggioEsistente && (
+        <div>
+          <h3 className="mt-4 font-semibold">Invia Messaggio</h3>
+          <textarea
+            rows={4}
+            value={messaggio}
+            onChange={(e) => setMessaggio(e.target.value)}
+            className="border p-2 rounded w-full mb-2"
+            placeholder="Scrivi il messaggio qui..."
+          />
+          <button
+            onClick={inviaMessaggio}
+            className="bg-green-600 text-white py-2 px-4 rounded"
+          >
+            Invia Messaggio
+          </button>
+        </div>
       )}
     </div>
   );
