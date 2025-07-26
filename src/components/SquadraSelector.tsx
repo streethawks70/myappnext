@@ -30,8 +30,8 @@ const SquadraSelector = ({
           const [matricolaParte, squadraParte] = riga.split('squadra');
           const matricola = matricolaParte.trim().replace('matricola', '').trim();
           const parts = squadraParte.split('/').filter(p => p.trim() !== '');
-          const nomeCapoSquadra = parts[0].trim();
-          const operai = parts.slice(1).map(op => op.trim());
+          const nomeCapoSquadra = parts[1].trim();
+          const operai = parts.slice(2).map(op => op.trim());
           return { matricola, nome: nomeCapoSquadra, operai };
         });
         setSquadre(parsed);
@@ -71,28 +71,34 @@ const SquadraSelector = ({
       </div>
 
       {squadraTrovata && (
-        <div className="radio-group mt-4">
-          <p>Seleziona Persona:</p>
-          <label>
-            <input
-              type="radio"
-              checked={selectedName === squadraTrovata.nome}
-              onChange={() => handlePersonaSelect(squadraTrovata.nome)}
-            />
-            {squadraTrovata.nome} (Caposquadra)
-          </label>
-          {squadraTrovata.operai.map((op, i) => (
-            <label key={i}>
-              <input
-                type="radio"
-                checked={selectedName === op}
-                onChange={() => handlePersonaSelect(op)}
-              />
-              {op}
-            </label>
-          ))}
-        </div>
-      )}
+  <div className="radio-group mt-4">
+    <p>Seleziona Persona:</p>
+
+    {/* Caposquadra (primo della lista) */}
+    <label className="flex items-center gap-2">
+      <input
+        type="radio"
+        checked={selectedName === squadraTrovata.nome}
+        onChange={() => handlePersonaSelect(squadraTrovata.nome)}
+      />
+      👷‍♂️ {squadraTrovata.nome} <span className="text-sm text-gray-500">(Caposquadra)</span>
+    </label>
+
+    {/* Operai */}
+    {squadraTrovata.operai.map((operaio, i) => (
+      <label key={i} className="flex items-center gap-2">
+        <input
+          type="radio"
+          checked={selectedName === operaio}
+          onChange={() => handlePersonaSelect(operaio)}
+        />
+        👷 {operaio}
+      </label>
+    ))}
+  </div>
+)}
+
+
     </div>
   );
 };
