@@ -17,7 +17,8 @@ const DISTRETTO_URLS: { [key: string]: string } = {
   'Distretto 8': 'https://script.google.com/macros/s/URL_8/exec',
   'Distretto 9': 'https://script.google.com/macros/s/URL_9/exec',
   'Distretto 10': 'https://script.google.com/macros/s/URL_10/exec',
-  'Distretto 11': 'https://script.google.com/macros/s/AKfycbyZB3pHtE32pkHiUR5vcFormHXmR2BY7TELWGpwVaKjAG0JHYL9kYH3goYLwxaa5HUC/exec',
+  'Distretto 11': 'https://script.google.com/macros/s/AKfycbwg9AR6WWQ9CdMoTd3GLnpAwX56FAg4bZZAv4YKiJlcOAHq8urB2ErT-z0ru61PgCSk/exec',
+  'Distretto 13':'https://script.google.com/macros/s/AKfycbxBaTwDjP0VPOg2Z71HbEXUisCjCG_1S-9k1u3S5wGQ67L0PcWFwJwhDpKw_QhnPhHycA/exec'
 };
 
 export default function CapoCantierePage() {
