@@ -111,6 +111,7 @@ export default function DirettorePage() {
     <thead className="bg-green-100 text-green-900 text-xs uppercase tracking-wide">
       <tr>
         {[
+          'Data',
           'Nome',
           'Matricola',
           'Targa',
@@ -147,6 +148,7 @@ export default function DirettorePage() {
               highlight ? 'bg-red-50 text-red-700' : ''
             }`}
           >
+            <td className="px-3 py-2 text-left border-b border-gray-100">{riga.data}</td>
             <td className="px-3 py-2 text-left border-b border-gray-100">{riga.nominativo}</td>
             <td className="px-3 py-2 text-center border-b border-gray-100">{riga.matricola}</td>
             <td className="px-3 py-2 text-center border-b border-gray-100">{riga.targa}</td>

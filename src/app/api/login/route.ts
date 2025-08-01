@@ -35,7 +35,7 @@ export async function GET(request: Request) {
       });
     }
 
-    const url = `https://script.google.com/macros/s/AKfycbxtf_F5lvXTOyrRIAgx61feoqnv0NWYvcb32s7NarT01voclRnCr8htNiD3e-pVCh4r/exec?email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}&sheetId=${sheetId}`;
+    const url = `https://script.google.com/macros/s/AKfycbyjHPLoOm8CXz1noBA3VWA-zSnuc--TWsjAYjxed363Jw13yT0PikPsRfilb5aaLQ4/exec?email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}&sheetId=${sheetId}`;
 
     const res = await fetch(url);
     if (!res.ok) {
