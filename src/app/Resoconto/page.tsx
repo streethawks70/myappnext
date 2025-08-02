@@ -85,3 +85,5 @@ export default function ResocontoPage() {
     </div>
   );
 }
+// ⬅️ IMPORTANTE: Disabilita prerendering statico
+export const dynamic = 'force-dynamic';
