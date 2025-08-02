@@ -65,9 +65,8 @@ export default function ResocontoPage() {
                   <td className="px-3 py-2 text-center border-b border-gray-100">{riga.totale_legge104}</td>
                    <td className="px-3 py-2 text-center border-b border-gray-100">{riga.totale_art9}</td>
                     <td className="px-3 py-2 text-center border-b border-gray-100">{riga.totale_art51}</td>
-                <td className="px-3 py-2 text-center border-b border-gray-100">
-  {riga["ORE PERMESSI GIORNALIERI"]}
-</td>
+                
+
 
 
               </tr>
