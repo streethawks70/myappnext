@@ -1,5 +1,6 @@
 'use client';
 import { useState } from 'react';
+import Link from 'next/link'; // ⬅️ IMPORT NECESSARIO
 
 const DISTRETTI = [
   'Distretto 1',
@@ -106,69 +107,88 @@ export default function DirettorePage() {
   }
 
   return (
-    <div className="overflow-x-auto shadow-lg rounded-xl border border-gray-200 bg-white">
+  <div className="max-w-6xl mx-auto mt-10 p-4">
+    <div className="mb-6">
+      <Link
+  href={{
+    pathname: '/Resoconto',
+    query: {
+      email,
+      password,
+      distretto,
+    },
+  }}
+>
+  <button className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded transition">
+    Vai a ore Lavorate e permessi
+  </button>
+</Link>
+
+    </div>
+
+    <div className="overflow-x-auto shadow-lg rounded-xl border border-gray-200 bg-white max-h-[500px] overflow-y-auto">
   <table className="min-w-full text-sm text-gray-700 font-medium">
-    <thead className="bg-green-100 text-green-900 text-xs uppercase tracking-wide">
-      <tr>
-        {[
-          'Data',
-          'Nome',
-          'Matricola',
-          'Targa',
-          'Presenze',
-          'Assenze',
-          'Ferie',
-          'Malattia',
-          'Infortunio',
-          'Cassa Int',
-          'Permessi',
-          'Rientro',
-          'Festività',
-          'Uscita',
-        ].map((header, i) => (
-          <th
-            key={i}
-            className="px-3 py-3 text-center border-b border-green-300 whitespace-nowrap"
-          >
-            {header}
-          </th>
-        ))}
-      </tr>
-    </thead>
-    <tbody>
-      {dati.map((riga, idx) => {
-        const highlight =
-          parseFloat(riga.assenze || 0) > 0 ||
-          parseFloat(riga.malattia || 0) > 0;
+    <thead className="bg-green-100 text-green-900 text-xs uppercase tracking-wide sticky top-0 z-10 shadow">
 
-        return (
-          <tr
-            key={idx}
-            className={`hover:bg-green-50 ${
-              highlight ? 'bg-red-50 text-red-700' : ''
-            }`}
-          >
-            <td className="px-3 py-2 text-left border-b border-gray-100">{riga.data}</td>
-            <td className="px-3 py-2 text-left border-b border-gray-100">{riga.nominativo}</td>
-            <td className="px-3 py-2 text-center border-b border-gray-100">{riga.matricola}</td>
-            <td className="px-3 py-2 text-center border-b border-gray-100">{riga.targa}</td>
-            <td className="px-3 py-2 text-center border-b border-gray-100">{riga.presenze}</td>
-            <td className="px-3 py-2 text-center border-b border-gray-100">{riga.assenze}</td>
-            <td className="px-3 py-2 text-center border-b border-gray-100">{riga.ferie}</td>
-            <td className="px-3 py-2 text-center border-b border-gray-100">{riga.malattia}</td>
-            <td className="px-3 py-2 text-center border-b border-gray-100">{riga.infortunio}</td>
-            <td className="px-3 py-2 text-center border-b border-gray-100">{riga.cig}</td>
-            <td className="px-3 py-2 text-center border-b border-gray-100">{riga.permessi}</td>
-            <td className="px-3 py-2 text-center border-b border-gray-100">{riga.rientro}</td>
-            <td className="px-3 py-2 text-center border-b border-gray-100">{riga.festivita}</td>
-            <td className="px-3 py-2 text-center border-b border-gray-100">{riga.uscita}</td>
+          <tr>
+            {[
+              'Data',
+              'Nome',
+              'Matricola',
+              'Targa',
+              'Presenze',
+              'Assenze',
+              'Ferie',
+              'Malattia',
+              'Infortunio',
+              'Cassa Int',
+              'Permessi',
+              'Rientro',
+              'Festività',
+              'Uscita',
+            ].map((header, i) => (
+              <th
+                key={i}
+                className="px-3 py-3 text-center border-b border-green-300 whitespace-nowrap"
+              >
+                {header}
+              </th>
+            ))}
           </tr>
-        );
-      })}
-    </tbody>
-  </table>
-</div>
+        </thead>
+        <tbody>
+          {dati.map((riga, idx) => {
+            const highlight =
+              parseFloat(riga.assenze || 0) > 0 ||
+              parseFloat(riga.malattia || 0) > 0;
 
-
-  );
+            return (
+              <tr
+                key={idx}
+                className={`hover:bg-green-50 ${
+                  highlight ? 'bg-red-50 text-red-700' : ''
+                }`}
+              >
+                <td className="px-3 py-2 text-left border-b border-gray-100">{riga.data}</td>
+                <td className="px-3 py-2 text-left border-b border-gray-100">{riga.nominativo}</td>
+                <td className="px-3 py-2 text-center border-b border-gray-100">{riga.matricola}</td>
+                <td className="px-3 py-2 text-center border-b border-gray-100">{riga.targa}</td>
+                <td className="px-3 py-2 text-center border-b border-gray-100">{riga.presenze}</td>
+                <td className="px-3 py-2 text-center border-b border-gray-100">{riga.assenze}</td>
+                <td className="px-3 py-2 text-center border-b border-gray-100">{riga.ferie}</td>
+                <td className="px-3 py-2 text-center border-b border-gray-100">{riga.malattia}</td>
+                <td className="px-3 py-2 text-center border-b border-gray-100">{riga.infortunio}</td>
+                <td className="px-3 py-2 text-center border-b border-gray-100">{riga.cig}</td>
+                <td className="px-3 py-2 text-center border-b border-gray-100">{riga.permessi}</td>
+                <td className="px-3 py-2 text-center border-b border-gray-100">{riga.rientro}</td>
+                <td className="px-3 py-2 text-center border-b border-gray-100">{riga.festivita}</td>
+                <td className="px-3 py-2 text-center border-b border-gray-100">{riga.uscita}</td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+    </div>
+  </div>
+);
 }
