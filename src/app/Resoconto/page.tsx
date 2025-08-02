@@ -46,7 +46,7 @@ export default function ResocontoPage() {
     <thead className="bg-indigo-100 text-indigo-900 text-xs uppercase tracking-wide sticky top-0 z-10">
 
             <tr>
-              {['Data', 'Nome', 'Ore giornaliere', 'Totale Ferie', 'Totale malattia','Totale perm Retr','Totale Legge 104','Totale art 9','Totale art 51'].map((header, i) => (
+              {['Data', 'Nome', 'Ore giornaliere', 'Totale Ferie', 'Totale malattia','Totale perm Retribuito','Totale Legge 104','Totale art 9','Totale art 51'].map((header, i) => (
                 <th key={i} className="px-3 py-3 text-center border-b border-indigo-300 whitespace-nowrap">
                   {header}
                 </th>
