@@ -6,10 +6,22 @@ import { useEffect, useState } from 'react';
 type RigaPermesso = {
   nominativo: string;
   matricola: string;
-  permesso_sind: string;
-  permessi_vari: string;
-  cassa_int: string;
-  donazione_sangue: string;
+  totale_ore_mens: string;
+  totale_perm_retr: string;
+  totale_legge104: string;
+  totale_art9: string;
+  totale_art51:string;
+  totale_ferie:string;
+  totale_mal:string;
+  totale_inf:string;
+  totale_donaz:string;
+  totale_perm_sind:string;
+  totale_cassa_int:string;
+  totale_festivita:string;
+  totale_perm_elett:string;
+  totale_perm_pioggia:string;
+  totale_perm_lutto:string;
+
 };
 
 export default function PermessiClient() {
@@ -62,10 +74,21 @@ export default function PermessiClient() {
               <tr>
                 <th className="px-4 py-2 border-b">Nominativo</th>
                 <th className="px-4 py-2 border-b">Matricola</th>
-                <th className="px-4 py-2 border-b text-yellow-600">Permesso Sindacale</th>
-                <th className="px-4 py-2 border-b text-yellow-600">Permessi Vari</th>
-                <th className="px-4 py-2 border-b text-yellow-600">Cassa Interna</th>
-                <th className="px-4 py-2 border-b text-yellow-600">Donazione Sangue</th>
+                <th className="px-4 py-2 border-b text-yellow-600">Totale Ore Mensili</th>
+                <th className="px-4 py-2 border-b text-yellow-600">Totale Permessi retr</th>
+                <th className="px-4 py-2 border-b text-yellow-600">Totale 104</th>
+                <th className="px-4 py-2 border-b text-yellow-600">Totale Art9</th>
+                <th className="px-4 py-2 border-b text-yellow-600">Totale Art51</th>
+                <th className="px-4 py-2 border-b text-yellow-600">Totale Ferie</th>
+                <th className="px-4 py-2 border-b text-yellow-600">Totale Malattia</th>
+                <th className="px-4 py-2 border-b text-yellow-600">Totale Infortunio</th>
+                <th className="px-4 py-2 border-b text-yellow-600">Totale Don. sangue</th>
+                <th className="px-4 py-2 border-b text-yellow-600">Totale Perm. Sind</th>
+                <th className="px-4 py-2 border-b text-yellow-600">Totale Cassa Int</th>
+                <th className="px-4 py-2 border-b text-yellow-600">Totale Festivita</th>
+                <th className="px-4 py-2 border-b text-yellow-600">Totale Permesso El. </th>
+                <th className="px-4 py-2 border-b text-yellow-600">Totale Permesso Pioggia </th>
+                <th className="px-4 py-2 border-b text-yellow-600">Totale Permesso Lutto </th>
               </tr>
             </thead>
             <tbody>
@@ -73,10 +96,21 @@ export default function PermessiClient() {
                 <tr key={i} className={i % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
                   <td className="px-4 py-2 border-b">{row.nominativo}</td>
                   <td className="px-4 py-2 border-b">{row.matricola}</td>
-                  <td className="px-4 py-2 border-b text-yellow-600">{row.permesso_sind}</td>
-                  <td className="px-4 py-2 border-b text-yellow-600">{row.permessi_vari}</td>
-                  <td className="px-4 py-2 border-b text-yellow-600">{row.cassa_int}</td>
-                  <td className="px-4 py-2 border-b text-yellow-600">{row.donazione_sangue}</td>
+                  <td className="px-4 py-2 border-b text-yellow-600">{row.totale_ore_mens}</td>
+                  <td className="px-4 py-2 border-b text-yellow-600">{row.totale_perm_retr}</td>
+                  <td className="px-4 py-2 border-b text-yellow-600">{row.totale_legge104}</td>
+                  <td className="px-4 py-2 border-b text-yellow-600">{row.totale_art9}</td>
+                   <td className="px-4 py-2 border-b text-yellow-600">{row.totale_art51}</td>
+                   <td className="px-4 py-2 border-b text-yellow-600">{row.totale_ferie}</td>
+                   <td className="px-4 py-2 border-b text-yellow-600">{row.totale_mal}</td>
+                    <td className="px-4 py-2 border-b text-yellow-600">{row.totale_inf}</td>
+                    <td className="px-4 py-2 border-b text-yellow-600">{row.totale_donaz}</td>
+                    <td className="px-4 py-2 border-b text-yellow-600">{row.totale_perm_sind}</td>
+                    <td className="px-4 py-2 border-b text-yellow-600">{row.totale_cassa_int}</td>
+                    <td className="px-4 py-2 border-b text-yellow-600">{row.totale_festivita}</td>
+                    <td className="px-4 py-2 border-b text-yellow-600">{row.totale_perm_elett}</td>
+                    <td className="px-4 py-2 border-b text-yellow-600">{row.totale_perm_pioggia}</td>
+                    <td className="px-4 py-2 border-b text-yellow-600">{row.totale_perm_lutto}</td>
                 </tr>
               ))}
             </tbody>
