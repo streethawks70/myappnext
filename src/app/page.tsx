@@ -318,6 +318,7 @@ const Home = () => {
       <option value="ASPETTATIVA ">ASPETTATIVA</option>
       <option value="LAVORI DISAGIATI ">LAVORI DISAGIATI</option>
       <option value="CONGEDO PARENTALE">CONGEDO PARENTALE</option>
+      <option value="RIPOSO VEDETTE">RIPOSO VEDETTE</option>
     </select>
   </div>
 )}

@@ -50,6 +50,9 @@ const iconGiallo = new L.Icon({
   shadowSize: [41, 41],
 });
 
+
+
+
 export default function MappaLeaflet({ posizioni }: Props) {
   const [selezionato, setSelezionato] = useState<Posizione | null>(null);
   const mapRef = useRef<L.Map>(null);
@@ -69,6 +72,7 @@ export default function MappaLeaflet({ posizioni }: Props) {
   }, [selezionato]);
 
   const scegliIcona = (stato: Posizione['stato']) => {
+    
     switch (stato) {
       case 'presente':
       case 'ferie':
@@ -81,6 +85,7 @@ export default function MappaLeaflet({ posizioni }: Props) {
       default:
         return new L.Icon.Default();
     }
+    
   };
 
   return (
