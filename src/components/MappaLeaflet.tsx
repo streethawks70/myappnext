@@ -16,38 +16,38 @@ type Props = {
   posizioni: Posizione[];
 };
 
-delete (L.Icon.Default.prototype as any)._getIconUrl;
-L.Icon.Default.mergeOptions({
-  iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.3/dist/images/marker-icon-2x.png',
-  iconUrl: 'https://unpkg.com/leaflet@1.9.3/dist/images/marker-icon.png',
+//delete (L.Icon.Default.prototype as any)._getIconUrl;
+//L.Icon.Default.mergeOptions({
+  //iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.3/dist/images/marker-icon-2x.png',
+  //iconUrl: 'https://unpkg.com/leaflet@1.9.3/dist/images/marker-icon.png',
+  //shadowUrl: 'https://unpkg.com/leaflet@1.9.3/dist/images/marker-shadow.png',
+//});
+
+const iconPresente = new L.Icon({
+  iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png',
   shadowUrl: 'https://unpkg.com/leaflet@1.9.3/dist/images/marker-shadow.png',
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+  popupAnchor: [1, -34],
+  shadowSize: [41, 41]
 });
 
-const iconVerde = new L.Icon({
-  iconUrl: 'https://chart.googleapis.com/chart?chst=d_map_pin_icon&chld=person|008000',
-  iconSize: [30, 42],
-  iconAnchor: [15, 42],
-  popupAnchor: [1, -34],
+const iconAssente = new L.Icon({
+  iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
   shadowUrl: 'https://unpkg.com/leaflet@1.9.3/dist/images/marker-shadow.png',
-  shadowSize: [41, 41],
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+  popupAnchor: [1, -34],
+  shadowSize: [41, 41]
 });
 
-const iconRosso = new L.Icon({
-  iconUrl: 'https://chart.googleapis.com/chart?chst=d_map_pin_icon&chld=person|FF0000',
-  iconSize: [30, 42],
-  iconAnchor: [15, 42],
-  popupAnchor: [1, -34],
+const iconPermessi = new L.Icon({
+  iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-yellow.png',
   shadowUrl: 'https://unpkg.com/leaflet@1.9.3/dist/images/marker-shadow.png',
-  shadowSize: [41, 41],
-});
-
-const iconGiallo = new L.Icon({
-  iconUrl: 'https://chart.googleapis.com/chart?chst=d_map_pin_icon&chld=person|FFFF00',
-  iconSize: [30, 42],
-  iconAnchor: [15, 42],
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
   popupAnchor: [1, -34],
-  shadowUrl: 'https://unpkg.com/leaflet@1.9.3/dist/images/marker-shadow.png',
-  shadowSize: [41, 41],
+  shadowSize: [41, 41]
 });
 
 
@@ -72,21 +72,16 @@ export default function MappaLeaflet({ posizioni }: Props) {
   }, [selezionato]);
 
   const scegliIcona = (stato: Posizione['stato']) => {
-    
-    switch (stato) {
-      case 'presente':
-      case 'ferie':
-        return iconVerde;
-      case 'assente':
-      case 'malattia':
-        return iconRosso;
-      case 'permessi':
-        return iconGiallo;
-      default:
-        return new L.Icon.Default();
-    }
-    
-  };
+  switch (stato) {
+    case 'presente': return iconPresente;
+    case 'assente': return iconAssente;
+    case 'ferie': return iconAssente;
+    case 'malattia': return iconAssente;
+    case 'permessi': return iconPermessi;
+    default: return iconAssente;
+  }
+};
+
 
   return (
     <div className="flex h-full w-full">

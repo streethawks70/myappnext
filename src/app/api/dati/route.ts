@@ -10,7 +10,7 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: "Parametri mancanti" }, { status: 400 });
   }
 
-  const baseUrl = "https://script.google.com/macros/s/AKfycbxJROVWDqoC65FaRfMLOwfLwaGSjZAS1Jfn4q0ipnDf51T4JfXMitdOwL76eQzzXKPD/exec";
+  const baseUrl = "https://script.google.com/macros/s/AKfycbxC1ZuvkQFXgiRdveXjoeCNySat8IGa1SwHInldQGyeRZb6cf4PuY2Wg31e-Ou-MbYy/exec";
   const url = `${baseUrl}?email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}&distretto=${encodeURIComponent(distretto)}`;
 
   try {

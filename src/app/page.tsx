@@ -188,7 +188,7 @@ const Home = () => {
     } finally {
       setIsLoading(false);
     }
-  };
+  }; 
 
   return (
    // <div className="min-h-screen bg-gray-100 flex flex-col items-center p-4 text-gray-800">
@@ -336,6 +336,7 @@ const Home = () => {
   <ComunicazioniComponent
     nome={selectedName}
     distretto={distretto}
+    
     onClose={() => setTipoPresenza('')}
   />
 )}

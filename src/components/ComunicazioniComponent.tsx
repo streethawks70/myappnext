@@ -169,7 +169,7 @@ const ComunicazioniComponent = ({ nome, distretto, onClose }: ComunicazioniProps
 
       {(messaggioEsistente || showMessaggioManuale) && messaggioRicevuto && (
         <div className="bg-yellow-200 p-3 rounded mt-4">
-          <p className="font-semibold">📢 Messaggio ricevuto:</p>
+          <p className="font-semibold">📢 Messaggio ricevuto per {nome},{matricola}:</p>
           <p className="mt-2">{messaggioRicevuto}</p>
           <button onClick={eliminaMessaggio} className="bg-red-600 text-white py-1 px-3 rounded mt-3">
             Elimina Messaggio
