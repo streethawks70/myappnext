@@ -1,213 +1,153 @@
-'use client';
-import { useEffect, useState } from 'react';
+// ComunicazioniComponent.tsx
+"use client";
+import { useState } from "react";
 
 interface ComunicazioniProps {
-  distretto: string;
-  nome?: string;
-  onClose: () => void; // 👈 nuova prop per chiudere il componente
+  distretto: string;           // es. "distretto5"
+  onClose: () => void;
+  mode: "invia" | "stato" | "dl";
+  nome?: string;               // opzionale: nome del caposquadra / persona (se lo sai)
 }
 
-type MessaggioSquadra = {
-  nome: string;
-  matricola: string;
-  messaggio: string;
-};
+const PROXY_URL = "/api/gas-proxy";
 
-const scriptUrl = 'https://script.google.com/macros/s/AKfycbyYp39XkdvzkNBlVE0PlK8h20cD5dtUZ8Ofjkb6MHQ7hE1MjS5njD_KyyI-xsl9D2B1/exec';
-const PASSWORD_CORRETTA = '12345678';
+async function inviaGiustificativo(distrettoId: string, matricola: string, nome: string, testo: string) {
+  const res = await fetch(PROXY_URL, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ action: "invia", distretto: distrettoId, matricola, nome, testo }),
+  });
+  return res.json();
+}
 
-const ComunicazioniComponent = ({ nome, distretto, onClose }: ComunicazioniProps) => {
-  const [password, setPassword] = useState('');
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [messaggio, setMessaggio] = useState('');
-  const [matricola, setMatricola] = useState('');
-  const [messaggioRicevuto, setMessaggioRicevuto] = useState('');
-  const [messaggioEsistente, setMessaggioEsistente] = useState(false);
-  const [showMessaggioManuale, setShowMessaggioManuale] = useState(false);
-  const [messaggiSquadra, setMessaggiSquadra] = useState<MessaggioSquadra[]>([]);
+async function controllaStato(distrettoId: string, matricola: string) {
+  const params = new URLSearchParams({ action: "stato", distretto: distrettoId, matricola });
+  const res = await fetch(`${PROXY_URL}?${params.toString()}`);
+  return res.json();
+}
 
-  useEffect(() => {
-    if (nome) {
-      const fetchMatricola = async () => {
-        try {
-          const res = await fetch(`${scriptUrl}?action=getMatricola&nome=${encodeURIComponent(nome)}&distretto=${encodeURIComponent(distretto)}`);
-          const data = await res.json();
-          if (data.matricola) {
-            setMatricola(data.matricola);
-            checkMessaggi(data.matricola);
-          }
-        } catch (error) {
-          console.error('Errore nel recupero della matricola', error);
-        }
-      };
-      fetchMatricola();
-    } else {
-      leggiMessaggiSquadra();
-    }
-  }, [nome, distretto]);
+async function convalidaRichiesta(distrettoId: string, matricola: string, stato: string, commento?: string, password?: string) {
+  const body: any = { action: "convalida", distretto: distrettoId, matricola, stato };
+  if (commento) body.commento = commento;
+  if (password) body.password = password;
 
-  const checkMessaggi = async (mat: string) => {
-    try {
-      const res = await fetch(`${scriptUrl}?action=getMessaggi&matricola=${mat}&distretto=${encodeURIComponent(distretto)}`);
-      const data = await res.json();
-      if (Array.isArray(data) && data.length > 0) {
-        setMessaggioRicevuto(data[0]);
-        setMessaggioEsistente(true);
-      } else {
-        setMessaggioRicevuto('');
-        setMessaggioEsistente(false);
-      }
-    } catch (error) {
-      console.error('Errore nel controllo messaggi', error);
-    }
-  };
+  const res = await fetch(PROXY_URL, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(body),
+  });
+  return res.json();
+}
 
-  const leggiMessaggiSquadra = async () => {
-    try {
-      const res = await fetch(`${scriptUrl}?action=getMessaggiSquadra&distretto=${encodeURIComponent(distretto)}`);
-      const data = await res.json();
-      if (Array.isArray(data)) {
-        setMessaggiSquadra(data);
-        setShowMessaggioManuale(true);
-      }
-    } catch (error) {
-      console.error('Errore recupero messaggi squadra', error);
-    }
-  };
+const ComunicazioniComponent = ({ distretto, onClose, mode, nome = "" }: ComunicazioniProps) => {
+  const [matricola, setMatricola] = useState("");
+  const [testo, setTesto] = useState("");
+  const [feedback, setFeedback] = useState("");
+  const [stato, setStato] = useState("");
+  const [commento, setCommento] = useState("");
+  const [statoDL, setStatoDL] = useState("");
+  const [password, setPassword] = useState("");
 
-  const handleLogin = () => {
-    if (password === PASSWORD_CORRETTA) {
-      setIsLoggedIn(true);
-      setPassword('');
-      alert('Accesso consentito');
-    } else {
-      alert('Password errata');
-    }
-  };
-
-  const inviaMessaggio = async () => {
-    if (!messaggio.trim()) {
-      alert('Inserisci un messaggio');
+  const handleInvio = async () => {
+    if (!matricola.trim() || !testo.trim()) {
+      setFeedback("Inserisci matricola e testo");
       return;
     }
-  
-    try {
-      const url = `${scriptUrl}?action=invia&matricola=${encodeURIComponent(matricola)}&messaggio=${encodeURIComponent(messaggio)}&distretto=${encodeURIComponent(distretto)}`;
-      const res = await fetch(url);
-      const text = await res.text();
-      alert(text);
-      setMessaggio('');
-      checkMessaggi(matricola);
-  
-      if (text === 'Messaggio inviato correttamente') {
-        onClose(); // ✅ Chiude il form dopo invio
-      }
-  
-    } catch (error) {
-      console.error('Errore invio messaggio', error);
-      alert('Errore invio messaggio');
+    setFeedback("Invio in corso...");
+    const result = await inviaGiustificativo(distretto, matricola.trim(), nome, testo.trim());
+    if (result.status === "success") {
+      setFeedback("Richiesta inviata! In attesa approvazione...");
+      setMatricola("");
+      setTesto("");
+    } else {
+      setFeedback("Errore: " + result.message);
     }
   };
-  
 
-  const eliminaMessaggio = async () => {
-    try {
-      const res = await fetch(`${scriptUrl}?action=cancellaMessaggio&matricola=${encodeURIComponent(matricola)}&distretto=${encodeURIComponent(distretto)}`);
-      const text = await res.text();
-      alert(text);
+  const handleControlla = async () => {
+    if (!matricola.trim()) {
+      setFeedback("Inserisci matricola");
+      return;
+    }
+    setFeedback("Controllo in corso...");
+    const result = await controllaStato(distretto, matricola.trim());
+    if (result.status === "success") {
+      setStato(result.stato);
+      setFeedback(`Richiesta ${result.stato}${result.commento ? ": " + result.commento : ""}`);
+    } else {
+      setFeedback("Errore: " + result.message);
+    }
+  };
 
-      // Reset stati locali
-      setMessaggio('');
-      setMessaggioRicevuto('');
-      setMessaggioEsistente(false);
-      setShowMessaggioManuale(false);
-
-      // Chiudi il form
-      onClose(); // 👈 torna alla schermata iniziale
-    } catch (error) {
-      console.error('Errore eliminazione messaggio', error);
+  const handleConvalida = async () => {
+    if (!matricola.trim() || !statoDL) {
+      alert("Inserisci matricola e seleziona stato");
+      return;
+    }
+    if (!password) {
+      alert("Inserisci password DL");
+      return;
+    }
+    const result = await convalidaRichiesta(distretto, matricola.trim(), statoDL, commento, password);
+    alert(result.message);
+    if (result.status === "success") {
+      setStato(statoDL);
+      setFeedback(`Richiesta ${statoDL} con commento: ${commento}`);
     }
   };
 
   return (
-    <div className="bg-white p-4 rounded shadow mt-4">
-      <h2 className="text-xl font-bold mb-2">
-        Comunicazioni {nome ? `per ${nome}` : `per la squadra ${distretto}`}
-      </h2>
+    <div className="bg-white p-6 rounded shadow max-w-md mx-auto">
+      <h2 className="text-2xl font-bold mb-4">Gestione Comunicazioni - {distretto}</h2>
 
-      {!isLoggedIn ? (
+      {/* Campo Matricola */}
+      <div className="mb-4">
+        <label className="block mb-1 font-semibold">Matricola</label>
+        <input
+          type="text"
+          className="border p-2 rounded w-full"
+          value={matricola}
+          onChange={(e) => setMatricola(e.target.value)}
+        />
+      </div>
+
+      {mode === "invia" && (
         <>
-          <h3>Login Comunicazioni</h3>
-          <input
-            type="password"
-            placeholder="Inserisci password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="border p-2 rounded w-full mb-2"
-          />
-          <div className="flex gap-2 flex-wrap">
-            <button onClick={handleLogin} className="bg-blue-600 text-white py-2 px-4 rounded">
-              Accedi
-            </button>
-            {nome && (
-              <button
-                onClick={() => {
-                  checkMessaggi(matricola);
-                  setShowMessaggioManuale(true);
-                }}
-                className="bg-yellow-500 text-white py-2 px-4 rounded"
-              >
-                📩 Leggi Messaggio
-              </button>
-            )}
-            <button onClick={leggiMessaggiSquadra} className="bg-purple-600 text-white py-2 px-4 rounded">
-              🧑‍🤝‍🧑 Messaggi Squadra
-            </button>
-          </div>
+          <label className="block mb-1 font-semibold">Testo Giustificativo</label>
+          <textarea rows={5} className="border p-2 rounded w-full mb-4" value={testo} onChange={(e) => setTesto(e.target.value)} />
+          <button onClick={handleInvio} className="bg-blue-600 text-white py-2 rounded w-full">Invia Richiesta</button>
         </>
-      ) : null}
-
-      {(messaggioEsistente || showMessaggioManuale) && messaggioRicevuto && (
-        <div className="bg-yellow-200 p-3 rounded mt-4">
-          <p className="font-semibold">📢 Messaggio ricevuto per {nome},{matricola}:</p>
-          <p className="mt-2">{messaggioRicevuto}</p>
-          <button onClick={eliminaMessaggio} className="bg-red-600 text-white py-1 px-3 rounded mt-3">
-            Elimina Messaggio
-          </button>
-        </div>
       )}
 
-      {messaggiSquadra.length > 0 && (
-        <div className="bg-gray-100 p-3 rounded mt-4">
-          <h3 className="font-semibold mb-2">📢 Messaggi dalla Squadra</h3>
-          <ul className="list-disc ml-4">
-            {messaggiSquadra.map((m, i) => (
-              <li key={i}>
-                <strong>{m.nome}</strong>: {m.messaggio}
-              </li>
-            ))}
-          </ul>
-        </div>
+      {mode === "stato" && (
+        <>
+          <button onClick={handleControlla} className="bg-gray-700 text-white py-2 rounded w-full">Controlla Stato</button>
+          {stato && <p className="mt-4 font-semibold">Stato: <span>{stato}</span></p>}
+        </>
       )}
 
-      {isLoggedIn && nome && !messaggioEsistente && (
-        <div>
-          <h3 className="mt-4 font-semibold">Invia Messaggio</h3>
-          <textarea
-            rows={4}
-            value={messaggio}
-            onChange={(e) => setMessaggio(e.target.value)}
-            className="border p-2 rounded w-full mb-2"
-            placeholder="Scrivi il messaggio qui..."
-          />
-          <button
-            onClick={inviaMessaggio}
-            className="bg-green-600 text-white py-2 px-4 rounded"
-          >
-            Invia Messaggio
-          </button>
-        </div>
+      {mode === "dl" && (
+        <>
+          <label className="block mb-1 font-semibold">Esito</label>
+          <select className="border p-2 rounded w-full mb-3" value={statoDL} onChange={(e) => setStatoDL(e.target.value)}>
+            <option value="">Seleziona</option>
+            <option value="Approvato">Approva</option>
+            <option value="Rifiutato">Rifiuta</option>
+          </select>
+
+          <label className="block mb-1 font-semibold">Commento (opzionale)</label>
+          <textarea rows={3} className="border p-2 rounded w-full mb-3" value={commento} onChange={(e) => setCommento(e.target.value)} />
+
+          <label className="block mb-1 font-semibold">Password DL</label>
+          <input type="password" className="border p-2 rounded w-full mb-4" value={password} onChange={(e) => setPassword(e.target.value)} />
+
+          <button onClick={handleConvalida} className="bg-green-600 text-white py-2 rounded w-full">Conferma</button>
+        </>
       )}
+
+      {feedback && <p className="mt-4 text-sm">{feedback}</p>}
+
+      <button onClick={onClose} className="mt-6 underline text-sm text-gray-600 w-full">Chiudi</button>
     </div>
   );
 };

@@ -5,7 +5,7 @@ import Link from 'next/link'; // ⬅️ IMPORT NECESSARIO
 import DistrettoSelector from '../components/DistrettoSelector';
 import SquadraSelector from '../components/SquadraSelector';
 import MenuPresenza from '../components/MenuPresenza';
-import ComunicazioniComponent from '../components/ComunicazioniComponent';
+
 
 const TabellaPresenze = ({ presenze }: { presenze: any[] }) => {
   return (
@@ -222,6 +222,13 @@ const Home = () => {
     </button>
   </Link>
 </div>
+<div className="mb-6">
+  <Link href="/Notifica">
+    <button className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded transition">
+      Richieta Giustificativi
+    </button>
+  </Link>
+</div>
 
 
       <div className="bg-white p-6 rounded-xl shadow-md w-full max-w-xl">
@@ -332,14 +339,7 @@ const Home = () => {
                 </button>
               </form>
             )}
-            {tipoPresenza === 'Comunicazioni' && (
-  <ComunicazioniComponent
-    nome={selectedName}
-    distretto={distretto}
-    
-    onClose={() => setTipoPresenza('')}
-  />
-)}
+          
 
 
 
