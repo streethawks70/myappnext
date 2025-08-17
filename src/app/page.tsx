@@ -30,6 +30,8 @@ const TabellaPresenze = ({ presenze }: { presenze: any[] }) => {
         </tbody>
       </table>
     </div>
+     
+    
   );
 };
 
