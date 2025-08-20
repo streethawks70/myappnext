@@ -5,6 +5,7 @@ import Link from 'next/link'; // ⬅️ IMPORT NECESSARIO
 import DistrettoSelector from '../components/DistrettoSelector';
 import SquadraSelector from '../components/SquadraSelector';
 import MenuPresenza from '../components/MenuPresenza';
+import Testiamo from '../components/Testiamo';
 
 
 const TabellaPresenze = ({ presenze }: { presenze: any[] }) => {
@@ -229,8 +230,18 @@ const Home = () => {
     <button className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded transition">
       Richieta Giustificativi
     </button>
+    </Link>
+    </div>
+
+  
+  <div className="mb-3">
+  <Link href="/Storico">
+    <button className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded transition">
+      STORICO MENSILITA'
+    </button>
   </Link>
 </div>
+
 
 
       <div className="bg-white p-6 rounded-xl shadow-md w-full max-w-xl">
@@ -351,6 +362,7 @@ const Home = () => {
         )}
 
         <TabellaPresenze presenze={presenze} />
+        
       </div>
     </div>
     
