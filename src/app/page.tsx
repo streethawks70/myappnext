@@ -242,7 +242,13 @@ const Home = () => {
   </Link>
 </div>
 
-
+<div className="mb-6">
+  <Link href="/admin">
+    <button className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded transition">
+      comunicazioni
+    </button>
+  </Link>
+</div>
 
       <div className="bg-white p-6 rounded-xl shadow-md w-full max-w-xl">
         <DistrettoSelector setDistretto={setDistretto} />
