@@ -155,10 +155,10 @@ const Home = () => {
         'Distretto 5': 'https://script.google.com/macros/s/AKfycbyiFstun8TO_ZM1e512O87HYcK23C7EnQ6pRAHspEhkvBaTrrN5HxsvfOfBSaivUeA/exec',
         'Distretto 6': 'https://script.google.com/macros/s/AKfycbxcxQ5WqcsD_UmARccxuglj7kfs1OMgrU1k14pCiMvRMIJGTy21sujR806wHmPKwBEtAA/exec',
         'Distretto 7': 'URL7',
-        'Distretto 8': 'URL8',
+        'Distretto 8': 'https://script.google.com/macros/s/AKfycbxtKhf7BtVVUiIprs_RcX8KQj0L0-yBHRf8SKNwJGs7C63XK7OzzBlqa21JB_TTZs4T8A/exec',
         'Distretto 9': 'https://script.google.com/macros/s/AKfycbzLL0VM0DtGTVRIpYQGcoX3VSuBHOKX0iaoul199WnX56m_mBhEgS1H8JXiPU_61OKkHA/exec',
         'Distretto 10': 'https://script.google.com/macros/s/AKfycbyOHZ6oHE-SJAZLPdgSyio1Zfm2iG1nEkdeDPGH9Rhofw8FUX666ax49R6Pf28y_ig/exec',
-        'Distretto 11': 'https://script.google.com/macros/s/AKfycbzVGzLNYxRh1PXFNiFAd5LscX9VWGgam2NyjJ3J8lETWongnYvT869eIHNvwgNiDNIA/exec',
+        'Distretto 11': 'https://script.google.com/macros/s/AKfycbwlL6JsZHfO4z3okPOZTx5bTeZM0ZkU_7P8jl7vtSL0IALK-5_kHYUz__8JaMea7gYw/exec',
         'Distretto 12':  'https://script.google.com/macros/s/AKfycby3fuDsAYPQI5ulosjgDF2v360_FxGeKqzEkax8Yp-MwCrLoZ2qKTzdcaekE4Kb3hO0/exec',
         'Distretto 13': 'https://script.google.com/macros/s/AKfycbxBaTwDjP0VPOg2Z71HbEXUisCjCG_1S-9k1u3S5wGQ67L0PcWFwJwhDpKw_QhnPhHycA/exec',
 
@@ -321,33 +321,62 @@ const Home = () => {
                 )}
 
 {tipoPresenza === 'Permessi Vari' && (
-  <div>
-    <label className="block text-sm font-medium mb-1">Seleziona Tipo di Permesso</label>
-    <select
-      value={permesso}
-      onChange={(e) => setPermesso(e.target.value)}
-      required
-      className="border rounded p-2 w-full"
-    >
-      <option value="" disabled>-- Seleziona un permesso --</option>
-      <option value="PERMESSO RETRIBUITO">PERMESSO RETRIBUITO</option>
-      <option value="LEGGE 104">LEGGE 104</option>
-      <option value="ART.9">ART.9</option>
-      <option value="DISTACCAMENTO AIB">DISTACCAMENTO AIB</option>
-      <option value="DISTACCAMENTO CONVENZIONE">DISTACCAMENTO-CONVENZIONE</option>
-      <option value="PERMESSO LUTTO">PERMESSO LUTTO</option>
-      <option value="VISITA MEDICA">VISITA MEDICA</option>
-      <option value="PERMESSO ELETTORALE">PERMESSO ELETTORALE</option>
-      <option value="ART 51">ART 51</option>
-      <option value="PERMESSO CAUSA PIOGGIA">PERMESSO CAUSA PIOGGIA</option>
-      <option value="ATTIVABILE">ATTIVABILE</option>
-      <option value="ASPETTATIVA ">ASPETTATIVA</option>
-      <option value="LAVORI DISAGIATI ">LAVORI DISAGIATI</option>
-      <option value="CONGEDO PARENTALE">CONGEDO PARENTALE</option>
-      <option value="RIPOSO VEDETTE">RIPOSO VEDETTE</option>
-    </select>
+  <div className="flex flex-col gap-3">
+    <div>
+      <label className="block text-sm font-medium mb-1">Seleziona Tipo di Permesso</label>
+      <select
+        value={permesso}
+        onChange={(e) => setPermesso(e.target.value)}
+        required
+        className="border rounded p-2 w-full"
+      >
+        <option value="" disabled>-- Seleziona un permesso --</option>
+        <option value="PERMESSO RETRIBUITO">PERMESSO RETRIBUITO</option>
+        <option value="LEGGE 104">LEGGE 104</option>
+        <option value="ART.9">ART.9</option>
+        <option value="DISTACCAMENTO AIB">DISTACCAMENTO AIB</option>
+        <option value="DISTACCAMENTO CONVENZIONE">DISTACCAMENTO-CONVENZIONE</option>
+        <option value="PERMESSO LUTTO">PERMESSO LUTTO</option>
+        <option value="VISITA MEDICA">VISITA MEDICA</option>
+        <option value="PERMESSO ELETTORALE">PERMESSO ELETTORALE</option>
+        <option value="ART 51">ART 51</option>
+        <option value="PERMESSO CAUSA PIOGGIA">PERMESSO CAUSA PIOGGIA</option>
+        <option value="ATTIVABILE">ATTIVABILE</option>
+        <option value="ASPETTATIVA ">ASPETTATIVA</option>
+        <option value="LAVORI DISAGIATI ">LAVORI DISAGIATI</option>
+        <option value="CONGEDO PARENTALE">CONGEDO PARENTALE</option>
+        <option value="RIPOSO VEDETTE">RIPOSO VEDETTE</option>
+      </select>
+    </div>
+
+    {/* ✅ Se il permesso è DISTACCAMENTO AIB mostro il calendario */}
+    {permesso === 'DISTACCAMENTO AIB' && (
+      <div className="flex gap-4">
+        <div className="flex-1">
+          <label className="block text-sm font-medium mb-1">Data Inizio</label>
+          <input
+            type="date"
+            value={dataInizio}
+            onChange={(e) => setDataInizio(e.target.value)}
+            required
+            className="border rounded p-2 w-full"
+          />
+        </div>
+        <div className="flex-1">
+          <label className="block text-sm font-medium mb-1">Data Fine</label>
+          <input
+            type="date"
+            value={dataFine}
+            onChange={(e) => setDataFine(e.target.value)}
+            required
+            className="border rounded p-2 w-full"
+          />
+        </div>
+      </div>
+    )}
   </div>
 )}
+
 
                 <button
                   type="submit"
