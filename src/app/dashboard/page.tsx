@@ -4,8 +4,10 @@ import { useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
 type RigaDati = {
+  data:string;
   nominativo: string;
   matricola: string;
+  comune:string;
   targa: string;
   presenze: string; // orario entrata
   assenze: string;
@@ -125,8 +127,10 @@ export default function DashboardPage() {
             <table className="min-w-full table-auto text-sm text-left">
               <thead className="bg-gray-100 sticky top-0 z-10">
                 <tr>
+                  <th className="px-4 py-2 border-b">Data</th>
                   <th className="px-4 py-2 border-b">Nominativo</th>
                   <th className="px-4 py-2 border-b">Matricola</th>
+                   <th className="px-4 py-2 border-b">Comune</th>
                   <th className="px-4 py-2 border-b">Targa</th>
                   <th className="px-4 py-2 border-b">Entrata</th>
                   <th className="px-4 py-2 border-b">Uscita</th>
@@ -147,8 +151,10 @@ export default function DashboardPage() {
     const ore = calcolaOreLavorate(row.presenze, row.uscita);
     return (
       <tr key={i} className={i % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
+        <td className="px-4 py-2 border-b">{row.data}</td>
         <td className="px-4 py-2 border-b">{row.nominativo}</td>
         <td className="px-4 py-2 border-b">{row.matricola}</td>
+        <td className="px-4 py-2 border-b">{row.comune}</td>
         <td className="px-4 py-2 border-b">{row.targa}</td>
 
         {/* Entrata (Presenze) in verde */}

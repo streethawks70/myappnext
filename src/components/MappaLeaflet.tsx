@@ -10,18 +10,12 @@ export type Posizione = {
   lat: number;
   lng: number;
   stato: 'presente' | 'assente' | 'ferie' | 'malattia' | 'permessi';
+  comune: string; // 🔹 aggiunto
 };
 
 type Props = {
   posizioni: Posizione[];
 };
-
-//delete (L.Icon.Default.prototype as any)._getIconUrl;
-//L.Icon.Default.mergeOptions({
-  //iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.3/dist/images/marker-icon-2x.png',
-  //iconUrl: 'https://unpkg.com/leaflet@1.9.3/dist/images/marker-icon.png',
-  //shadowUrl: 'https://unpkg.com/leaflet@1.9.3/dist/images/marker-shadow.png',
-//});
 
 const iconPresente = new L.Icon({
   iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png',
@@ -50,38 +44,29 @@ const iconPermessi = new L.Icon({
   shadowSize: [41, 41]
 });
 
-
-
-
 export default function MappaLeaflet({ posizioni }: Props) {
   const [selezionato, setSelezionato] = useState<Posizione | null>(null);
   const mapRef = useRef<L.Map>(null);
   const markerRefs = useRef<{ [key: string]: L.Marker }>({});
 
-  // Centra la mappa sulla posizione selezionata e apre il popup corrispondente
   useEffect(() => {
     if (selezionato && mapRef.current) {
       mapRef.current.setView([selezionato.lat, selezionato.lng], 14, { animate: true });
-      
-      // Apri il popup corrispondente
       const marker = markerRefs.current[selezionato.nome];
-      if (marker) {
-        marker.openPopup();
-      }
+      if (marker) marker.openPopup();
     }
   }, [selezionato]);
 
   const scegliIcona = (stato: Posizione['stato']) => {
-  switch (stato) {
-    case 'presente': return iconPresente;
-    case 'assente': return iconAssente;
-    case 'ferie': return iconAssente;
-    case 'malattia': return iconAssente;
-    case 'permessi': return iconPermessi;
-    default: return iconAssente;
-  }
-};
-
+    switch (stato) {
+      case 'presente': return iconPresente;
+      case 'assente': return iconAssente;
+      case 'ferie': return iconAssente;
+      case 'malattia': return iconAssente;
+      case 'permessi': return iconPermessi;
+      default: return iconAssente;
+    }
+  };
 
   return (
     <div className="flex h-full w-full">
@@ -94,7 +79,7 @@ export default function MappaLeaflet({ posizioni }: Props) {
                 onClick={() => setSelezionato(r)}
                 className="text-sm text-blue-600 hover:underline w-full text-left"
               >
-                {r.nome} ({r.stato})
+                {r.nome} ({r.stato}) – {r.comune}  {/* 🔹 mostra il comune */}
               </button>
             </li>
           ))}
@@ -120,7 +105,9 @@ export default function MappaLeaflet({ posizioni }: Props) {
                 if (el) markerRefs.current[r.nome] = el;
               }}
             >
-              <Popup>{r.nome}</Popup>
+              <Popup>
+                {r.nome} ({r.stato}) – {r.comune}  {/* 🔹 mostra anche qui */}
+              </Popup>
             </Marker>
           ))}
         </MapContainer>

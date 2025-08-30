@@ -13,7 +13,7 @@ const opzioni = [
   'Rientro',
   'Festivita',
   'Uscita',
-  'Comunicazioni', // Aggiunto qui
+  
 ];
 
 const MenuPresenza = ({

@@ -171,6 +171,10 @@ export default function CapoCantierePage() {
 
   return (
     <div className="p-6 max-w-xl mx-auto">
+      {/* Titolo con emoji */}
+      <h1 className="text-2xl font-bold mb-6 flex items-center gap-2">
+        👷‍♂️🛠️ Capo Cantiere
+      </h1>
       {!firmaCompletata && !inviato ? (
         <>
           <div className="mb-4">

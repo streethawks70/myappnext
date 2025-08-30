@@ -14,6 +14,7 @@ export default function MappaPage() {
   const distretto = searchParams.get('distretto') || '';
 
   const [posizioni, setPosizioni] = useState<Posizione[]>([]);
+  const [search, setSearch] = useState('');
 
   useEffect(() => {
     const caricaDati = async () => {
@@ -36,6 +37,7 @@ export default function MappaPage() {
                 | 'malattia'
                 | 'permessi'
                 | undefined,
+              comune: r.comune || '', // ✅ prende il comune già calcolato dal GAS
             };
           });
 
@@ -48,11 +50,26 @@ export default function MappaPage() {
     caricaDati();
   }, [email, password, distretto]);
 
+  const posizioniFiltrate = posizioni.filter(p =>
+    p.nome.toLowerCase().includes(search.toLowerCase())
+  );
+
   return (
     <div className="p-4">
       <h1 className="text-xl font-bold mb-4">Mappa – {distretto.toUpperCase()}</h1>
+
+      <div className="mb-4">
+        <input
+          type="text"
+          placeholder="🔍 Cerca nominativo..."
+          value={search}
+          onChange={e => setSearch(e.target.value)}
+          className="border p-2 rounded w-full"
+        />
+      </div>
+
       <div className="h-[600px] w-full border rounded overflow-hidden">
-        <MappaLeafletComponent posizioni={posizioni} />
+        <MappaLeafletComponent posizioni={posizioniFiltrate} />
       </div>
     </div>
   );
