@@ -27,7 +27,9 @@ export default function Home() {
     setError(null);
     try {
       const dataStr = data.toISOString().split("T")[0];
-      const res = await fetch(`/api/list?distretto=${distretto}&data=${dataStr}`);
+      const res = await fetch(
+        `/api/list?distretto=${distretto}&data=${dataStr}`
+      );
       if (!res.ok) {
         const text = await res.text();
         throw new Error(text || `Errore server ${res.status}`);
@@ -89,7 +91,9 @@ export default function Home() {
                 className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"
               />
             </div>
-            {loginError && <p className="text-red-500 text-sm">{loginError}</p>}
+            {loginError && (
+              <p className="text-red-500 text-sm">{loginError}</p>
+            )}
             <button
               type="submit"
               className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded transition"
@@ -102,10 +106,12 @@ export default function Home() {
     );
   }
 
-  // Pagina dopo login con Tailwind
+  // Pagina dopo login
   return (
     <div className="p-6 max-w-4xl mx-auto">
-      <h1 className="text-3xl font-bold mb-6 text-center">Visualizza Fogli Presenze</h1>
+      <h1 className="text-3xl font-bold mb-6 text-center">
+        Visualizza Fogli Presenze
+      </h1>
 
       <div className="flex flex-wrap gap-4 mb-6 justify-center">
         <div>
@@ -139,20 +145,41 @@ export default function Home() {
       {files.length > 0 ? (
         <ul className="space-y-2">
           {files.map((f) => (
-            <li key={f.id}>
-              <a
-                href={f.webViewLink || f.webContentLink}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-indigo-600 hover:underline"
-              >
-                {f.name}
-              </a>
+            <li
+              key={f.id}
+              className="flex items-center justify-between bg-gray-50 p-3 rounded-lg shadow-sm"
+            >
+              <span className="text-gray-800 font-medium">{f.name}</span>
+              <div className="flex gap-4">
+                {/* Pulsante per visualizzare */}
+                {f.webViewLink && (
+                  <a
+                    href={f.webViewLink}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="px-3 py-1 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition"
+                  >
+                    Visualizza
+                  </a>
+                )}
+                {/* Pulsante per scaricare */}
+                {f.webContentLink && (
+                  <a
+                    href={f.webContentLink}
+                    download={f.name}
+                    className="px-3 py-1 bg-green-600 text-white rounded-lg hover:bg-green-700 transition"
+                  >
+                    Download
+                  </a>
+                )}
+              </div>
             </li>
           ))}
         </ul>
       ) : (
-        !loading && <p className="text-center text-gray-500">Nessun file trovato</p>
+        !loading && (
+          <p className="text-center text-gray-500">Nessun file trovato</p>
+        )
       )}
     </div>
   );

@@ -1,15 +1,15 @@
-'use client';
+"use client";
 
-import { useSearchParams } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
 
 type RigaDati = {
-  data:string;
+  data: string;
   nominativo: string;
   matricola: string;
-  comune:string;
+  comune: string;
   targa: string;
-  presenze: string; // orario entrata
+  presenze: string;
   assenze: string;
   ferie: string;
   malattia: string;
@@ -19,53 +19,55 @@ type RigaDati = {
   cassa_int: string;
   permessi_vari: string;
   festivita: string;
-  uscita: string; // orario uscita
-  posizione:string;//coordinate geografiche
+  uscita: string;
+  posizione: string;
 };
 
 export default function DashboardPage() {
   const searchParams = useSearchParams();
-  const email = searchParams.get('email') || '';
-  const password = searchParams.get('password') || '';
-  const distretto = searchParams.get('distretto') || '';
+  const email = searchParams.get("email") || "";
+  const password = searchParams.get("password") || "";
+  const distretto = searchParams.get("distretto") || "";
 
   const [dati, setDati] = useState<RigaDati[]>([]);
-  const [chartData, setChartData] = useState<
-    { nome: string; ore_lavorate: number }[]
-  >([]);
+  const [chartData, setChartData] = useState<{ nome: string; ore_lavorate: number }[]>([]);
   const [loading, setLoading] = useState(true);
   const [errore, setErrore] = useState<string | null>(null);
+  const [ultimoAggiornamento, setUltimoAggiornamento] = useState<Date | null>(null);
+  const [updating, setUpdating] = useState(false);
 
   function calcolaOreLavorate(inizio: string, fine: string): number {
-  if (!inizio || !fine) return NaN;
-
-  const parseOrario = (h: string) => {
-    const [oreStr, minStr] = h.split('.');
-    const ore = parseInt(oreStr, 10);
-    const minuti = parseInt(minStr || '0', 10);
-    if (isNaN(ore) || isNaN(minuti)) return NaN;
-    return ore + minuti / 60;
-  };
-
-  const oraInizio = parseOrario(inizio);
-  const oraFine = parseOrario(fine);
-
-  if (isNaN(oraInizio) || isNaN(oraFine)) return NaN;
-
-  return oraFine - oraInizio;
-}
+    if (!inizio || !fine) return NaN;
+    const parseOrario = (h: string) => {
+      const [oreStr, minStr] = h.split(".");
+      const ore = parseInt(oreStr, 10);
+      const minuti = parseInt(minStr || "0", 10);
+      if (isNaN(ore) || isNaN(minuti)) return NaN;
+      return ore + minuti / 60;
+    };
+    const oraInizio = parseOrario(inizio);
+    const oraFine = parseOrario(fine);
+    if (isNaN(oraInizio) || isNaN(oraFine)) return NaN;
+    return oraFine - oraInizio;
+  }
 
   useEffect(() => {
+    let interval: NodeJS.Timeout;
+
     const caricaDati = async () => {
       try {
+        setUpdating(true);
         const res = await fetch(
           `/api/dati?email=${email}&password=${password}&distretto=${distretto}`
         );
         const json = await res.json();
 
         if (!res.ok) {
-          setErrore(json?.error || 'Errore sconosciuto');
+          setErrore(json?.error || "Errore sconosciuto");
+          setDati([]);
+          setChartData([]);
         } else {
+          setErrore(null);
           setDati(json);
 
           // Prepara i dati per il grafico delle ore lavorate
@@ -77,15 +79,22 @@ export default function DashboardPage() {
             };
           });
           setChartData(convertiti);
+
+          // aggiorna timestamp
+          setUltimoAggiornamento(new Date());
         }
       } catch (err) {
-        setErrore('Errore di rete o server non raggiungibile');
+        setErrore("Errore di rete o server non raggiungibile");
       } finally {
         setLoading(false);
+        setUpdating(false);
       }
     };
 
     caricaDati();
+    interval = setInterval(caricaDati, 30000);
+
+    return () => clearInterval(interval);
   }, [email, password, distretto]);
 
   return (
@@ -93,29 +102,42 @@ export default function DashboardPage() {
       <h1 className="text-2xl font-bold text-gray-800 mb-6">
         Dashboard – {distretto.toUpperCase()}
       </h1>
-       <a
-    href={`/permessi?email=${email}&password=${password}&distretto=${distretto}`}
-    className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded shadow"
-  >
-    Visualizza Permessi
-  </a>
-  <a
-    href={`/mappa?email=${email}&password=${password}&distretto=${distretto}`}
-    className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded shadow"
-  >
-    Visualizza Mappa
-  </a>
+
+      <div className="flex gap-4 mb-4">
+        <a
+          href={`/permessi?email=${email}&password=${password}&distretto=${distretto}`}
+          className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded shadow"
+        >
+          Visualizza Permessi
+        </a>
+        <a
+          href={`/mappa?email=${email}&password=${password}&distretto=${distretto}`}
+          className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded shadow"
+        >
+          Visualizza Mappa
+        </a>
+      </div>
+
+      {/* Ultimo aggiornamento */}
+      {ultimoAggiornamento && (
+        <div className="text-sm text-gray-500 mb-4 flex items-center gap-2">
+          <span>Ultimo aggiornamento: {ultimoAggiornamento.toLocaleTimeString()}</span>
+          {updating && <span className="animate-pulse text-blue-500">⟳ Aggiornamento...</span>}
+        </div>
+      )}
 
       {loading && (
-        <div className="text-gray-500 animate-pulse">Caricamento dati...</div>
+        <div className="text-gray-500 animate-pulse mt-6">
+          Caricamento dati...
+        </div>
       )}
 
       {!loading && errore && (
-        <div className="text-red-600 font-medium">{errore}</div>
+        <div className="text-red-600 font-medium mt-6">{errore}</div>
       )}
 
       {!loading && !errore && dati.length === 0 && (
-        <div className="text-gray-600">
+        <div className="text-gray-600 mt-6">
           Nessun dato trovato per le credenziali inserite.
         </div>
       )}
@@ -123,14 +145,14 @@ export default function DashboardPage() {
       {!loading && dati.length > 0 && (
         <>
           {/* Tabella */}
-          <div className="overflow-x-auto border rounded-lg shadow-sm max-h-[60vh] overflow-y-auto">
+          <div className="overflow-x-auto border rounded-lg shadow-sm max-h-[60vh] overflow-y-auto mt-6">
             <table className="min-w-full table-auto text-sm text-left">
               <thead className="bg-gray-100 sticky top-0 z-10">
                 <tr>
                   <th className="px-4 py-2 border-b">Data</th>
                   <th className="px-4 py-2 border-b">Nominativo</th>
                   <th className="px-4 py-2 border-b">Matricola</th>
-                   <th className="px-4 py-2 border-b">Comune</th>
+                  <th className="px-4 py-2 border-b">Comune</th>
                   <th className="px-4 py-2 border-b">Targa</th>
                   <th className="px-4 py-2 border-b">Entrata</th>
                   <th className="px-4 py-2 border-b">Uscita</th>
@@ -146,59 +168,32 @@ export default function DashboardPage() {
                   <th className="px-4 py-2 border-b">Festività</th>
                 </tr>
               </thead>
-             <tbody>
-  {dati.map((row, i) => {
-    const ore = calcolaOreLavorate(row.presenze, row.uscita);
-    return (
-      <tr key={i} className={i % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
-        <td className="px-4 py-2 border-b">{row.data}</td>
-        <td className="px-4 py-2 border-b">{row.nominativo}</td>
-        <td className="px-4 py-2 border-b">{row.matricola}</td>
-        <td className="px-4 py-2 border-b">{row.comune}</td>
-        <td className="px-4 py-2 border-b">{row.targa}</td>
-
-        {/* Entrata (Presenze) in verde */}
-        <td className="px-4 py-2 border-b text-green-700 font-semibold">
-          {row.presenze}
-        </td>
-
-        {/* Uscita in verde */}
-        <td className="px-4 py-2 border-b text-green-700 font-semibold">
-          {row.uscita}
-        </td>
-
-        {/* Ore Lavorate */}
-        <td className="px-4 py-2 border-b">
-          {isNaN(ore) ? '-' : ore.toFixed(2)}
-        </td>
-
-        {/* Assenze in rosso */}
-        <td className="px-4 py-2 border-b text-red-600 font-semibold">
-          {row.assenze}
-        </td>
-
-        {/* Ferie in blu */}
-        <td className="px-4 py-2 border-b text-blue-600 font-semibold">
-          {row.ferie}
-        </td>
-
-        <td className="px-4 py-2 border-b">{row.malattia}</td>
-        <td className="px-4 py-2 border-b">{row.infortunio}</td>
-        <td className="px-4 py-2 border-b">{row.donazione_sangue}</td>
-        <td className="px-4 py-2 border-b">{row.permesso_sind}</td>
-        <td className="px-4 py-2 border-b">{row.cassa_int}</td>
-
-        {/* Permessi Vari in giallo */}
-        <td className="px-4 py-2 border-b text-yellow-600 font-semibold">
-          {row.permessi_vari}
-        </td>
-
-        <td className="px-4 py-2 border-b">{row.festivita}</td>
-      </tr>
-    );
-  })}
-</tbody>
-
+              <tbody>
+                {dati.map((row, i) => {
+                  const ore = calcolaOreLavorate(row.presenze, row.uscita);
+                  return (
+                    <tr key={i} className={i % 2 === 0 ? "bg-white" : "bg-gray-50"}>
+                      <td className="px-4 py-2 border-b">{row.data}</td>
+                      <td className="px-4 py-2 border-b">{row.nominativo}</td>
+                      <td className="px-4 py-2 border-b">{row.matricola}</td>
+                      <td className="px-4 py-2 border-b">{row.comune}</td>
+                      <td className="px-4 py-2 border-b">{row.targa}</td>
+                      <td className="px-4 py-2 border-b text-green-700 font-semibold">{row.presenze}</td>
+                      <td className="px-4 py-2 border-b text-green-700 font-semibold">{row.uscita}</td>
+                      <td className="px-4 py-2 border-b">{isNaN(ore) ? "-" : ore.toFixed(2)}</td>
+                      <td className="px-4 py-2 border-b text-red-600 font-semibold">{row.assenze}</td>
+                      <td className="px-4 py-2 border-b text-blue-600 font-semibold">{row.ferie}</td>
+                      <td className="px-4 py-2 border-b">{row.malattia}</td>
+                      <td className="px-4 py-2 border-b">{row.infortunio}</td>
+                      <td className="px-4 py-2 border-b">{row.donazione_sangue}</td>
+                      <td className="px-4 py-2 border-b">{row.permesso_sind}</td>
+                      <td className="px-4 py-2 border-b">{row.cassa_int}</td>
+                      <td className="px-4 py-2 border-b text-yellow-600 font-semibold">{row.permessi_vari}</td>
+                      <td className="px-4 py-2 border-b">{row.festivita}</td>
+                    </tr>
+                  );
+                })}
+              </tbody>
             </table>
           </div>
 
@@ -213,7 +208,7 @@ export default function DashboardPage() {
                   </p>
                   <div className="flex h-5 rounded overflow-hidden bg-gray-200 shadow-inner">
                     <div
-                      className="bg-blue-600"
+                      className="bg-blue-600 transition-all duration-500"
                       style={{ width: `${row.ore_lavorate * 10}px` }}
                       title={`${row.ore_lavorate} ore`}
                     />
