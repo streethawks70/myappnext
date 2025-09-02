@@ -10,6 +10,14 @@ const DISTRETTI = [
   'Distretto 6','Distretto 7','Distretto 8','Distretto 9','Distretto 10','Distretto 11',
 ];
 
+const COLORI_STATO: Record<string, string> = {
+  ferie: 'yellow',
+  malattia: 'red',
+  assente: 'black',
+  permessi: 'purple',
+  presente: 'green',
+};
+
 export default function DirettorePage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -21,40 +29,54 @@ export default function DirettorePage() {
   const [selected, setSelected] = useState<{ lat: number; lon: number; matricola: string } | null>(null);
 
   const caricaDati = async () => {
-    if (!email || !password || !distretto) return;
-    try {
-      setLoading(true);
-      const res = await fetch(
-        `/api/login?email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}&distretto=${encodeURIComponent(distretto)}`
-      );
-      const text = await res.text();
-      if (text === 'Unauthorized') {
-        alert('Accesso negato.');
-        setLoggedIn(false);
-        return;
-      }
-      const json = JSON.parse(text);
-      if (json.error) {
-        alert(json.error);
-        setLoggedIn(false);
-        setDati([]);
-      } else if (Array.isArray(json) && json.length > 0) {
-        setDati(json);
-        setLoggedIn(true);
-        setLastUpdate(new Date().toLocaleTimeString());
-      } else {
-        alert('Nessun dato trovato.');
-        setLoggedIn(false);
-        setDati([]);
-      }
-    } catch (err) {
-      alert('Errore durante il recupero dati.');
+  if (!email || !password || !distretto) return;
+
+  try {
+    setLoading(true);
+    const res = await fetch(
+      `/api/login?email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}&distretto=${encodeURIComponent(distretto)}`
+    );
+    const text = await res.text();
+    if (text === 'Unauthorized') {
+      alert('Accesso negato.');
+      setLoggedIn(false);
+      return;
+    }
+    const json = JSON.parse(text);
+    if (json.error) {
+      alert(json.error);
       setLoggedIn(false);
       setDati([]);
-    } finally {
-      setLoading(false);
+    } else if (Array.isArray(json) && json.length > 0) {
+      const datiConStato = json.map((riga: any) => {
+        let stato = 'assente'; // default
+
+        if (riga.presenze && riga.presenze.trim() !== '') stato = 'presente';
+        else if (riga.assenze && riga.assenze.trim() !== '') stato = 'assente';
+        else if (riga.malattia && riga.malattia.trim() !== '') stato = 'malattia';
+        else if (riga.infortunio && riga.infortunio.trim() !== '') stato = 'infortunio';
+        else if (riga.ferie && riga.ferie.trim() !== '') stato = 'ferie';
+        else if (riga.permessi && riga.permessi.trim() !== '') stato = 'permessi';
+
+        return { ...riga, stato };
+      });
+
+      setDati(datiConStato);
+      setLoggedIn(true);
+      setLastUpdate(new Date().toLocaleTimeString());
+    } else {
+      alert('Nessun dato trovato.');
+      setLoggedIn(false);
+      setDati([]);
     }
-  };
+  } catch (err) {
+    alert('Errore durante il recupero dati.');
+    setLoggedIn(false);
+    setDati([]);
+  } finally {
+    setLoading(false);
+  }
+};
 
   const handleLogin = async () => {
     if (!email || !password || !distretto) {
@@ -93,18 +115,15 @@ export default function DirettorePage() {
 
   return (
     <div className="max-w-6xl mx-auto mt-10 p-4">
-      {/* Bottone per resoconto */}
       <div className="flex gap-4 mb-6">
         <Link href={{ pathname: '/Resoconto', query: { email, password, distretto } }}>
           <button className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded transition">Vai a ore Lavorate e Permessi</button>
         </Link>
       </div>
 
-      {/* Aggiornamenti */}
       {loading && <div className="text-sm text-gray-500 mb-2">⏳ Aggiornamento dati...</div>}
       {lastUpdate && !loading && <div className="text-sm text-gray-500 mb-2">✅ Ultimo aggiornamento: {lastUpdate}</div>}
 
-      {/* Tabella */}
       <div className="overflow-x-auto shadow-lg rounded-xl border border-gray-200 bg-white max-h-[500px] overflow-y-auto">
         <table className="min-w-full text-sm text-gray-700 font-medium">
           <thead className="bg-green-100 text-green-900 text-xs uppercase tracking-wide sticky top-0 z-10 shadow">
@@ -141,12 +160,10 @@ export default function DirettorePage() {
       </div>
 
       <div className="flex gap-4 mt-6">
-        {/* Mappa */}
         <div className="h-[500px] w-2/3 rounded-xl overflow-hidden shadow-lg">
-          <MappaLeaflet1 dati={dati} selected={selected} />
+          <MappaLeaflet1 dati={dati} selected={selected} coloriStato={COLORI_STATO} />
         </div>
 
-        {/* Lista nomi */}
         <div className="h-[500px] w-1/3 overflow-y-auto rounded-xl border p-4 shadow-md bg-white">
           <h3 className="font-semibold mb-3">Nominativi</h3>
           <ul className="space-y-2">
