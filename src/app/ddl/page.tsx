@@ -128,7 +128,7 @@ export default function DirettorePage() {
         <table className="min-w-full text-sm text-gray-700 font-medium">
           <thead className="bg-green-100 text-green-900 text-xs uppercase tracking-wide sticky top-0 z-10 shadow">
             <tr>
-              {['Data','Nome','Matricola','Targa','Presenze','Assenze','Ferie','Malattia','Infortunio','Cassa Int','Permessi','Rientro','Festività','Uscita'].map((header, i) => (
+              {['Data','Nome','Matricola','Comune','Targa','Presenze','Assenze','Ferie','Malattia','Infortunio','Cassa Int','Permessi','Rientro','Festività','Uscita'].map((header, i) => (
                 <th key={i} className="px-3 py-3 text-center border-b border-green-300 whitespace-nowrap">{header}</th>
               ))}
             </tr>
@@ -141,6 +141,7 @@ export default function DirettorePage() {
                   <td className="px-3 py-2 text-left border-b border-gray-100">{riga.data}</td>
                   <td className="px-3 py-2 text-left border-b border-gray-100">{riga.nominativo}</td>
                   <td className="px-3 py-2 text-center border-b border-gray-100">{riga.matricola}</td>
+                  <td className="px-3 py-2 text-center border-b border-gray-100">{riga.comune}</td>
                   <td className="px-3 py-2 text-center border-b border-gray-100">{riga.targa}</td>
                   <td className="px-3 py-2 text-center border-b border-gray-100">{riga.presenze}</td>
                   <td className="px-3 py-2 text-center border-b border-gray-100">{riga.assenze}</td>

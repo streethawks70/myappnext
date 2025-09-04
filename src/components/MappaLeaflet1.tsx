@@ -113,6 +113,8 @@ export default function MappaLeaflet1({ dati, selected, coloriStato }: MappaLeaf
               <br />
               Matricola: {item.matricola}
               <br />
+              Comune:{item.comune}
+              <br/>
               {item.permessi && statoEff === 'permesso' && (
                 <>Tipo permesso: {item.permessi}</>
               )}
