@@ -3,13 +3,17 @@
 import { useEffect, useState } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import { useRouter } from "next/navigation";
 
-const distretti = ["distr11", "distr2", "distr3"];
+
+const distretti = ["distr1", "distr2", "distr3","distr4","distr5","distr6","distr7","distr8","distr9","distr10","distr11"];
 
 const PRESET_EMAIL = "admin@calabriaverde.com";
 const PRESET_PASSWORD = "KlY70";
 
 export default function Home() {
+  const router = useRouter();
+
   const [loggedIn, setLoggedIn] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -138,6 +142,25 @@ export default function Home() {
           />
         </div>
       </div>
+      <div className="flex gap-4 justify-center mb-6">
+  <button
+    onClick={() =>
+      router.push(`/Storicooperaio?distretto=${encodeURIComponent(distretto)}`)
+    }
+    className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded shadow"
+  >
+    Vai al Resoconto
+  </button>
+  <button
+    onClick={() =>
+      router.push(`/storico_mensile?distretto=${encodeURIComponent(distretto)}`)
+    }
+    className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded shadow"
+  >
+    Vai al Riepilogo mensile distretto
+  </button>
+</div>
+
 
       {loading && <p className="text-center text-gray-600">Caricamento file...</p>}
       {error && <p className="text-center text-red-500">{error}</p>}

@@ -4,9 +4,18 @@ import { google} from "googleapis"
 
 // mappa distretti → ID cartelle Google Drive
 const folderMap: Record<string, string> = {
-  distr11: "1jsr4bqRQtqxG6SoMnlqbr5VjyeuG_G5-",
+  distr1: "",
   distr2: "",
-  distr3: "ID_CARTELLA_BACKUP_DISTR3",
+  distr3: "1nDLemNiIUeuc9cLflFK77nv4SdE7n7uB",
+  distr4: "ID_CARTELLA_BACKUP_DISTR3",
+  distr5: "1EIZ-VuqpeSSZYrGSBvUdQJGopLQJOk8f",
+  distr6: "ID_CARTELLA_BACKUP_DISTR3",
+  distr7: "ID_CARTELLA_BACKUP_DISTR3",
+  distr8: "ID_CARTELLA_BACKUP_DISTR3",
+  distr9: "ID_CARTELLA_BACKUP_DISTR3",
+  distr10: "ID_CARTELLA_BACKUP_DISTR3",
+  distr11: "1jsr4bqRQtqxG6SoMnlqbr5VjyeuG_G5-",
+  
 };
 
 // legge e sistema la chiave privata

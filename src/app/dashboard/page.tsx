@@ -1,7 +1,9 @@
 "use client";
 
-import { useSearchParams } from "next/navigation";
+import { useSearchParams ,useRouter} from "next/navigation";
 import { useEffect, useState } from "react";
+
+
 
 type RigaDati = {
   data: string;
@@ -24,6 +26,7 @@ type RigaDati = {
 };
 
 export default function DashboardPage() {
+  const router = useRouter();  
   const searchParams = useSearchParams();
   const email = searchParams.get("email") || "";
   const password = searchParams.get("password") || "";
@@ -116,6 +119,7 @@ export default function DashboardPage() {
         >
           Visualizza Mappa
         </a>
+      
       </div>
 
       {/* Ultimo aggiornamento */}

@@ -6,6 +6,8 @@ import DistrettoSelector from '../components/DistrettoSelector';
 import SquadraSelector from '../components/SquadraSelector';
 import MenuPresenza from '../components/MenuPresenza';
 import Testiamo from '../components/Testiamo';
+import { Edit } from "lucide-react";
+
 
 
 const TabellaPresenze = ({ presenze }: { presenze: any[] }) => {
@@ -150,7 +152,7 @@ const Home = () => {
       const sheetUrls: Record<string, string> = {
         'Distretto 1': 'https://script.google.com/macros/s/AKfycbz8CLYKisFcKXgyR2Dj80Z35nGbCrnJKhoGLeb-A64726faOJfHTgfOp_H51ZKee1yVOA/exec',
         'Distretto 2': 'https://script.google.com/macros/s/AKfycbypH8yFYfN8anr5S_cswx1nl9Nutp6vjIPV-CSiYlTzuA6j5hOqZlcjHxcpOez_ss8M5A/exec',
-        'Distretto 3': 'https://script.google.com/macros/s/AKfycbyFvxxSsL-7houYS-h4UtpNiK6dH05lHXiPIB1yVQvuj-8iCbKR9QjbBvADi3ROIWgE/exec',
+        'Distretto 3': 'https://script.google.com/macros/s/AKfycbzsJok6SIe7JY9hP8z2DF66pGesdtqv1rFcmCJ3437w-WnRaaO5ebcWfbhnd_FynlVR/exec',
         'Distretto 4': 'https://script.google.com/macros/s/AKfycbzz_Zm8ezcdA0TkgaNt4OLVvMseC4TD8-mi0ExVgcmGsk9L70XFRcMcJ6zMS6dXnWj7AQ/exec',
         'Distretto 5': 'https://script.google.com/macros/s/AKfycbyiFstun8TO_ZM1e512O87HYcK23C7EnQ6pRAHspEhkvBaTrrN5HxsvfOfBSaivUeA/exec',
         'Distretto 6': 'https://script.google.com/macros/s/AKfycbxcxQ5WqcsD_UmARccxuglj7kfs1OMgrU1k14pCiMvRMIJGTy21sujR806wHmPKwBEtAA/exec',
@@ -160,7 +162,7 @@ const Home = () => {
         'Distretto 10': 'https://script.google.com/macros/s/AKfycbyOHZ6oHE-SJAZLPdgSyio1Zfm2iG1nEkdeDPGH9Rhofw8FUX666ax49R6Pf28y_ig/exec',
         'Distretto 11': 'https://script.google.com/macros/s/AKfycbwlL6JsZHfO4z3okPOZTx5bTeZM0ZkU_7P8jl7vtSL0IALK-5_kHYUz__8JaMea7gYw/exec',
         'Distretto 12':  'https://script.google.com/macros/s/AKfycby3fuDsAYPQI5ulosjgDF2v360_FxGeKqzEkax8Yp-MwCrLoZ2qKTzdcaekE4Kb3hO0/exec',
-        'Distretto 13': 'https://script.google.com/macros/s/AKfycbxBaTwDjP0VPOg2Z71HbEXUisCjCG_1S-9k1u3S5wGQ67L0PcWFwJwhDpKw_QhnPhHycA/exec',
+        'Distretto 13': 'https://script.google.com/macros/s/AKfycbxzK5ddO1PPo5PAoK4OY7kEpC2bc7tHV7Cf01w6Tp8jdefDhtHtT2ooZ5iLYSqk5LF0/exec',
 
       };
 
@@ -210,45 +212,56 @@ const Home = () => {
       <h2 className='text-2xl font-bold mb-4'> Azienda</h2>
       <h1 className='text-5xl font-bold mb-4'>Calabria Verde</h1>
 
-<div className="mb-6">
+<div className="mb-6 grid grid-cols-1 sm:grid-cols-2 gap-4 justify-items-center">
   <Link href="/ddl">
-    <button className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded transition">
+    <button className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded transition w-48">
       Accesso Direttori dei Lavori
     </button>
   </Link>
-</div>
 
-<div className="mb-6">
   <Link href="/accesso/login">
-    <button className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded transition">
+    <button className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded transition w-48">
       Accesso Dashboard
     </button>
   </Link>
-</div>
-<div className="mb-6">
-  <Link href="/Notifica">
-    <button className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded transition">
-      Richieta Giustificativi
-    </button>
-    </Link>
-    </div>
 
-  
-  <div className="mb-3">
+  <Link href="/Notifica">
+    <button className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded transition w-48">
+      Richiesta Giustificativi
+    </button>
+  </Link>
+
   <Link href="/Storico">
-    <button className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded transition">
+    <button className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded transition w-48">
       STORICO MENSILITA'
     </button>
   </Link>
-</div>
 
-<div className="mb-6">
   <Link href="/admin">
-    <button className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded transition">
-      comunicazioni
+    <button className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded transition w-48">
+      Comunicazioni
     </button>
   </Link>
+
+  {/* sesto pulsante (es. altro/settimo se ne hai uno) */}
+  <Link href="/altro">
+    <button className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded transition w-48">
+      Altro
+    </button>
+  </Link>
+
+  {/* Settimo bottone: Vai a Correzioni -> su tutta la riga, centrato */}
+  <div className="col-span-1 sm:col-span-2 flex justify-center">
+    <Link
+      href="/Correzioni"
+      className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded transition"
+    >
+      <Edit className="w-4 h-4" />
+      Vai a Correzioni
+    </Link>
+  </div>
 </div>
+
 
       <div className="bg-white p-6 rounded-xl shadow-md w-full max-w-xl">
         <DistrettoSelector setDistretto={setDistretto} />

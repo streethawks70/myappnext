@@ -16,7 +16,7 @@ export async function GET(request: Request) {
     const DISTRETTI_ID_MAP: Record<string, string> = {
       'Distretto 1': '1-id-google-sheet-distretto-1',
       'Distretto 2': '1-id-google-sheet-distretto-2',
-      'Distretto 3': '1-id-google-sheet-distretto-3',
+      'Distretto 3': '1TUp9oKn0Pdlctbzhm1G_on4fwunqVOaUFtBQXfjgqPA',
       'Distretto 4': '1-id-google-sheet-distretto-4',
       'Distretto 5': '1YhBdp5vSY3wIzZq8r64LLmBGMkRird1cd5gathcxiOo',
       'Distretto 6': '1-id-google-sheet-distretto-6',

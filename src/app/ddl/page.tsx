@@ -1,7 +1,9 @@
 'use client';
+
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import dynamic from 'next/dynamic';
+import * as XLSX from 'xlsx';
 
 const MappaLeaflet1 = dynamic(() => import('@/components/MappaLeaflet1'), { ssr: false });
 
@@ -29,54 +31,54 @@ export default function DirettorePage() {
   const [selected, setSelected] = useState<{ lat: number; lon: number; matricola: string } | null>(null);
 
   const caricaDati = async () => {
-  if (!email || !password || !distretto) return;
+    if (!email || !password || !distretto) return;
 
-  try {
-    setLoading(true);
-    const res = await fetch(
-      `/api/login?email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}&distretto=${encodeURIComponent(distretto)}`
-    );
-    const text = await res.text();
-    if (text === 'Unauthorized') {
-      alert('Accesso negato.');
-      setLoggedIn(false);
-      return;
-    }
-    const json = JSON.parse(text);
-    if (json.error) {
-      alert(json.error);
+    try {
+      setLoading(true);
+      const res = await fetch(
+        `/api/login?email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}&distretto=${encodeURIComponent(distretto)}`
+      );
+      const text = await res.text();
+      if (text === 'Unauthorized') {
+        alert('Accesso negato.');
+        setLoggedIn(false);
+        return;
+      }
+      const json = JSON.parse(text);
+      if (json.error) {
+        alert(json.error);
+        setLoggedIn(false);
+        setDati([]);
+      } else if (Array.isArray(json) && json.length > 0) {
+        const datiConStato = json.map((riga: any) => {
+          let stato = 'assente'; // default
+
+          if (riga.presenze && riga.presenze.trim() !== '') stato = 'presente';
+          else if (riga.assenze && riga.assenze.trim() !== '') stato = 'assente';
+          else if (riga.malattia && riga.malattia.trim() !== '') stato = 'malattia';
+          else if (riga.infortunio && riga.infortunio.trim() !== '') stato = 'infortunio';
+          else if (riga.ferie && riga.ferie.trim() !== '') stato = 'ferie';
+          else if (riga.permessi && riga.permessi.trim() !== '') stato = 'permessi';
+
+          return { ...riga, stato };
+        });
+
+        setDati(datiConStato);
+        setLoggedIn(true);
+        setLastUpdate(new Date().toLocaleTimeString());
+      } else {
+        alert('Nessun dato trovato.');
+        setLoggedIn(false);
+        setDati([]);
+      }
+    } catch (err) {
+      alert('Errore durante il recupero dati.');
       setLoggedIn(false);
       setDati([]);
-    } else if (Array.isArray(json) && json.length > 0) {
-      const datiConStato = json.map((riga: any) => {
-        let stato = 'assente'; // default
-
-        if (riga.presenze && riga.presenze.trim() !== '') stato = 'presente';
-        else if (riga.assenze && riga.assenze.trim() !== '') stato = 'assente';
-        else if (riga.malattia && riga.malattia.trim() !== '') stato = 'malattia';
-        else if (riga.infortunio && riga.infortunio.trim() !== '') stato = 'infortunio';
-        else if (riga.ferie && riga.ferie.trim() !== '') stato = 'ferie';
-        else if (riga.permessi && riga.permessi.trim() !== '') stato = 'permessi';
-
-        return { ...riga, stato };
-      });
-
-      setDati(datiConStato);
-      setLoggedIn(true);
-      setLastUpdate(new Date().toLocaleTimeString());
-    } else {
-      alert('Nessun dato trovato.');
-      setLoggedIn(false);
-      setDati([]);
+    } finally {
+      setLoading(false);
     }
-  } catch (err) {
-    alert('Errore durante il recupero dati.');
-    setLoggedIn(false);
-    setDati([]);
-  } finally {
-    setLoading(false);
-  }
-};
+  };
 
   const handleLogin = async () => {
     if (!email || !password || !distretto) {
@@ -93,6 +95,49 @@ export default function DirettorePage() {
     }, 30000);
     return () => clearInterval(interval);
   }, [loggedIn, email, password, distretto]);
+
+  // --- Export to Excel (XLSX)
+  const exportToExcel = () => {
+    if (!dati || dati.length === 0) {
+      alert('Nessun dato da esportare.');
+      return;
+    }
+
+    // Mappa i dati nell'ordine/nomi colonne desiderati
+    const rows = dati.map((r) => ({
+      Data: r.data ?? '',
+      Nome: r.nominativo ?? '',
+      Matricola: r.matricola ?? '',
+      Comune: r.comune ?? '',
+      Targa: r.targa ?? '',
+      Presenze: r.presenze ?? '',
+      Assenze: r.assenze ?? '',
+      Ferie: r.ferie ?? '',
+      Malattia: r.malattia ?? '',
+      Infortunio: r.infortunio ?? '',
+      'Cassa Int': r.cig ?? '',
+      Permessi: r.permessi ?? '',
+      Rientro: r.rientro ?? '',
+      Festivita: r.festivita ?? '',
+      Uscita: r.uscita ?? '',
+    }));
+
+    const ws = XLSX.utils.json_to_sheet(rows, {
+      header: [
+        'Data','Nome','Matricola','Comune','Targa','Presenze','Assenze','Ferie','Malattia','Infortunio','Cassa Int','Permessi','Rientro','Festivita','Uscita'
+      ]
+    });
+
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Presenze');
+
+    const filenameDistretto = (distretto && distretto.replace(/\s+/g, '_')) || 'dati';
+    const dateStr = new Date().toISOString().slice(0, 10);
+    const filename = `${filenameDistretto}_${dateStr}.xlsx`;
+
+    // Scarica il file
+    XLSX.writeFile(wb, filename);
+  };
 
   if (!loggedIn) {
     return (
@@ -119,6 +164,16 @@ export default function DirettorePage() {
         <Link href={{ pathname: '/Resoconto', query: { email, password, distretto } }}>
           <button className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded transition">Vai a ore Lavorate e Permessi</button>
         </Link>
+
+        {/* Bottone per esportare in Excel */}
+        <button
+          onClick={exportToExcel}
+          disabled={loading || dati.length === 0}
+          className="bg-amber-600 hover:bg-amber-700 text-white font-bold py-2 px-4 rounded transition disabled:opacity-50 disabled:cursor-not-allowed"
+          aria-label="Esporta dati in Excel"
+        >
+          {dati.length === 0 ? 'Esporta Excel (vuoto)' : 'Esporta Excel'}
+        </button>
       </div>
 
       {loading && <div className="text-sm text-gray-500 mb-2">⏳ Aggiornamento dati...</div>}
