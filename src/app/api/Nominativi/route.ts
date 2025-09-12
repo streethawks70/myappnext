@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { google } from "googleapis";
 
 const sheetMap: Record<string, string> = {
-  distretto1: "ID_GOOGLE_SHEET_DISTRETTO_1",
+  distretto1: "1n0CP_I7xCGr2RiFgvrmai5Zt-HHFbekhrNHabKUVUco",
   distretto2: "ID_GOOGLE_SHEET_DISTRETTO_2",
   distretto3: "1TUp9oKn0Pdlctbzhm1G_on4fwunqVOaUFtBQXfjgqPA",
   distretto4: "ID_GOOGLE_SHEET_DISTRETTO_2",
