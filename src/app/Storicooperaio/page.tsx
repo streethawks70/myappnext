@@ -8,6 +8,14 @@ type RecordStorico = Record<string, any>;
 const distretti = [
   { label: "Distretto 1", value: "distretto1" },
   { label: "Distretto 2", value: "distretto2" },
+  { label: "Distretto 3", value: "distretto3" },
+  { label: "Distretto 4", value: "distretto4" },
+  { label: "Distretto 5", value: "distretto5" },
+  { label: "Distretto 6", value: "distretto6" },
+  { label: "Distretto 7", value: "distretto7" },
+  { label: "Distretto 8", value: "distretto8" },
+  { label: "Distretto 9", value: "distretto9" },
+  { label: "Distretto 10", value: "distretto10" },
   { label: "Distretto 11", value: "distretto11" },
   // ... aggiungi gli altri distretti
 ];

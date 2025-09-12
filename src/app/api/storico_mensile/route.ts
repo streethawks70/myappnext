@@ -9,6 +9,11 @@ const folderMap: Record<string, string> = {
   distretto3: "1nDLemNiIUeuc9cLflFK77nv4SdE7n7uB",
   distretto4: "ID_CARTELLA_4",
   distretto5: "1EIZ-VuqpeSSZYrGSBvUdQJGopLQJOk8f",
+  distretto6: "ID_CARTELLA_6",
+  distretto7: "ID_CARTELLA_7",
+  distretto8: "ID_CARTELLA_8",
+  distretto9: "ID_CARTELLA_9",
+  distretto10: "ID_CARTELLA_10",
   distretto11: "1jsr4bqRQtqxG6SoMnlqbr5VjyeuG_G5-",
   // ... aggiungi gli altri
 };
