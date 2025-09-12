@@ -4,7 +4,7 @@ import { google} from "googleapis"
 
 // mappa distretti → ID cartelle Google Drive
 const folderMap: Record<string, string> = {
-  distr1: "",
+  distr1: "1-BKLFgFRaWNd67XCP25jxB2ICuOTZ2P_",
   distr2: "",
   distr3: "1nDLemNiIUeuc9cLflFK77nv4SdE7n7uB",
   distr4: "ID_CARTELLA_BACKUP_DISTR3",
