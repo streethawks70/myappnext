@@ -7,14 +7,14 @@ import MenuPresenza from '../../components/MenuPresenza';
 const FIRMA_URL = 'https://script.google.com/macros/s/AKfycbzNrn2Ze2h1pSz5Kioybyl3U4irNJmasrqLfozErxo6SpCNIyPQahtiw9kfYEhXzC40/exec';
 
 const DISTRETTO_URLS: { [key: string]: string } = {
-  'Distretto 1': 'https://script.google.com/macros/s/AKfycbz8CLYKisFcKXgyR2Dj80Z35nGbCrnJKhoGLeb-A64726faOJfHTgfOp_H51ZKee1yVOA/exec',
+  'Distretto 1': 'https://script.google.com/macros/s/AKfycbyZfVE8nYFQ_finiOyVc3WJagoPSQf8dtX0dsDhcYfVRiCjqhwNqM9krxpiMdGQIf5JZg/exec',
   'Distretto 2': 'https://script.google.com/macros/s/URL_SUD/exec',
   'Distretto 3': 'https://script.google.com/macros/s/AKfycbzsJok6SIe7JY9hP8z2DF66pGesdtqv1rFcmCJ3437w-WnRaaO5ebcWfbhnd_FynlVR/exec',
   'Distretto 4': 'https://script.google.com/macros/s/URL_OVEST/exec',
-  'Distretto 5': 'https://script.google.com/macros/s/AKfycbyiFstun8TO_ZM1e512O87HYcK23C7EnQ6pRAHspEhkvBaTrrN5HxsvfOfBSaivUeA/exec',
+  'Distretto 5': 'https://script.google.com/macros/s/AKfycbyu_nl4bIkaybBunDavAJLmMZz6FJpNn3jB7fe7RyVY-Q_FSstc8eghxGW3qxE4cWBg/exec',
   'Distretto 6': 'https://script.google.com/macros/s/URL_6/exec',
   'Distretto 7': 'https://script.google.com/macros/s/URL_7/exec',
-  'Distretto 8': 'https://script.google.com/macros/s/AKfycbxtKhf7BtVVUiIprs_RcX8KQj0L0-yBHRf8SKNwJGs7C63XK7OzzBlqa21JB_TTZs4T8A/exec',
+  'Distretto 8': 'https://script.google.com/macros/s/AKfycbxn8Usq4RmRPsoPUmnU8Qt3orrzwTWltjgYilCjRTEMjhYxbZekGftFrAyXDpzzmR0nHQ/exec',
   'Distretto 9': 'https://script.google.com/macros/s/URL_9/exec',
   'Distretto 10': 'https://script.google.com/macros/s/URL_10/exec',
   'Distretto 11': 'https://script.google.com/macros/s/AKfycbwlL6JsZHfO4z3okPOZTx5bTeZM0ZkU_7P8jl7vtSL0IALK-5_kHYUz__8JaMea7gYw/exec',

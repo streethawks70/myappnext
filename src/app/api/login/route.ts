@@ -21,7 +21,7 @@ export async function GET(request: Request) {
       'Distretto 5': '1YhBdp5vSY3wIzZq8r64LLmBGMkRird1cd5gathcxiOo',
       'Distretto 6': '1-id-google-sheet-distretto-6',
       'Distretto 7': '1-id-google-sheet-distretto-7',
-      'Distretto 8': '1-id-google-sheet-distretto-8',
+      'Distretto 8': '1xdhnyvJevT1xNPAYeDqhrwcCdDaHn5Q8WP7PPuh73g0',
       'Distretto 9': '1-id-google-sheet-distretto-9',
       'Distretto 10': '1-id-google-sheet-distretto-10',
       'Distretto 11': '1-jWjnButxLpJEOr8AxKaY8cH57J2IOgU9S5fzV0npJw',

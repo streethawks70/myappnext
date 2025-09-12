@@ -115,7 +115,7 @@ export default function DirettorePage() {
       Ferie: r.ferie ?? '',
       Malattia: r.malattia ?? '',
       Infortunio: r.infortunio ?? '',
-      'Cassa Int': r.cig ?? '',
+      Cassa_Int: r.cig ?? '',
       Permessi: r.permessi ?? '',
       Rientro: r.rientro ?? '',
       Festivita: r.festivita ?? '',
@@ -124,7 +124,7 @@ export default function DirettorePage() {
 
     const ws = XLSX.utils.json_to_sheet(rows, {
       header: [
-        'Data','Nome','Matricola','Comune','Targa','Presenze','Assenze','Ferie','Malattia','Infortunio','Cassa Int','Permessi','Rientro','Festivita','Uscita'
+        'Data','Nome','Matricola','Comune','Targa','Presenze','Assenze','Ferie','Malattia','Infortunio','Cassa_Int','Permessi','Rientro','Festivita','Uscita'
       ]
     });
 

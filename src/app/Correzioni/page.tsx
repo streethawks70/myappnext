@@ -29,10 +29,16 @@ const Correzioni = () => {
   const [distretto, setDistretto] = useState("Distretto 1"); // default
 
   const sheetUrls: Record<string, string> = {
-    "Distretto 1": "",
+    "Distretto 1": "https://script.google.com/macros/s/AKfycbyZfVE8nYFQ_finiOyVc3WJagoPSQf8dtX0dsDhcYfVRiCjqhwNqM9krxpiMdGQIf5JZg/exec",
     "Distretto 2": "URL_APPS_SCRIPT_DISTRETTO2",
-    "Distretto 3": "URL_APPS_SCRIPT_DISTRETTO3",
+    "Distretto 3": "https://script.google.com/macros/s/AKfycbzsJok6SIe7JY9hP8z2DF66pGesdtqv1rFcmCJ3437w-WnRaaO5ebcWfbhnd_FynlVR/exec",
     "Distretto 4": "URL_APPS_SCRIPT_DISTRETTO4",
+    "Distretto 5":"https://script.google.com/macros/s/AKfycbyu_nl4bIkaybBunDavAJLmMZz6FJpNn3jB7fe7RyVY-Q_FSstc8eghxGW3qxE4cWBg/exec",
+    "Distretto 6":"",
+    "Distretto 7":"",
+    "Distretto 8":"https://script.google.com/macros/s/AKfycbxn8Usq4RmRPsoPUmnU8Qt3orrzwTWltjgYilCjRTEMjhYxbZekGftFrAyXDpzzmR0nHQ/exec",
+    "Distretto 9":"",
+    "Distretto 10":"",
     "Distretto 13": "https://script.google.com/macros/s/AKfycbxzK5ddO1PPo5PAoK4OY7kEpC2bc7tHV7Cf01w6Tp8jdefDhtHtT2ooZ5iLYSqk5LF0/exec",
     // ... aggiungi gli altri come necessario
   };
