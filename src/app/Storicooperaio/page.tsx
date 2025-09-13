@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useState } from "react";
 
 type Nominativo = { nome: string; matricola: string };
@@ -80,10 +81,18 @@ export default function StoricoOperaio() {
       .catch(err => setError(err.message || "Errore nel caricamento storico"))
       .finally(() => setLoading(false));
   }, [matricola, mese, distretto]);
+   
 
   return (
     <div className="p-4 space-y-4">
       <h1 className="text-xl font-bold">Storico Operai</h1>
+      <div>
+      <Link href="/Storico">
+          <button className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-5 rounded transition w-60">
+           RITORNA A STORICO MENSILITA'
+          </button>
+        </Link>
+        </div>
 
       {/* Selezione distretto */}
       <div>

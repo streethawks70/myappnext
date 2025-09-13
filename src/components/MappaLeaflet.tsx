@@ -115,3 +115,5 @@ export default function MappaLeaflet({ posizioni }: Props) {
     </div>
   );
 }
+
+

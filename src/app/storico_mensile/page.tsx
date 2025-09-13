@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useState } from "react";
 
 interface RecordMensile {
@@ -81,7 +82,7 @@ export default function StoricoMensilePage() {
           <option value="distretto8">Distretto 8</option>
           <option value="distretto9">Distretto 9</option>
           <option value="distretto10">Distretto 10</option>
-          <option value="distretto31">Distretto 11</option>
+          <option value="distretto11">Distretto 11</option>
         </select>
         <input
           type="text"
@@ -97,6 +98,11 @@ export default function StoricoMensilePage() {
           Carica
         </button>
       </div>
+      <Link href="/Storico">
+          <button className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded transition w-48">
+           RITORNA A STORICO MENSILITA'
+          </button>
+        </Link>
 
       {/* TABELLA */}
       {loading ? (
