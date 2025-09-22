@@ -34,7 +34,7 @@ const Correzioni = () => {
     "Distretto 3": "https://script.google.com/macros/s/AKfycbzsJok6SIe7JY9hP8z2DF66pGesdtqv1rFcmCJ3437w-WnRaaO5ebcWfbhnd_FynlVR/exec",
     "Distretto 4": "URL_APPS_SCRIPT_DISTRETTO4",
     "Distretto 5":"https://script.google.com/macros/s/AKfycbyu_nl4bIkaybBunDavAJLmMZz6FJpNn3jB7fe7RyVY-Q_FSstc8eghxGW3qxE4cWBg/exec",
-    "Distretto 6":"",
+    "Distretto 6":"https://script.google.com/macros/s/AKfycbxcxQ5WqcsD_UmARccxuglj7kfs1OMgrU1k14pCiMvRMIJGTy21sujR806wHmPKwBEtAA/exec",
     "Distretto 7":"",
     "Distretto 8":"https://script.google.com/macros/s/AKfycbxn8Usq4RmRPsoPUmnU8Qt3orrzwTWltjgYilCjRTEMjhYxbZekGftFrAyXDpzzmR0nHQ/exec",
     "Distretto 9":"",
