@@ -23,7 +23,7 @@ export async function GET(request: Request) {
       'Distretto 7': '1-id-google-sheet-distretto-7',
       'Distretto 8': '1xdhnyvJevT1xNPAYeDqhrwcCdDaHn5Q8WP7PPuh73g0',
       'Distretto 9': '1-id-google-sheet-distretto-9',
-      'Distretto 10': '1-id-google-sheet-distretto-10',
+      'Distretto 10': '1oFsm3ZlAzFyMF1LkGlewNiUjBjK2Qi1KhdEAJk0sVW8',
       'Distretto 11': '1-jWjnButxLpJEOr8AxKaY8cH57J2IOgU9S5fzV0npJw',
     };
 

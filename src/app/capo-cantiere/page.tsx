@@ -16,7 +16,7 @@ const DISTRETTO_URLS: { [key: string]: string } = {
   'Distretto 7': 'https://script.google.com/macros/s/URL_7/exec',
   'Distretto 8': 'https://script.google.com/macros/s/AKfycbxn8Usq4RmRPsoPUmnU8Qt3orrzwTWltjgYilCjRTEMjhYxbZekGftFrAyXDpzzmR0nHQ/exec',
   'Distretto 9': 'https://script.google.com/macros/s/URL_9/exec',
-  'Distretto 10': 'https://script.google.com/macros/s/URL_10/exec',
+  'Distretto 10': 'https://script.google.com/macros/s/AKfycbwm5i-hnm8a0-iez_Z23eFdIcT4KRweq9iLEQBNIV5cMq37bB5CEG3kiUX9wQD2Tzt2/exec',
   'Distretto 11': 'https://script.google.com/macros/s/AKfycbwlL6JsZHfO4z3okPOZTx5bTeZM0ZkU_7P8jl7vtSL0IALK-5_kHYUz__8JaMea7gYw/exec',
   'Distretto 13':'https://script.google.com/macros/s/AKfycbxBaTwDjP0VPOg2Z71HbEXUisCjCG_1S-9k1u3S5wGQ67L0PcWFwJwhDpKw_QhnPhHycA/exec'
 };
