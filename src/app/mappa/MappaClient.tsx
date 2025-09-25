@@ -44,6 +44,9 @@ export default function MappaPage() {
                 | "permessi"
                 | undefined,
               comune: r.comune || "",
+               matricola: r.matricola || "",
+               direttore_lavori:r.direttore_lavori || "",
+               
             };
           });
 

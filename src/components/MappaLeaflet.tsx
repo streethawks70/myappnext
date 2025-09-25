@@ -11,6 +11,8 @@ export type Posizione = {
   lng: number;
   stato: 'presente' | 'assente' | 'ferie' | 'malattia' | 'permessi';
   comune: string;
+  matricola:string;
+  direttore_lavori:string;
 };
 
 type Props = {
@@ -95,14 +97,19 @@ export default function MappaLeaflet({ posizioni }: Props) {
         <h2 className="text-lg font-bold mb-3">Nominativi</h2>
         <ul className="space-y-2">
           {posizioni.map((r) => (
-            <li key={r.nome}>
-              <button
-                onClick={() => setSelezionato(r)}
-                className="text-sm text-blue-600 hover:underline w-full text-left"
-              >
-                {r.nome} ({r.stato}) – {r.comune}
-              </button>
-            </li>
+            <li key={r.nome} className="border-b pb-2 mb-2">
+  <button
+    onClick={() => setSelezionato(r)}
+    className="text-sm w-full text-left"
+  >
+    <span className="font-bold">{r.nome}</span> <br />
+    Stato: {r.stato} <br />
+    Comune: {r.comune} <br />
+    Matricola: {r.matricola} <br />
+    direttore_lavori: {r.direttore_lavori}
+  </button>
+</li>
+
           ))}
         </ul>
       </div>
@@ -133,24 +140,31 @@ export default function MappaLeaflet({ posizioni }: Props) {
             </LayersControl.BaseLayer>
           </LayersControl>
 
-          {posizioni.map((r) => (
-            <Marker
-              key={r.nome}
-              position={[r.lat, r.lng]}
-              icon={scegliIcona(r.stato)}
-              ref={(el) => {
-                if (el) markerRefs.current[r.nome] = el;
-              }}
-            >
-              <Popup>
-                {r.nome} ({r.stato}) – {r.comune}
-              </Popup>
-              {/* 🔹 Tooltip con coordinate */}
-              <Tooltip direction="top" offset={[0, -10]} opacity={0.9}>
-                {r.lat.toFixed(5)}, {r.lng.toFixed(5)}
-              </Tooltip>
-            </Marker>
-          ))}
+         {posizioni.map((r) => (
+  <Marker
+    key={r.nome}
+    position={[r.lat, r.lng]}
+    icon={scegliIcona(r.stato)}
+    ref={(el) => {
+      if (el) markerRefs.current[r.nome] = el;
+    }}
+  >
+    <Popup>
+      <div>
+        <strong>{r.nome}</strong> <br />
+        Stato: {r.stato} <br />
+        Comune: {r.comune} <br />
+        Matricola: {r.matricola} <br />
+        direttore_lavori: {r.direttore_lavori} <br />
+        
+      </div>
+    </Popup>
+    <Tooltip direction="top" offset={[0, -10]} opacity={0.9}>
+      {r.lat.toFixed(5)}, {r.lng.toFixed(5)}
+    </Tooltip>
+  </Marker>
+))}
+
         </MapContainer>
       </div>
     </div>
