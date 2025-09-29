@@ -38,6 +38,11 @@ export default function DirettorePage() {
   const [filtroNome, setFiltroNome] = useState<string>("");
   const [filtroComune, setFiltroComune] = useState<string>("");
 
+  const comuniUnici = Array.from(
+  new Set(dati.map((item) => item.comune).filter(Boolean))
+).sort();
+
+
   // Data odierna
   const oggi = new Date().toISOString().slice(0, 10);
 
@@ -76,6 +81,7 @@ export default function DirettorePage() {
           let stato = "assente";
           if (riga.presenze && riga.presenze.trim() !== "") stato = "presente";
           else if (riga.assenze && riga.assenze.trim() !== "") stato = "assente";
+          else if(riga.uscita && riga.uscita.trim() !== "") stato = "uscita";
           else if (riga.malattia && riga.malattia.trim() !== "") stato = "malattia";
           else if (riga.infortunio && riga.infortunio.trim() !== "") stato = "infortunio";
           else if (riga.ferie && riga.ferie.trim() !== "") stato = "ferie";
@@ -155,6 +161,7 @@ export default function DirettorePage() {
       Comune: r.comune ?? "",
       Targa: r.targa ?? "",
       Presenze: r.presenze ?? "",
+      Uscita :r.uscita ?? "",
       Assenze: r.assenze ?? "",
       Ferie: r.ferie ?? "",
       Malattia: r.malattia ?? "",
@@ -198,7 +205,19 @@ export default function DirettorePage() {
           {Object.keys(COLORI_STATO).map((s) => <option key={s} value={s}>{s}</option>)}
         </select>
         <input type="text" placeholder="Cerca nominativo..." value={filtroNome} onChange={(e) => setFiltroNome(e.target.value)} className="border px-3 py-2 rounded" />
-        <input type="text" placeholder="Cerca comune..." value={filtroComune} onChange={(e) => setFiltroComune(e.target.value)} className="border px-3 py-2 rounded" />
+        <select
+  value={filtroComune}
+  onChange={(e) => setFiltroComune(e.target.value)}
+  className="border px-3 py-2 rounded"
+>
+  <option value="">Tutti i comuni</option>
+  {comuniUnici.map((c, i) => (
+    <option key={i} value={c}>
+      {c}
+    </option>
+  ))}
+</select>
+
 
         <Link href={{ pathname: '/Resoconto', query: { email, password, distretto } }}>
           <button className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded transition">Vai a ore Lavorate e Permessi</button>
@@ -214,7 +233,7 @@ export default function DirettorePage() {
         <table className="min-w-full text-sm text-gray-700 font-medium">
           <thead className="bg-green-100 text-green-900 text-xs uppercase tracking-wide sticky top-0 z-10 shadow">
             <tr>
-              {["Data","Nome","Matricola","Comune","Targa","Presenze","Assenze","Ferie","Malattia","Infortunio","Permessi"].map((header, i) => (
+              {["Data","Nome","Matricola","Comune","Targa","Presenze","Uscita","Assenze","Ferie","Malattia","Infortunio","Permessi"].map((header, i) => (
                 <th key={i} className="px-3 py-3 text-center border-b border-green-300 whitespace-nowrap">{header}</th>
               ))}
             </tr>
@@ -228,6 +247,7 @@ export default function DirettorePage() {
                 <td className="px-3 py-2 border-b">{riga.comune}</td>
                 <td className="px-3 py-2 border-b">{riga.targa}</td>
                 <td className="px-3 py-2 border-b">{riga.presenze}</td>
+                <td className="px-3 py-2 border-b">{riga.uscita}</td>
                 <td className="px-3 py-2 border-b">{riga.assenze}</td>
                 <td className="px-3 py-2 border-b">{riga.ferie}</td>
                 <td className="px-3 py-2 border-b">{riga.malattia}</td>

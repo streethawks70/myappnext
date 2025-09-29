@@ -18,6 +18,7 @@ export default function MappaPage() {
   const [statoFiltro, setStatoFiltro] = useState<string>("tutti");
   const [comuneFiltro, setComuneFiltro] = useState<string>("tutti");
   const [loading, setLoading] = useState(false);
+  const [attivaClickPartenza, setAttivaClickPartenza] = useState(false);
 
   useEffect(() => {
     let interval: NodeJS.Timeout;
@@ -46,6 +47,7 @@ export default function MappaPage() {
               comune: r.comune || "",
                matricola: r.matricola || "",
                direttore_lavori:r.direttore_lavori || "",
+               chilometri_percorsi:r.chilometri_percorsi ||"",
                
             };
           });
@@ -149,6 +151,15 @@ export default function MappaPage() {
           Permessi: {contatori.permessi}
         </span>
       </div>
+      <div className="mb-2 flex items-center space-x-1 text-sm">
+  <input
+    type="checkbox"
+    checked={attivaClickPartenza}
+    onChange={() => setAttivaClickPartenza(!attivaClickPartenza)}
+    className="w-4 h-4"
+  />
+  <span>Attiva click per punto di partenza</span>
+</div>
 
       {loading && (
         <div className="flex items-center justify-center mb-2 text-gray-600">
@@ -170,7 +181,9 @@ export default function MappaPage() {
       )}
 
       <div className="h-[600px] w-full border rounded overflow-hidden">
-        <MappaLeafletComponent posizioni={posizioniFiltrate} />
+        <MappaLeafletComponent posizioni={posizioniFiltrate}
+        attivaClickPartenza={attivaClickPartenza} 
+         />
       </div>
     </div>
   );
