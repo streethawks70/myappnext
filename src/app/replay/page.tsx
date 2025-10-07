@@ -1,8 +1,10 @@
-'use client';
+"use client";
+
+import { Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import ReplayLeaflet from "@/components/ReplayLeaflet";
 
-export default function ReplayPage() {
+function ReplayContent() {
   const searchParams = useSearchParams();
   const email = searchParams.get("email") || "";
   const password = searchParams.get("password") || "";
@@ -14,8 +16,19 @@ export default function ReplayPage() {
 
   return (
     <div className="p-4">
-      <h1 className="text-xl font-bold mb-4">Replay – {distretto.toUpperCase()}</h1>
+      <h1 className="text-xl font-bold mb-4">
+        Replay – {distretto.toUpperCase()}
+      </h1>
       <ReplayLeaflet email={email} password={password} distretto={distretto} />
     </div>
   );
 }
+
+export default function ReplayPage() {
+  return (
+    <Suspense fallback={<div>Caricamento replay...</div>}>
+      <ReplayContent />
+    </Suspense>
+  );
+}
+
