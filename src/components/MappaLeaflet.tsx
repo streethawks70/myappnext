@@ -15,6 +15,8 @@ export type Posizione = {
   matricola: string;
   direttore_lavori: string;
   chilometri_percorsi: string;
+  data:string;
+  
 };
 
 type Props = {
@@ -38,6 +40,8 @@ const iconFerie = createIcon('yellow');
 const iconMalattia = createIcon('red');
 const iconPermessi = createIcon('blue');
 const iconPartenza = createIcon('cyan');
+
+
 
 export default function MappaLeaflet({ posizioni, attivaClickPartenza }: Props) {
   const [selezionato, setSelezionato] = useState<Posizione | null>(null);
@@ -125,7 +129,9 @@ useEffect(() => {
                 className="text-sm w-full text-left"
               >
                 <span className="font-bold">{r.nome}</span> <br />
-                Stato: {r.stato} <br />
+                
+                Data:{r.data}<br/>
+                Stato: {r.stato } <br />
                 Comune: {r.comune} <br />
                 Matricola: {r.matricola} <br />
                 direttore_lavori: {r.direttore_lavori} <br />
@@ -185,6 +191,7 @@ useEffect(() => {
               <Popup>
                 <div>
                   <strong>{r.nome}</strong> <br />
+                  Data:{r.data}<br/>
                   Stato: {r.stato} <br />
                   Comune: {r.comune} <br />
                   Matricola: {r.matricola} <br />

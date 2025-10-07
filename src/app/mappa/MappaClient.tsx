@@ -4,6 +4,7 @@ import { useSearchParams } from "next/navigation";
 import { useEffect, useState, useMemo } from "react";
 import dynamic from "next/dynamic";
 import type { Posizione } from "@/components/MappaLeaflet";
+import Link from 'next/link'; 
 
 const MappaLeafletComponent = dynamic(() => import("@/components/MappaLeaflet"), { ssr: false });
 
@@ -48,6 +49,7 @@ export default function MappaPage() {
                matricola: r.matricola || "",
                direttore_lavori:r.direttore_lavori || "",
                chilometri_percorsi:r.chilometri_percorsi ||"",
+               data:r.data ||"",
                
             };
           });
@@ -179,6 +181,18 @@ export default function MappaPage() {
           Aggiornamento dati in corso...
         </div>
       )}
+      {/* Pulsante Modalità Replay */}
+{email && password && distretto && (
+  <div className="mb-4">
+    <Link
+      href={`/replay?email=${email}&password=${password}&distretto=${distretto}`}
+      className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded transition"
+    >
+      Modalità Replay
+    </Link>
+  </div>
+)}
+
 
       <div className="h-[600px] w-full border rounded overflow-hidden">
         <MappaLeafletComponent posizioni={posizioniFiltrate}
