@@ -2,6 +2,8 @@
 
 import { useSearchParams ,useRouter} from "next/navigation";
 import { useEffect, useState } from "react";
+import Link from "next/link";
+
 
 
 
@@ -71,7 +73,9 @@ export default function DashboardPage() {
           setChartData([]);
         } else {
           setErrore(null);
+         
           setDati(json);
+         
 
           // Prepara i dati per il grafico delle ore lavorate
           const convertiti = json.map((row: RigaDati) => {
@@ -85,6 +89,7 @@ export default function DashboardPage() {
 
           // aggiorna timestamp
           setUltimoAggiornamento(new Date());
+        
         }
       } catch (err) {
         setErrore("Errore di rete o server non raggiungibile");
@@ -119,6 +124,7 @@ export default function DashboardPage() {
         >
           Visualizza Mappa
         </a>
+        
       
       </div>
 
