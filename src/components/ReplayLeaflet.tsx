@@ -54,6 +54,7 @@ export default function ReplayLeaflet({ email, password, distretto }: Props) {
               matricola: r.matricola || "",
               direttore_lavori: r.direttore_lavori || "",
               chilometri_percorsi: r.chilometri_percorsi || "",
+              distretto:r.distretto || "",
             });
           }
 
@@ -71,6 +72,7 @@ export default function ReplayLeaflet({ email, password, distretto }: Props) {
               matricola: r.matricola || "",
               direttore_lavori: r.direttore_lavori || "",
               chilometri_percorsi: r.chilometri_percorsi || "",
+              distretto:r.distretto || "",
             });
           }
 
