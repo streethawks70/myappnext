@@ -17,6 +17,7 @@ export type Posizione = {
   direttore_lavori: string;
   chilometri_percorsi: string;
   data: string;
+  distretto:string,
 };
 
 type Props = {
@@ -24,7 +25,7 @@ type Props = {
   attivaClickPartenza: boolean;
   centraMappa?: { lat: number; lng: number } | null;
   mostraSidebar?: boolean;
-  selezionato?: { nome: string } | null; // ✅ nuova prop per click esterno
+  selezionato?: { nome: string } | null;
 };
 
 // 🔹 Icone marker
@@ -49,15 +50,36 @@ export default function MappaLeaflet({
   attivaClickPartenza,
   centraMappa,
   mostraSidebar = true,
-  selezionato, // ✅ nuova prop
+  selezionato,
 }: Props) {
   const [selezionatoInterno, setSelezionatoInterno] = useState<Posizione | null>(null);
   const [puntoPartenza, setPuntoPartenza] = useState<[number, number] | null>(null);
   const [distanzaKm, setDistanzaKm] = useState<number | null>(null);
+  const [popupChiusoManualmente, setPopupChiusoManualmente] = useState<Set<string>>(new Set());
   const mapRef = useRef<L.Map>(null);
   const markerRefs = useRef<{ [key: string]: L.Marker }>({});
   const notificatiRef = useRef<Set<string>>(new Set());
   const primaVoltaRef = useRef(true);
+  const ultimoSelezionatoRef = useRef<string | null>(null);
+  const interazioneManualeRef = useRef(false); // ✅ Tiene traccia di zoom/pan manuale
+
+  // 🔹 Rileva interazioni manuali dell'utente
+  useEffect(() => {
+    if (!mapRef.current) return;
+    const map = mapRef.current;
+
+    const onMove = () => {
+      interazioneManualeRef.current = false;
+    };
+
+    map.on("zoomstart", onMove);
+    map.on("movestart", onMove);
+
+    return () => {
+      map.off("zoomstart", onMove);
+      map.off("movestart", onMove);
+    };
+  }, []);
 
   // ✅ Notifica nuovi nominativi
   useEffect(() => {
@@ -76,53 +98,48 @@ export default function MappaLeaflet({
 
     if (nuovi.length > 0) {
       nuovi.forEach(p => {
-        toast.success(`🟢 Nuovo nominativo: ${p.nome}`, { duration: 4000 });
+        toast.success(`🟢 Nuovo nominativo: ${p.nome}, Distretto: ${p.distretto}`, { duration: 7000 });
       });
     }
   }, [posizioni]);
 
-  // ✅ Zoom sul nominativo selezionato interno
+  // ✅ Zoom e popup solo se selezionato nuovo e utente non ha interagito
   useEffect(() => {
-    if (selezionatoInterno && mapRef.current) {
-      mapRef.current.setView([selezionatoInterno.lat, selezionatoInterno.lng], 14, { animate: true });
-      const marker = markerRefs.current[selezionatoInterno.nome];
-      if (marker) marker.openPopup();
-    }
-  }, [selezionatoInterno]);
+    if (!selezionatoInterno || !mapRef.current) return;
 
-  // ✅ Se arriva una selezione esterna (da sidebar principale)
+    if (!interazioneManualeRef.current && ultimoSelezionatoRef.current !== selezionatoInterno.nome) {
+      mapRef.current.setView([selezionatoInterno.lat, selezionatoInterno.lng], 14, { animate: true });
+      ultimoSelezionatoRef.current = selezionatoInterno.nome;
+    }
+
+    const marker = markerRefs.current[selezionatoInterno.nome];
+    if (marker && !popupChiusoManualmente.has(selezionatoInterno.nome)) marker.openPopup();
+  }, [selezionatoInterno, popupChiusoManualmente]);
+
+  // ✅ Selezione esterna
   useEffect(() => {
     if (selezionato && mapRef.current) {
       const trovato = posizioni.find(p => p.nome === selezionato.nome);
-      if (trovato) {
-        setSelezionatoInterno(trovato);
-        mapRef.current.setView([trovato.lat, trovato.lng], 14, { animate: true });
-        const marker = markerRefs.current[trovato.nome];
-        if (marker) marker.openPopup();
-      }
+      if (trovato) setSelezionatoInterno(trovato);
     }
   }, [selezionato, posizioni]);
 
+  // ✅ Centra mappa solo se utente non ha interagito
   useEffect(() => {
-  if (!centraMappa || !mapRef.current) return;
+    if (!centraMappa || !mapRef.current) return;
+    const map = mapRef.current;
 
-  const map = mapRef.current;
+    const marker = posizioni.find(p => p.lat === centraMappa.lat && p.lng === centraMappa.lng);
+    if (!marker) return;
 
-  // Trova il marker corrispondente
-  const marker = posizioni.find(
-    (p) => p.lat === centraMappa.lat && p.lng === centraMappa.lng
-  );
+    if (!interazioneManualeRef.current && ultimoSelezionatoRef.current !== marker.nome) {
+      map.flyTo([centraMappa.lat, centraMappa.lng], 14, { animate: true });
+      ultimoSelezionatoRef.current = marker.nome;
+    }
 
-  if (!marker) return;
-
-  // Centra la mappa
-  map.flyTo([centraMappa.lat, centraMappa.lng], 14, { animate: true });
-
-  // Apri popup sul marker
-  const markerRef = markerRefs.current[marker.nome];
-  if (markerRef) markerRef.openPopup();
-}, [centraMappa, posizioni]);
-
+    const markerRef = markerRefs.current[marker.nome];
+    if (markerRef && !popupChiusoManualmente.has(marker.nome)) markerRef.openPopup();
+  }, [centraMappa, posizioni, popupChiusoManualmente]);
 
   // ✅ Click per punto partenza
  useEffect(() => {
@@ -131,18 +148,16 @@ export default function MappaLeaflet({
   const map = mapRef.current;
 
   const onClick = (e: L.LeafletMouseEvent) => {
-    if (attivaClickPartenza) {
-      setPuntoPartenza([e.latlng.lat, e.latlng.lng]);
-    }
+    if (attivaClickPartenza) setPuntoPartenza([e.latlng.lat, e.latlng.lng]);
   };
 
   map.on("click", onClick);
 
+  // ✅ ritorno una funzione esplicita
   return () => {
     map.off("click", onClick);
   };
 }, [attivaClickPartenza]);
-
 
   // ✅ Calcola distanza
   useEffect(() => {
@@ -244,7 +259,13 @@ export default function MappaLeaflet({
               icon={scegliIcona(r.stato)}
               ref={(el) => { if (el) markerRefs.current[r.nome] = el; }}
             >
-              <Popup>
+              <Popup
+                eventHandlers={{
+                  remove: () => {
+                    setPopupChiusoManualmente(prev => new Set(prev).add(r.nome));
+                  }
+                }}
+              >
                 <div>
                   <strong>{r.nome}</strong> <br />
                   Stato: {r.stato}<br />
