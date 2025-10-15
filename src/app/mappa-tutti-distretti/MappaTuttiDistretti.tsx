@@ -265,19 +265,40 @@ export default function MappaTuttiDistretti() {
           {Object.entries(datiFiltrati).map(([distretto, nominativi]) => (
             <div key={distretto} className="p-2 bg-white rounded shadow">
               <h3 className="font-semibold">{distretto.toUpperCase()}</h3>
-              <ul className="text-xs mt-1 space-y-1">
-                {Array.isArray(nominativi) &&
-                  nominativi.map((n) => (
-                    <li key={`${distretto}-${n.matricola}`}>
-                      <button
-                        onClick={() => setSelezionato({ ...n, distretto })}
-                        className="hover:underline text-left w-full"
-                      >
-                        {n.nominativo} – <span className="italic">{n.stato}</span>
-                      </button>
-                    </li>
-                  ))}
-              </ul>
+             <ul className="text-xs mt-1 space-y-1">
+  {Array.isArray(nominativi) &&
+    nominativi.map((n) => {
+      // 🎨 Colore del testo in base allo stato
+      const statoColor =
+        n.stato === "presente"
+          ? "text-green-600"
+          : n.stato === "assente"
+          ? "text-black-500"
+          : n.stato === "ferie"
+          ? "text-yellow-500"
+          : n.stato === "permessi"
+          ? "text-blue-500"
+          : n.stato === "malattia"
+          ? "text-red-500"
+          : "text-black";
+
+      return (
+        <li key={`${distretto}-${n.matricola}`}>
+          <button
+            onClick={() => setSelezionato({ ...n, distretto })}
+            className="hover:underline text-left w-full"
+          >
+            <span className={`font-bold ${statoColor}`}>{n.nominativo}</span> –{" "}
+            <span className={`italic ${statoColor}`}>{n.stato}</span> –{" "}
+            <span className="italic">comune: {n.comune}</span> –{" "}
+            <span className="italic">matricola: {n.matricola}</span> –{" "}
+            <span className="italic font-bold ">DL: {n.direttore_lavori }</span>
+          </button>
+        </li>
+      );
+    })}
+</ul>
+
             </div>
           ))}
         </div>
