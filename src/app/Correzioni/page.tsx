@@ -34,12 +34,14 @@ const Correzioni = () => {
     "Distretto 3": "https://script.google.com/macros/s/AKfycbzsJok6SIe7JY9hP8z2DF66pGesdtqv1rFcmCJ3437w-WnRaaO5ebcWfbhnd_FynlVR/exec",
     "Distretto 4": "URL_APPS_SCRIPT_DISTRETTO4",
     "Distretto 5":"https://script.google.com/macros/s/AKfycbyu_nl4bIkaybBunDavAJLmMZz6FJpNn3jB7fe7RyVY-Q_FSstc8eghxGW3qxE4cWBg/exec",
-    "Distretto 6":"https://script.google.com/macros/s/AKfycbxcxQ5WqcsD_UmARccxuglj7kfs1OMgrU1k14pCiMvRMIJGTy21sujR806wHmPKwBEtAA/exec",
+    "Distretto 6":"https://script.google.com/macros/s/AKfycbyB2hEhZEvLG7Tv4KqpYAy8Pq3ftaDilAZxFRwXhdd-eIP4PFaPW7-lTEzOeWhsemY-/exec",
     "Distretto 7":"",
     "Distretto 8":"https://script.google.com/macros/s/AKfycbxn8Usq4RmRPsoPUmnU8Qt3orrzwTWltjgYilCjRTEMjhYxbZekGftFrAyXDpzzmR0nHQ/exec",
     "Distretto 9":"https://script.google.com/macros/s/AKfycbx2vPrIQNj8syqp49yNLg-almN4XGNYuiFI4mZOZUwA0yjS6iUEh83Gsi1aI1YOH6hI4g/exec",
     "Distretto 10":"https://script.google.com/macros/s/AKfycbwm5i-hnm8a0-iez_Z23eFdIcT4KRweq9iLEQBNIV5cMq37bB5CEG3kiUX9wQD2Tzt2/exec",
     "Distretto 13": "https://script.google.com/macros/s/AKfycbxzK5ddO1PPo5PAoK4OY7kEpC2bc7tHV7Cf01w6Tp8jdefDhtHtT2ooZ5iLYSqk5LF0/exec",
+    "Distretto 14": "https://script.google.com/macros/s/AKfycbxShFke0iGHahl7bCmvkToUYWI2PBDt-N_Dsr3r1xR1xQqO8UIx3XOKYig1mJ2-IH5-Aw/exec",
+
     // ... aggiungi gli altri come necessario
   };
 

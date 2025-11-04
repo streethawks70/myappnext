@@ -69,7 +69,7 @@ const Home = () => {
     'Distretto 3': 'https://script.google.com/macros/s/AKfycbzsJok6SIe7JY9hP8z2DF66pGesdtqv1rFcmCJ3437w-WnRaaO5ebcWfbhnd_FynlVR/exec',
     'Distretto 4': 'https://script.google.com/macros/s/AKfycbzz_Zm8ezcdA0TkgaNt4OLVvMseC4TD8-mi0ExVgcmGsk9L70XFRcMcJ6zMS6dXnWj7AQ/exec',
     'Distretto 5': 'https://script.google.com/macros/s/AKfycbyu_nl4bIkaybBunDavAJLmMZz6FJpNn3jB7fe7RyVY-Q_FSstc8eghxGW3qxE4cWBg/exec',
-    'Distretto 6': 'https://script.google.com/macros/s/AKfycbxcxQ5WqcsD_UmARccxuglj7kfs1OMgrU1k14pCiMvRMIJGTy21sujR806wHmPKwBEtAA/exec',
+    'Distretto 6': 'https://script.google.com/macros/s/AKfycbyB2hEhZEvLG7Tv4KqpYAy8Pq3ftaDilAZxFRwXhdd-eIP4PFaPW7-lTEzOeWhsemY-/exec',
     'Distretto 7': 'URL7',
     'Distretto 8': 'https://script.google.com/macros/s/AKfycbxn8Usq4RmRPsoPUmnU8Qt3orrzwTWltjgYilCjRTEMjhYxbZekGftFrAyXDpzzmR0nHQ/exec',
     'Distretto 9': 'https://script.google.com/macros/s/AKfycbx2vPrIQNj8syqp49yNLg-almN4XGNYuiFI4mZOZUwA0yjS6iUEh83Gsi1aI1YOH6hI4g/exec',
@@ -361,7 +361,7 @@ const Home = () => {
       
        <Link href="/login-tutti-distretti">
         <button className="bg-blue-600 text-white px-4 py-2 rounded">
-          
+
           ACCESSO A TUTTI I DISTRETTI
         </button>
       </Link>
@@ -406,6 +406,7 @@ const Home = () => {
                         required
                         className="w-full border rounded p-2"
                       />
+                     
                     </div>
                     <div className="flex-1">
                       <label className="block text-sm font-medium mb-1">Quota (m)</label>
@@ -511,7 +512,7 @@ const Home = () => {
         <TabellaPresenze presenze={presenze} />
 
         <button
-       //   onClick={handleSendOffline}
+        // onClick={handleSendOffline}
         //  className="mt-4 bg-orange-600 hover:bg-orange-700 text-white font-bold py-2 px-4 rounded w-full"
         >
           
