@@ -19,7 +19,7 @@ export async function GET(request: Request) {
       'Distretto 3': '1TUp9oKn0Pdlctbzhm1G_on4fwunqVOaUFtBQXfjgqPA',
       'Distretto 4': '1-id-google-sheet-distretto-4',
       'Distretto 5': '1YhBdp5vSY3wIzZq8r64LLmBGMkRird1cd5gathcxiOo',
-      'Distretto 6': '1NfEuM41UnV0YeM_M2QZT6kAaE6lbdEjUlVLXHC8v5T4',
+      'Distretto 6': '14BroMm8vG6lvVplL-cMbSfKtuoLUQM8FIeKK9JzWQ8',
       'Distretto 7': '1-id-google-sheet-distretto-7',
       'Distretto 8': '1xdhnyvJevT1xNPAYeDqhrwcCdDaHn5Q8WP7PPuh73g0',
       'Distretto 9': '1UZyVa5i-r3uxdZ7tos1bOHkm2g-YVXBrgCrmXviEpgw',
