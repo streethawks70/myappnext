@@ -12,7 +12,7 @@ const DISTRETTO_URLS: { [key: string]: string } = {
   'Distretto 3': 'https://script.google.com/macros/s/AKfycbzsJok6SIe7JY9hP8z2DF66pGesdtqv1rFcmCJ3437w-WnRaaO5ebcWfbhnd_FynlVR/exec',
   'Distretto 4': 'https://script.google.com/macros/s/URL_OVEST/exec',
   'Distretto 5': 'https://script.google.com/macros/s/AKfycbyu_nl4bIkaybBunDavAJLmMZz6FJpNn3jB7fe7RyVY-Q_FSstc8eghxGW3qxE4cWBg/exec',
-  'Distretto 6': 'https://script.google.com/macros/s/AKfycbwxAsImTfLLexsbwSz6j3qNn9BDK9hfB_lsuD0W1AjzKiLH-F6vAZ8STT0kdTuH_MU/exec',
+  'Distretto 6': 'https://script.google.com/macros/s/AKfycbz4f93rnFXOnffim67xhsd1wr44Lp0m_ShJUYQ_UUst14h4_Kc5BgZ0zJzBC7S1cbmp/exec',
   'Distretto 7': 'https://script.google.com/macros/s/URL_7/exec',
   'Distretto 8': 'https://script.google.com/macros/s/AKfycbxn8Usq4RmRPsoPUmnU8Qt3orrzwTWltjgYilCjRTEMjhYxbZekGftFrAyXDpzzmR0nHQ/exec',
   'Distretto 9': 'https://script.google.com/macros/s/AKfycbx2vPrIQNj8syqp49yNLg-almN4XGNYuiFI4mZOZUwA0yjS6iUEh83Gsi1aI1YOH6hI4g/exec',
