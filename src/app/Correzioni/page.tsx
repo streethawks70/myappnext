@@ -34,7 +34,7 @@ const Correzioni = () => {
     "Distretto 3": "https://script.google.com/macros/s/AKfycbzsJok6SIe7JY9hP8z2DF66pGesdtqv1rFcmCJ3437w-WnRaaO5ebcWfbhnd_FynlVR/exec",
     "Distretto 4": "URL_APPS_SCRIPT_DISTRETTO4",
     "Distretto 5":"https://script.google.com/macros/s/AKfycbyu_nl4bIkaybBunDavAJLmMZz6FJpNn3jB7fe7RyVY-Q_FSstc8eghxGW3qxE4cWBg/exec",
-    "Distretto 6":"https://script.google.com/macros/s/AKfycbyB2hEhZEvLG7Tv4KqpYAy8Pq3ftaDilAZxFRwXhdd-eIP4PFaPW7-lTEzOeWhsemY-/exec",
+    "Distretto 6":"https://script.google.com/macros/s/AKfycbwxAsImTfLLexsbwSz6j3qNn9BDK9hfB_lsuD0W1AjzKiLH-F6vAZ8STT0kdTuH_MU/exec",
     "Distretto 7":"",
     "Distretto 8":"https://script.google.com/macros/s/AKfycbxn8Usq4RmRPsoPUmnU8Qt3orrzwTWltjgYilCjRTEMjhYxbZekGftFrAyXDpzzmR0nHQ/exec",
     "Distretto 9":"https://script.google.com/macros/s/AKfycbx2vPrIQNj8syqp49yNLg-almN4XGNYuiFI4mZOZUwA0yjS6iUEh83Gsi1aI1YOH6hI4g/exec",
