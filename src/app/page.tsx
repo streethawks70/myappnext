@@ -55,6 +55,7 @@ const Home = () => {
   const [presenze, setPresenze] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [offlineQueue, setOfflineQueue] = useState<OfflineItem[]>([]);
+  const [Codice_Progetto, setCodice_Prodetto]=useState('');
 
   const getOraFormattata = () => {
     const now = new Date();
@@ -70,13 +71,13 @@ const Home = () => {
     'Distretto 4': 'https://script.google.com/macros/s/AKfycbzz_Zm8ezcdA0TkgaNt4OLVvMseC4TD8-mi0ExVgcmGsk9L70XFRcMcJ6zMS6dXnWj7AQ/exec',
     'Distretto 5': 'https://script.google.com/macros/s/AKfycbyu_nl4bIkaybBunDavAJLmMZz6FJpNn3jB7fe7RyVY-Q_FSstc8eghxGW3qxE4cWBg/exec',
     'Distretto 6': 'https://script.google.com/macros/s/AKfycbz4f93rnFXOnffim67xhsd1wr44Lp0m_ShJUYQ_UUst14h4_Kc5BgZ0zJzBC7S1cbmp/exec',
-    'Distretto 7': 'URL7',
+    'Distretto 7': 'https://script.google.com/macros/s/AKfycbwGIv8vXNQFF-7z_8qlSpx0LxMe9ggeGSWanNlwfJ8pnIG-2INi5eooqjpLdCvIDtwruQ/exec',
     'Distretto 8': 'https://script.google.com/macros/s/AKfycbxn8Usq4RmRPsoPUmnU8Qt3orrzwTWltjgYilCjRTEMjhYxbZekGftFrAyXDpzzmR0nHQ/exec',
     'Distretto 9': 'https://script.google.com/macros/s/AKfycbx2vPrIQNj8syqp49yNLg-almN4XGNYuiFI4mZOZUwA0yjS6iUEh83Gsi1aI1YOH6hI4g/exec',
     'Distretto 10': 'https://script.google.com/macros/s/AKfycbwm5i-hnm8a0-iez_Z23eFdIcT4KRweq9iLEQBNIV5cMq37bB5CEG3kiUX9wQD2Tzt2/exec',
     'Distretto 11': 'https://script.google.com/macros/s/AKfycbwlL6JsZHfO4z3okPOZTx5bTeZM0ZkU_7P8jl7vtSL0IALK-5_kHYUz__8JaMea7gYw/exec',
     'Distretto 12': 'https://script.google.com/macros/s/AKfycby3fuDsAYPQI5ulosjgDF2v360_FxGeKqzEkax8Yp-MwCrLoZ2qKTzdcaekE4Kb3hO0/exec',
-    'Distretto 13': 'https://script.google.com/macros/s/AKfycbwvoEqhMSKYZ1UlD12yAX0sWpImfPo3HrgSRQ_VEiIlK5CW4IAcwOs9P0csHOFZ-X4MvA/exec',
+    'Distretto 13': 'https://script.google.com/macros/s/AKfycbxlSHWBCelGxKLhhO2ODHPODC2BGWaH_YVMw7TPoYEiaq1dXeBbQLMqP63grh7Wwl7HYg/exec',
      'Distretto 14': 'https://script.google.com/macros/s/AKfycbx0ysZQmfSRLBLgfhoyvBCYl-jvSPN5VuOmXa0N2CVLY5oGqjIDDcLA3RwyjZXNFy50Sw/exec',
   };
 
@@ -179,44 +180,69 @@ const Home = () => {
     return () => window.removeEventListener('online', syncOfflineQueue);
   }, []);
 
-  const sendFormData = async (formData: URLSearchParams, targetDistretto?: string, isAuto = false): Promise<boolean> => {
-    const url = targetDistretto ? sheetUrls[targetDistretto] : sheetUrls[distretto];
-    if (!navigator.onLine || !url) return false;
+ const sendFormData = async (
+  formData: URLSearchParams,
+  targetDistretto?: string,
+  isAuto = false
+): Promise<boolean | null> => {
+  const url = targetDistretto ? sheetUrls[targetDistretto] : sheetUrls[distretto];
 
-    try {
-      const response = await fetch(url, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+  // 🔸 Se non c’è connessione o URL, segna "offline"
+  if (!navigator.onLine || !url) return false;
+
+  try {
+    const response = await fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: formData.toString(),
+    });
+
+    const text = await response.text();
+
+    // 🔹 Caso messaggio di conferma ("⚠️ Ti restano ...")
+    if (text.includes("⚠️ Ti restano")) {
+      if (isAuto) return false;
+
+      const conferma = confirm(text + "\n\nVuoi procedere?");
+      if (!conferma) {
+        console.warn("❌ Operazione annullata dall’utente. Nessun invio né salvataggio.");
+        return null; // ⛔ non salvare offline
+      }
+
+      const ore = prompt("Quante ore vuoi prendere?");
+      if (!ore) {
+        console.warn("❌ Nessun valore ore inserito. Operazione annullata.");
+        return null; // ⛔ non salvare offline
+      }
+
+      // Se confermato, invia la seconda richiesta
+      formData.append("oreRichieste", ore);
+      const response2 = await fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
         body: formData.toString(),
       });
 
-      const text = await response.text();
-
-      if (text.includes('⚠️ Ti restano')) {
-        if (isAuto) return false;
-        else {
-          const conferma = confirm(text + '\n\nVuoi procedere?');
-          if (!conferma) return false;
-          const ore = prompt('Quante ore vuoi prendere?');
-          if (!ore) return false;
-          formData.append('oreRichieste', ore);
-          const response2 = await fetch(url, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            body: formData.toString(),
-          });
-          alert(await response2.text());
-          return true;
-        }
-      } else {
-        alert(text);
-        return true;
-      }
-    } catch (err) {
-      console.error('Errore fetch:', err);
-      return false;
+      alert(await response2.text());
+      return true;
     }
-  };
+
+    // 🔹 Caso errore logico dal backend ("❌ ...")
+    if (text.includes("❌")) {
+      alert(text);
+      console.warn("⛔ Errore logico dal server. Nessun salvataggio offline.");
+      return null;
+    }
+
+    // 🔹 Tutti gli altri casi → OK
+    alert(text);
+    return true;
+  } catch (err) {
+    console.error("Errore fetch:", err);
+    return false; // salva in offlineQueue
+  }
+};
+
 
   const resetForm = () => {
     setTipoPresenza('');
@@ -226,6 +252,7 @@ const Home = () => {
     setDataFine('');
     setPermesso('');
     setSelectedName('');
+    setCodice_Prodetto('');
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -244,51 +271,65 @@ const Home = () => {
     const formData = new URLSearchParams();
     formData.append('nome', selectedName.trim());
     formData.append('stato', tipoPresenza);
-    formData.append('targa', `${targa} / ${chilometri} km / ${altitude} m`);
+    formData.append('targa', `${targa} / ${chilometri} km / ${altitude} m / ${Codice_Progetto} C.P.`);
     formData.append('dataInizio', dataInizio);
     formData.append('dataFine', dataFine);
     formData.append('tipoPermesso', permessoFinale);
     formData.append('posizione', posizione);
     formData.append('oraFirma', oraFirmaFormattata);
+    formData.append('Codice_Progetto',Codice_Progetto);
 
-    const successo = await sendFormData(formData);
+    const risultato = await sendFormData(formData);
 
-    if (successo) {
-      statiSalvati[selectedName] = tipoPresenza;
-      localStorage.setItem('statiPresenze', JSON.stringify(statiSalvati));
+// ⛔ Caso annullato o errore logico → NON salvare nulla
+if (risultato === null) {
+  setIsLoading(false);
+  resetForm();
+  return;
+}
 
-      const nuovaPresenza = {
-        nome: selectedName,
-        tipo: tipoPresenza,
-        data: new Date().toLocaleDateString(),
-        oraFirma: oraFirmaFormattata,
-      };
-      setPresenze(prev => [...prev, nuovaPresenza]);
-      resetForm();
-    } else {
-      const item: OfflineItem = {
-        data: Array.from(formData.entries()),
-        distretto: distretto,
-        oraFirma: oraFirmaFormattata,
-      };
-      const newQueue = [...offlineQueue, item];
-      setOfflineQueue(newQueue);
-      localStorage.setItem('offlineQueue', JSON.stringify(newQueue));
+// ✅ Caso riuscito online
+if (risultato === true) {
+  statiSalvati[selectedName] = tipoPresenza;
+  localStorage.setItem("statiPresenze", JSON.stringify(statiSalvati));
 
-      const nuovaPresenza = {
-        nome: selectedName,
-        tipo: tipoPresenza,
-        data: new Date().toLocaleDateString(),
-        oraFirma: oraFirmaFormattata,
-      };
-      setPresenze(prev => [...prev, nuovaPresenza]);
-      alert('Dati salvati offline. Verranno inviati appena torna la connessione.');
-      resetForm();
-    }
+  const nuovaPresenza = {
+    nome: selectedName,
+    tipo: tipoPresenza,
+    data: new Date().toLocaleDateString(),
+    oraFirma: oraFirmaFormattata,
+  };
+  setPresenze((prev) => [...prev, nuovaPresenza]);
+  resetForm();
+  setIsLoading(false);
+  return;
+}
 
-    setIsLoading(false);
+// 💾 Caso offline → salva nella coda come prima
+if (risultato === false) {
+  const item: OfflineItem = {
+    data: Array.from(formData.entries()),
+    distretto: distretto,
+    oraFirma: oraFirmaFormattata,
   };
 
+  const newQueue = [...offlineQueue, item];
+  setOfflineQueue(newQueue);
+  localStorage.setItem("offlineQueue", JSON.stringify(newQueue));
+
+  const nuovaPresenza = {
+    nome: selectedName,
+    tipo: tipoPresenza,
+    data: new Date().toLocaleDateString(),
+    oraFirma: oraFirmaFormattata,
+  };
+  setPresenze((prev) => [...prev, nuovaPresenza]);
+
+  alert("📴 Dati salvati offline. Verranno inviati appena torna la connessione.");
+  resetForm();
+  setIsLoading(false);
+}
+  };
   const handleSendOffline = async () => {
     if (offlineQueue.length === 0) return alert('Nessun dato offline da inviare.');
     const remaining: OfflineItem[] = [];
@@ -418,6 +459,17 @@ const Home = () => {
                         className="w-full border rounded p-2 bg-gray-100"
                       />
                     </div>
+                    <div className="flex-1">
+                      <label className="block text-sm font-medium mb-1">Codice Progetto</label>
+                      <input
+                        type="text"
+                        placeholder="AB123CD"
+                        value={Codice_Progetto}
+                        onChange={(e) => setCodice_Prodetto(e.target.value)}
+                        required
+                        className="w-full border rounded p-2"
+                      />
+                    </div>
                   </div>
                 )}
 
@@ -512,11 +564,14 @@ const Home = () => {
         <TabellaPresenze presenze={presenze} />
 
         <button
-        // onClick={handleSendOffline}
-        //  className="mt-4 bg-orange-600 hover:bg-orange-700 text-white font-bold py-2 px-4 rounded w-full"
-        >
-          
-        </button>
+    onClick={handleSendOffline}
+    className="bg-orange-600 hover:bg-orange-700 text-white font-bold py-2 px-4 rounded w-full"
+  >
+    INVIA DATI
+  </button>
+  <p className="text-sm text-gray-700 mt-1">
+    INVIA DATI E' DA UTILIZZARE SOLTANTO SE VIENE VISUALIZZATO IL MESSAGGIO "ALCUNI DATI OFFLINE NON SONO STATI INVIATI".
+  </p>
 
       </div>
     </div>
