@@ -8,7 +8,7 @@ const sheetMap: Record<string, string> = {
   distretto4: "ID_GOOGLE_SHEET_DISTRETTO_2",
   distretto5: "1YhBdp5vSY3wIzZq8r64LLmBGMkRird1cd5gathcxiOo",
   distretto6:"14BroMm8vG6lvVplL-cMbSfKtuoLUQM8FIeKK9JzWQ8I",
-  distretto7:"",
+  distretto7:"1nRQVt8bdwQYGJMsn54i54toq59AMp_PEliuTPebMU4c",
   distretto8:"1xdhnyvJevT1xNPAYeDqhrwcCdDaHn5Q8WP7PPuh73g0",
   distretto9:"1UZyVa5i-r3uxdZ7tos1bOHkm2g-YVXBrgCrmXviEpgw",
   distretto10:"1oFsm3ZlAzFyMF1LkGlewNiUjBjK2Qi1KhdEAJk0sVW8",
