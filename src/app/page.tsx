@@ -293,12 +293,20 @@ if (risultato === true) {
   statiSalvati[selectedName] = tipoPresenza;
   localStorage.setItem("statiPresenze", JSON.stringify(statiSalvati));
 
-  const nuovaPresenza = {
-    nome: selectedName,
-    tipo: tipoPresenza,
-    data: new Date().toLocaleDateString(),
-    oraFirma: oraFirmaFormattata,
-  };
+ const nuovaPresenza = {
+  nome: selectedName,
+  tipo:
+    tipoPresenza === "Permessi Vari"
+      ? permesso + " - " + oraFirmaFormattata
+      : tipoPresenza === "Ferie"
+      ? `FERIE dal ${dataInizio} al ${dataFine}`
+      : tipoPresenza === "Malattia"
+      ? `MALATTIA dal ${dataInizio} al ${dataFine}`
+      : tipoPresenza,
+  data: new Date().toLocaleDateString(),
+  oraFirma: oraFirmaFormattata,
+};
+
   setPresenze((prev) => [...prev, nuovaPresenza]);
   resetForm();
   setIsLoading(false);
@@ -318,11 +326,19 @@ if (risultato === false) {
   localStorage.setItem("offlineQueue", JSON.stringify(newQueue));
 
   const nuovaPresenza = {
-    nome: selectedName,
-    tipo: tipoPresenza,
-    data: new Date().toLocaleDateString(),
-    oraFirma: oraFirmaFormattata,
-  };
+  nome: selectedName,
+  tipo:
+    tipoPresenza === "Permessi Vari"
+      ? permesso + " - " + oraFirmaFormattata
+      : tipoPresenza === "Ferie"
+      ? `FERIE dal ${dataInizio} al ${dataFine}`
+      : tipoPresenza === "Malattia"
+      ? `MALATTIA dal ${dataInizio} al ${dataFine}`
+      : tipoPresenza,
+  data: new Date().toLocaleDateString(),
+  oraFirma: oraFirmaFormattata,
+};
+
   setPresenze((prev) => [...prev, nuovaPresenza]);
 
   alert("📴 Dati salvati offline. Verranno inviati appena torna la connessione.");
@@ -346,6 +362,34 @@ if (risultato === false) {
     if (remaining.length === 0) alert('Tutti i dati offline inviati.');
     else alert(`Alcuni dati offline non sono stati inviati (${remaining.length}). Riprova.`);
   };
+  const downloadPresenze = () => {
+  if (presenze.length === 0) {
+    alert("Nessun dato da scaricare.");
+    return;
+  }
+
+  // Converte presenze in CSV
+  const header = "Nome,Tipo,Data,Ora Firma\n";
+  const rows = presenze
+    .map(p =>
+      `${p.nome},${p.tipo},${p.data},${p.oraFirma || ''}`
+    )
+    .join("\n");
+
+  const csv = header + rows;
+
+  // Crea file scaricabile
+  const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+  const url = URL.createObjectURL(blob);
+
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = "presenze_giornaliere.csv";
+  link.click();
+
+  URL.revokeObjectURL(url);
+};
+
 
   return (
     <div className="min-h-screen bg-green-50 flex flex-col items-center p-4 text-gray-800">
@@ -556,6 +600,7 @@ if (risultato === false) {
                 >
                   {isLoading ? 'Invio...' : 'Invia Dati'}
                 </button>
+                
               </form>
             )}
           </>
@@ -570,10 +615,18 @@ if (risultato === false) {
     INVIA DATI
   </button>
   <p className="text-sm text-gray-700 mt-1">
-    INVIA DATI E' DA UTILIZZARE SOLTANTO SE VIENE VISUALIZZATO IL MESSAGGIO "ALCUNI DATI OFFLINE NON SONO STATI INVIATI".
+    INVIA DATI E' DA UTILIZZARE SOLTANTO SE VIENE VISUALIZZATO IL MESSAGGIO "ALCUNI DATI OFFLINE NON SONO STATI INVIATI"g.
   </p>
 
       </div>
+     <button
+ // onClick={downloadPresenze}
+ // className="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded mt-2"
+>
+ 
+</button>
+
+
     </div>
   );
 };
