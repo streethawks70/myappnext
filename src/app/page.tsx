@@ -66,7 +66,7 @@ const Home = () => {
 
   const sheetUrls: Record<string, string> = {
     'Distretto 1': 'https://script.google.com/macros/s/AKfycbyZfVE8nYFQ_finiOyVc3WJagoPSQf8dtX0dsDhcYfVRiCjqhwNqM9krxpiMdGQIf5JZg/exec',
-    'Distretto 2': 'https://script.google.com/macros/s/AKfycbypH8yFYfN8anr5S_cswx1nl9Nutp6vjIPV-CSiYlTzuA6j5hOqZlcjHxcpOez_ss8M5A/exec',
+    'Distretto 2': 'https://script.google.com/macros/s/AKfycbwrUO09tFPgZDFWR8Gsz-U144__0aECU3Ok9n-kPR5K5VQPv3fyd5yqDq4PU4oqJUBmzw/exec',
     'Distretto 3': 'https://script.google.com/macros/s/AKfycbzsJok6SIe7JY9hP8z2DF66pGesdtqv1rFcmCJ3437w-WnRaaO5ebcWfbhnd_FynlVR/exec',
     'Distretto 4': 'https://script.google.com/macros/s/AKfycbzz_Zm8ezcdA0TkgaNt4OLVvMseC4TD8-mi0ExVgcmGsk9L70XFRcMcJ6zMS6dXnWj7AQ/exec',
     'Distretto 5': 'https://script.google.com/macros/s/AKfycbyu_nl4bIkaybBunDavAJLmMZz6FJpNn3jB7fe7RyVY-Q_FSstc8eghxGW3qxE4cWBg/exec',
@@ -77,8 +77,8 @@ const Home = () => {
     'Distretto 10': 'https://script.google.com/macros/s/AKfycbwm5i-hnm8a0-iez_Z23eFdIcT4KRweq9iLEQBNIV5cMq37bB5CEG3kiUX9wQD2Tzt2/exec',
     'Distretto 11': 'https://script.google.com/macros/s/AKfycbwlL6JsZHfO4z3okPOZTx5bTeZM0ZkU_7P8jl7vtSL0IALK-5_kHYUz__8JaMea7gYw/exec',
     'Distretto 12': 'https://script.google.com/macros/s/AKfycby3fuDsAYPQI5ulosjgDF2v360_FxGeKqzEkax8Yp-MwCrLoZ2qKTzdcaekE4Kb3hO0/exec',
-    'Distretto 13': 'https://script.google.com/macros/s/AKfycbxCrtzlrPANKMXZn3zon9d8jeQ2s33Gs48I7lbinFBHVdxavLJhMPdrEMRqv_-WjGzm8w/exec',
-     'Distretto 14': 'https://script.google.com/macros/s/AKfycbx0ysZQmfSRLBLgfhoyvBCYl-jvSPN5VuOmXa0N2CVLY5oGqjIDDcLA3RwyjZXNFy50Sw/exec',
+    'Distretto 13': 'https://script.google.com/macros/s/AKfycbwjx44HiX5gfbMiAy0z4vwmyNo3GQSS8Y5JdQgRZFZPAu-XUaVGZ71zQXBzw5RN_NY52w/exec',
+     'Distretto 14': 'https://script.google.com/macros/s/AKfycbx5DiiPDiwwScGHOEego4Avcd99jHXHfvpl1m0CnaBOVF4PfO0MSAsv6bu7XU1-y9gxSQ/exec',
   };
 
   useEffect(() => {

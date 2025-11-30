@@ -15,7 +15,7 @@ export async function GET(request: Request) {
 
     const DISTRETTI_ID_MAP: Record<string, string> = {
       'Distretto 1': '1n0CP_I7xCGr2RiFgvrmai5Zt-HHFbekhrNHabKUVUco',
-      'Distretto 2': '1-id-google-sheet-distretto-2',
+      'Distretto 2': '1rkNIing2Xl6Ux3u1W7OOB0QbwRPWNDjCy-K1gCTenXY',
       'Distretto 3': '1TUp9oKn0Pdlctbzhm1G_on4fwunqVOaUFtBQXfjgqPA',
       'Distretto 4': '18GzAtWxeMCG6tRXqbmzND6QQmHZkW9RiWObE4-G_pAk',
       'Distretto 5': '1YhBdp5vSY3wIzZq8r64LLmBGMkRird1cd5gathcxiOo',

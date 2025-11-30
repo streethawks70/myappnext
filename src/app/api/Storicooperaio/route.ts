@@ -5,7 +5,7 @@ import * as XLSX from "xlsx";
 // Mappa distretto → cartella Drive
 const folderMap: Record<string, string> = {
   distretto1: "1-BKLFgFRaWNd67XCP25jxB2ICuOTZ2P_",
-  distretto2: "ID_CARTELLA_2",
+  distretto2: "1HTRY6NqQgvdtqraszROFM3z-9Ox0KGFP",
   distretto3: "1nDLemNiIUeuc9cLflFK77nv4SdE7n7uB",
   distretto4: "1HcU66INaehOOE2qEK3T4LTgzM2zlUaPz",
   distretto5: "1EIZ-VuqpeSSZYrGSBvUdQJGopLQJOk8f",

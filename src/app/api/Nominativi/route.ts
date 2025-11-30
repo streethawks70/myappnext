@@ -3,7 +3,7 @@ import { google } from "googleapis";
 
 const sheetMap: Record<string, string> = {
   distretto1: "1n0CP_I7xCGr2RiFgvrmai5Zt-HHFbekhrNHabKUVUco",
-  distretto2: "ID_GOOGLE_SHEET_DISTRETTO_2",
+  distretto2: "1rkNIing2Xl6Ux3u1W7OOB0QbwRPWNDjCy-K1gCTenXY",
   distretto3: "1TUp9oKn0Pdlctbzhm1G_on4fwunqVOaUFtBQXfjgqPA",
   distretto4: "18GzAtWxeMCG6tRXqbmzND6QQmHZkW9RiWObE4-G_pAk",
   distretto5: "1YhBdp5vSY3wIzZq8r64LLmBGMkRird1cd5gathcxiOo",
