@@ -191,6 +191,17 @@ export default function MappaLeaflet({
       default: return iconAssente;
     }
   };
+  // ✅ Funzione per la classe di colore del testo nella sidebar
+  const scegliClasseColore = (stato: Posizione['stato']): string => {
+    switch (stato) {
+      case 'presente': return 'text-green-600'; // Verde
+      case 'assente': return 'text-gray-600';   // Grigio
+      case 'ferie': return 'text-yellow-600';  // Giallo/Arancio
+      case 'malattia': return 'text-red-600';   // Rosso
+      case 'permessi': return 'text-blue-600';  // Blu
+      default: return 'text-gray-600';
+    }
+  };
 
   return (
     <div className="flex h-full w-full">
@@ -206,7 +217,8 @@ export default function MappaLeaflet({
                   onClick={() => setSelezionatoInterno(r)}
                   className="text-sm w-full text-left"
                 >
-                  <span className="font-bold">{r.nome}</span> <br />
+                 <span className={`font-bold ${scegliClasseColore(r.stato)}`}>{r.nome}</span> <br />
+                  Distretto:{r.distretto}<br/>
                   Stato: {r.stato}<br />
                   Comune: {r.comune}<br />
                   Matricola: {r.matricola}<br />
@@ -268,6 +280,7 @@ export default function MappaLeaflet({
               >
                 <div>
                   <strong>{r.nome}</strong> <br />
+                  Distretto :{r.distretto}<br/>
                   Stato: {r.stato}<br />
                   Comune: {r.comune}<br />
                   Matricola: {r.matricola}<br />

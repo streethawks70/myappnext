@@ -5,6 +5,7 @@ import { useEffect, useState, useMemo } from "react";
 import dynamic from "next/dynamic";
 import type { Posizione } from "@/components/MappaLeaflet";
 import Link from 'next/link'; 
+import DistrettoSelector from "@/components/DistrettoSelector";
 
 const MappaLeafletComponent = dynamic(() => import("@/components/MappaLeaflet"), { ssr: false });
 
@@ -50,6 +51,8 @@ export default function MappaPage() {
                direttore_lavori:r.direttore_lavori || "",
                chilometri_percorsi:r.chilometri_percorsi ||"",
                data:r.data ||"",
+               distretto:r.distretto ||"",
+               
                
             };
           });
