@@ -30,28 +30,63 @@ export default function MappaPage() {
         setLoading(true);
         const res = await fetch(`/api/dati?email=${email}&password=${password}&distretto=${distretto}`);
         const json = await res.json();
+        json.forEach((r: any) => {
+  console.log("DEBUG RIGA:", r.nominativo, r["Donazione sangue"]);
+});
 
         const conCoordinate = json
           .filter((r: any) => r.posizione)
           .map((r: any) => {
+            // console.log("DEBUG STATO:", r.nominativo, "→", r.stato);
             const [lat, lng] = r.posizione.split(",").map((s: string) => parseFloat(s.trim()));
             return {
               nome: r.nominativo,
               lat,
               lng,
-              stato: r.stato?.toLowerCase() as
-                | "presente"
-                | "assente"
-                | "ferie"
-                | "malattia"
-                | "permessi"
-                | undefined,
+            stato: (() => {
+  // Se la colonna L (cassa integrazione) contiene un valore → è cassa integrazione
+  if (r.cassa_int && r.cassa_int.toString().trim() !== "") {
+    return "cassa_integrazione";
+  }
+
+  // Se la colonna J (donazione sangue) contiene un valore → è donazione sangue
+  if (r.donazione_sangue && r.donazione_sangue.toString().trim() !== "") {
+    return "donazione_sangue";
+  }
+
+  // Se la colonna i (donazione sangue) contiene un valore → è infortunio
+  if (r.infortunio && r.infortunio.toString().trim() !== "") {
+    return "infortunio";
+  }
+  // Se la colonna k (permesso sindacale) contiene un valore → è permesse sindacale
+  if (r.permesso_sind && r.permesso_sind.toString().trim() !== "") {
+    return "permesso_sindacale";
+  }
+  // Altrimenti usa lo stato normale
+  const s = r.stato ? r.stato.toString().trim().toLowerCase() : "";
+
+  return (s || "assente") as
+    | "presente"
+    | "assente"
+    | "ferie"
+    | "malattia"
+    | "permessi"
+    | "cassa_integrazione"
+    | "donazione_sangue"
+    | "infortunio"
+    |"permesso_sindacale";
+})(),
+
+
+
               comune: r.comune || "",
                matricola: r.matricola || "",
                direttore_lavori:r.direttore_lavori || "",
                chilometri_percorsi:r.chilometri_percorsi ||"",
                data:r.data ||"",
                distretto:r.distretto ||"",
+      
+      
                
                
             };
@@ -89,6 +124,10 @@ export default function MappaPage() {
       ferie: 0,
       malattia: 0,
       permessi: 0,
+      cassa_integrazione: 0,
+      donazione_sangue : 0,
+      infortunio :0,
+      permesso_sindacale:0,
     };
     for (const p of posizioniFiltrate) {
       if (p.stato && counts[p.stato] !== undefined) {
@@ -123,6 +162,10 @@ export default function MappaPage() {
           <option value="ferie">Ferie</option>
           <option value="malattia">Malattia</option>
           <option value="permessi">Permessi</option>
+          <option value="cassa_integrazione">Cassa_integrazione</option>
+          <option value="donazione_sangue">Donazione_sangue</option>
+          <option value="infortunio">infortunio</option>
+          <option value="permesso_sindacale">permesso_sindacale</option>
         </select>
 
         <select
@@ -154,6 +197,18 @@ export default function MappaPage() {
         </span>
         <span className="px-3 py-1 bg-blue-100 text-blue-800 rounded-full">
           Permessi: {contatori.permessi}
+        </span>
+         <span className="px-3 py-1 bg-violet-100 text-violet-800 rounded-full">
+          Cassa_integrazione: {contatori.cassa_integrazione}
+        </span>
+         <span className="px-3 py-1 bg-orange-100 text-orange-400 rounded-full">
+          Donazione_sangue: {contatori.donazione_sangue}
+        </span>
+         <span className="px-3 py-1 bg-pink-100 text-pink-400 rounded-full">
+          infortunio: {contatori.infortunio}
+        </span>
+        <span className="px-3 py-1 bg-orange-100 text-orange-800 rounded-full">
+          permesso_sindacale: {contatori.permesso_sindacale}
         </span>
       </div>
       <div className="mb-2 flex items-center space-x-1 text-sm">

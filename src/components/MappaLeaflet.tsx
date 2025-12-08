@@ -11,13 +11,15 @@ export type Posizione = {
   nome: string;
   lat: number;
   lng: number;
-  stato: 'presente' | 'assente' | 'ferie' | 'malattia' | 'permessi';
+  stato: 'presente' | 'assente' | 'ferie' | 'malattia' | 'permessi'|'cassa_integrazione'|'donazione_sangue'|'infortunio'|'permesso_sindacale';
   comune: string;
   matricola: string;
   direttore_lavori: string;
   chilometri_percorsi: string;
   data: string;
   distretto:string,
+  
+  
 };
 
 type Props = {
@@ -44,6 +46,10 @@ const iconFerie = createIcon('yellow');
 const iconMalattia = createIcon('red');
 const iconPermessi = createIcon('blue');
 const iconPartenza = createIcon('cyan');
+const iconCassa_integrazione = createIcon('orange');
+const iconDonazione_sangue = createIcon('purple');
+const iconInfortunio = createIcon('purple');
+const iconPermesso_sindacale = createIcon('purple');
 
 export default function MappaLeaflet({
   posizioni,
@@ -188,6 +194,10 @@ export default function MappaLeaflet({
       case 'ferie': return iconFerie;
       case 'malattia': return iconMalattia;
       case 'permessi': return iconPermessi;
+      case 'cassa_integrazione':return iconCassa_integrazione;
+      case 'donazione_sangue':return iconDonazione_sangue;
+      case 'infortunio':return iconInfortunio;
+      case 'permesso_sindacale':return iconPermesso_sindacale;
       default: return iconAssente;
     }
   };
@@ -199,6 +209,10 @@ export default function MappaLeaflet({
       case 'ferie': return 'text-yellow-600';  // Giallo/Arancio
       case 'malattia': return 'text-red-600';   // Rosso
       case 'permessi': return 'text-blue-600';  // Blu
+      case 'cassa_integrazione': return 'text-orange-600';  // Blu
+      case 'donazione_sangue': return 'text-purple-600';  // Blu
+      case 'infortunio': return 'text-purple-600';  // Blu
+      case 'permesso_sindacale': return 'text-purple-600';  // Blu
       default: return 'text-gray-600';
     }
   };
@@ -224,6 +238,8 @@ export default function MappaLeaflet({
                   Matricola: {r.matricola}<br />
                   Direttore lavori: {r.direttore_lavori}<br />
                   Km percorsi: {r.chilometri_percorsi}
+
+  
                 </button>
               </li>
             ))}
@@ -286,6 +302,8 @@ export default function MappaLeaflet({
                   Matricola: {r.matricola}<br />
                   Direttore lavori: {r.direttore_lavori}<br />
                   Km percorsi: {r.chilometri_percorsi}
+    
+    
                 </div>
               </Popup>
               <Tooltip direction="top" offset={[0, -10]} opacity={0.9}>
