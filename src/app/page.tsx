@@ -563,6 +563,7 @@ if (risultato === false) {
                         <option value="CONGEDO PARENTALE">CONGEDO PARENTALE</option>
                         <option value="RIPOSO VEDETTE">RIPOSO VEDETTE</option>
                         <option value="PERMESSO SINDACALE">PERMESSO SINDACALE</option>
+                         <option value="PERMESSO DI SERVIZIO AZIENDALE">PERMESSO DI SERVIZIO AZIENDALE</option>
                       </select>
                     </div>
 

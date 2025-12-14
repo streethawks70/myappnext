@@ -82,6 +82,26 @@ export default function StoricoOperaio() {
       .finally(() => setLoading(false));
   }, [matricola, mese, distretto]);
    
+  const scaricaExcel = async () => {
+  if (!storico || storico.length === 0) {
+    alert("Nessun dato da scaricare");
+    return;
+  }
+  //SCARICA EXEL
+  const XLSX = await import("xlsx");
+
+  // Lo storico è già un array di oggetti → perfetto per json_to_sheet
+  const ws = XLSX.utils.json_to_sheet(storico);
+
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, "Storico Operaio");
+
+  XLSX.writeFile(
+    wb,
+    `storico_operaio_${matricola}_${mese}.xlsx`
+  );
+};
+
 
   return (
     <div className="p-4 space-y-4">
@@ -147,6 +167,15 @@ export default function StoricoOperaio() {
       {error && <p className="text-red-600">{error}</p>}
       {loading && <p>Caricamento...</p>}
       {!loading && storico.length === 0 && !error && matricola && <p>Nessun dato trovato.</p>}
+      {storico.length > 0 && (
+  <button
+    onClick={scaricaExcel}
+    className="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-5 rounded transition"
+  >
+    ⬇️ Scarica Excel
+  </button>
+)}
+
 
       {/* Tabella storico */}
       {storico.length > 0 && (

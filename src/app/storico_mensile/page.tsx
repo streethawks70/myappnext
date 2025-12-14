@@ -31,6 +31,55 @@ export default function StoricoMensilePage() {
       setLoading(false);
     }
   };
+  //scarica exel
+ const scaricaExcel = async () => {
+  if (!dati || dati.length === 0) {
+    alert("Nessun dato da scaricare");
+    return;
+  }
+
+  const XLSX = await import("xlsx");
+
+  const giorni = Array.from({ length: 31 }, (_, i) => (i + 1).toString());
+  const permessi = [
+    "ferie",
+    "malattia",
+    "permessiRetribuiti",
+    "art9",
+    "art51",
+    "legge104",
+    "infortunio",
+    "ore_mensili",
+  ];
+
+  const datiExport = dati.map((r) => {
+    const row: any = {
+      nominativo: r.nominativo ?? "",
+      matricola: r.matricola ?? "",
+    };
+
+    // giorni
+    giorni.forEach((g) => {
+      row[g] = r[g] ?? "";
+    });
+
+    // permessi
+    permessi.forEach((p) => {
+      row[p] = r[p] ?? "";
+    });
+
+    return row;
+  });
+
+  const headers = ["nominativo", "matricola", ...giorni, ...permessi];
+
+  const ws = XLSX.utils.json_to_sheet(datiExport, { header: headers });
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, "Storico Mensile");
+
+  XLSX.writeFile(wb, `storico_${distretto}_${mese}.xlsx`);
+};
+
 
   useEffect(() => {
     fetchDati();
@@ -103,6 +152,14 @@ export default function StoricoMensilePage() {
            RITORNA A STORICO MENSILITA'
           </button>
         </Link>
+        <div>
+        <button
+    onClick={scaricaExcel}
+    className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg shadow-md transition"
+  >
+    📥 Scarica Excel
+  </button>
+</div>
 
       {/* TABELLA */}
       {loading ? (
