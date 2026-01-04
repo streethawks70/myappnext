@@ -25,6 +25,7 @@ export async function GET(request: Request) {
       'Distretto 9': '1UZyVa5i-r3uxdZ7tos1bOHkm2g-YVXBrgCrmXviEpgw',
       'Distretto 10': '1oFsm3ZlAzFyMF1LkGlewNiUjBjK2Qi1KhdEAJk0sVW8',
       'Distretto 11': '1-jWjnButxLpJEOr8AxKaY8cH57J2IOgU9S5fzV0npJw',
+      'CAPI-CANTIERE':'1_SI8GpuVirQCiWOhnbR_Qj8Sr8e7zbk16caAAhP1Sn0',
     };
 
     const sheetId = DISTRETTI_ID_MAP[distretto];
