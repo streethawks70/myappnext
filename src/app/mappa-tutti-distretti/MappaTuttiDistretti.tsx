@@ -9,7 +9,7 @@ const MappaLeafletComponent = dynamic(() => import("@/components/MappaLeaflet"),
   ssr: false,
 });
 
-type Stato = "presente" | "assente" | "ferie" | "malattia" | "permessi";
+type Stato = "presente" | "assente" | "ferie" | "malattia" | "permessi"|"cassa_integrazione";
 
 interface PosizioneDistretto {
   latitudine: number;
@@ -42,6 +42,11 @@ export default function MappaTuttiDistretti() {
   const [filtroNome, setFiltroNome] = useState("");
   const [filtroStato, setFiltroStato] = useState<Stato | "">("");
   const [filtroComune, setFiltroComune] = useState("");
+  const [filtroDirettore, setFiltroDirettore] = useState("");
+
+  // 🧭 Stato aggiunto: per centrare mappa una sola volta
+  const [centraMappa, setCentraMappa] = useState<{ lat: number; lng: number } | null>(null);
+  const [haCentrato, setHaCentrato] = useState(false);
 
   useEffect(() => {
     const e = searchParams.get("email") || "";
@@ -57,14 +62,14 @@ export default function MappaTuttiDistretti() {
     let primoCaricamento = true;
 
     const caricaDati = async () => {
-      if (!primoCaricamento) setAggiornamento(true);
+      if (!primoCaricamento) setAggiornamento(false);
 
       try {
         const res = await fetch(`/api/tutti-distretti?email=${email}&password=${password}`);
         const json = await res.json();
 
         const dati: PosizioneDistretto[] = [];
-        const statiValidi = ["presente", "assente", "ferie", "malattia", "permessi"];
+        const statiValidi = ["presente", "assente", "ferie", "malattia", "permessi","cassa_integrazione"];
 
         Object.entries(json).forEach(([distretto, nominativi]) => {
           if (Array.isArray(nominativi)) {
@@ -94,7 +99,6 @@ export default function MappaTuttiDistretti() {
           }
         });
 
-        // ✅ Aggiorna dati senza far sparire la mappa
         if (dati.length > 0) {
           setPosizioni(dati);
         }
@@ -146,7 +150,7 @@ export default function MappaTuttiDistretti() {
 
   // 🔢 Contatori per distretto
   const contatori = useMemo(() => {
-    const statiValidi = ["presente", "assente", "ferie", "malattia", "permessi"] as const;
+    const statiValidi = ["presente", "assente", "ferie", "malattia", "permessi","cassa_integrazione"] as const;
     type Stato = typeof statiValidi[number];
     const countsPerDistretto: Record<string, Record<Stato, number>> = {};
 
@@ -157,6 +161,7 @@ export default function MappaTuttiDistretti() {
         ferie: 0,
         malattia: 0,
         permessi: 0,
+        cassa_integrazione:0,
       };
       if (Array.isArray(nominativi)) {
         nominativi.forEach((n) => {
@@ -168,7 +173,7 @@ export default function MappaTuttiDistretti() {
     return countsPerDistretto;
   }, [datiPerDistretto]);
 
-  // 🔍 Filtri attivi
+  // 🔍 Filtri
   const datiFiltrati = useMemo(() => {
     return Object.fromEntries(
       Object.entries(datiPerDistretto).map(([distretto, nominativi]) => [
@@ -177,15 +182,36 @@ export default function MappaTuttiDistretti() {
           const matchNome = n.nominativo.toLowerCase().includes(filtroNome.toLowerCase());
           const matchStato = !filtroStato || n.stato === filtroStato;
           const matchComune = !filtroComune || n.comune.toLowerCase().includes(filtroComune.toLowerCase());
-          return matchNome && matchStato && matchComune;
+          const matchDirettore =
+            !filtroDirettore || n.direttore_lavori.toLowerCase() === filtroDirettore.toLowerCase();
+          return matchNome && matchStato && matchComune && matchDirettore;
         }),
       ])
     );
-  }, [datiPerDistretto, filtroNome, filtroStato, filtroComune]);
+  }, [datiPerDistretto, filtroNome, filtroStato, filtroComune, filtroDirettore]);
 
   const comuniUnici = useMemo(() => {
     return Array.from(new Set(posizioni.map((p) => p.comune))).sort();
   }, [posizioni]);
+
+  const direttoriUnici = useMemo(() => {
+    return Array.from(
+      new Set(posizioni.map((p) => p.direttore_lavori?.trim()).filter((d) => d && d.length > 0))
+    )
+      .sort((a: string, b: string) => a.localeCompare(b))
+      .map(String);
+  }, [posizioni]);
+
+  // ⏱ Disattiva centraMappa dopo un secondo
+  useEffect(() => {
+    if (centraMappa && !haCentrato) {
+      const timer = setTimeout(() => {
+        setCentraMappa(null);
+        setHaCentrato(true);
+      }, 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [centraMappa, haCentrato]);
 
   return (
     <div className="flex h-screen">
@@ -218,6 +244,10 @@ export default function MappaTuttiDistretti() {
                   <span className="text-blue-500 font-semibold">Permessi</span>
                   <span>{contatori[distretto]?.permessi ?? 0}</span>
                 </div>
+                 <div className="flex justify-between">
+                  <span className="text-blue-500 font-semibold"> Cassa_integrazione</span>
+                  <span>{contatori[distretto]?.cassa_integrazione ?? 0}</span>
+                </div>
               </div>
             </div>
           ))}
@@ -246,6 +276,7 @@ export default function MappaTuttiDistretti() {
               <option value="ferie">Ferie</option>
               <option value="malattia">Malattia</option>
               <option value="permessi">Permessi</option>
+              <option value="cassa_integrazione">Cassa_integrazione</option>
             </select>
 
             <select
@@ -260,45 +291,62 @@ export default function MappaTuttiDistretti() {
                 </option>
               ))}
             </select>
+
+            <select
+              className="w-full border rounded p-1 text-xs"
+              value={filtroDirettore}
+              onChange={(e) => setFiltroDirettore(e.target.value)}
+            >
+              <option value="">Tutti i direttori lavori</option>
+              {direttoriUnici.map((dl) => (
+                <option key={dl} value={dl}>
+                  {dl}
+                </option>
+              ))}
+            </select>
           </div>
 
           {Object.entries(datiFiltrati).map(([distretto, nominativi]) => (
             <div key={distretto} className="p-2 bg-white rounded shadow">
               <h3 className="font-semibold">{distretto.toUpperCase()}</h3>
-             <ul className="text-xs mt-1 space-y-1">
-  {Array.isArray(nominativi) &&
-    nominativi.map((n) => {
-      // 🎨 Colore del testo in base allo stato
-      const statoColor =
-        n.stato === "presente"
-          ? "text-green-600"
-          : n.stato === "assente"
-          ? "text-black-500"
-          : n.stato === "ferie"
-          ? "text-yellow-500"
-          : n.stato === "permessi"
-          ? "text-blue-500"
-          : n.stato === "malattia"
-          ? "text-red-500"
-          : "text-black";
+              <ul className="text-xs mt-1 space-y-1">
+                {Array.isArray(nominativi) &&
+                  nominativi.map((n) => {
+                    const statoColor =
+                      n.stato === "presente"
+                        ? "text-green-600"
+                        : n.stato === "assente"
+                        ? "text-black-500"
+                        : n.stato === "ferie"
+                        ? "text-yellow-500"
+                        : n.stato === "permessi"
+                        ? "text-blue-500"
+                        : n.stato === "malattia"
+                        ? "text-red-500"
+                         : n.stato === "cassa_integrazione"
+                        ? "text-red-500"
+                        : "text-black";
 
-      return (
-        <li key={`${distretto}-${n.matricola}`}>
-          <button
-            onClick={() => setSelezionato({ ...n, distretto })}
-            className="hover:underline text-left w-full"
-          >
-            <span className={`font-bold ${statoColor}`}>{n.nominativo}</span> –{" "}
-            <span className={`italic ${statoColor}`}>{n.stato}</span> –{" "}
-            <span className="italic">comune: {n.comune}</span> –{" "}
-            <span className="italic">matricola: {n.matricola}</span> –{" "}
-            <span className="italic font-bold ">DL: {n.direttore_lavori }</span>
-          </button>
-        </li>
-      );
-    })}
-</ul>
-
+                    return (
+                      <li key={`${distretto}-${n.matricola}`}>
+                        <button
+                          onClick={() => {
+                            setSelezionato({ ...n, distretto });
+                            setCentraMappa({ lat: n.latitudine, lng: n.longitudine });
+                            setHaCentrato(false);
+                          }}
+                          className="hover:underline text-left w-full"
+                        >
+                          <span className={`font-bold ${statoColor}`}>{n.nominativo}</span> –{" "}
+                          <span className={`italic ${statoColor}`}>{n.stato}</span> –{" "}
+                          <span className="italic">comune: {n.comune}</span> –{" "}
+                          <span className="italic">matricola: {n.matricola}</span> –{" "}
+                          <span className="italic font-bold ">DL: {n.direttore_lavori}</span>
+                        </button>
+                      </li>
+                    );
+                  })}
+              </ul>
             </div>
           ))}
         </div>
@@ -334,9 +382,7 @@ export default function MappaTuttiDistretti() {
             })) as unknown as Posizione[]}
           attivaClickPartenza={false}
           mostraSidebar={false}
-          centraMappa={
-            selezionato ? { lat: selezionato.latitudine, lng: selezionato.longitudine } : null
-          }
+          centraMappa={centraMappa}
           selezionato={selezionato ? { nome: selezionato.nominativo } : null}
         />
       </div>
