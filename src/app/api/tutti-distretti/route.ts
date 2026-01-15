@@ -11,7 +11,7 @@ export async function GET(req: Request) {
 
   try {
     const scriptUrl =
-      "https://script.google.com/macros/s/AKfycby76HkqjMlWtENUDGN4XYEzlXpscKnMQ8vrTFWsRmYShCJOdOvpJXycouVSffrSeju9gw/exec";
+      "https://script.google.com/macros/s/AKfycbzuS5BedVAb1ouGDSaompvv2L57O9h99EZo2TpKV7xU37R1a1eTTcADk-CTc4XYJuatJA/exec";
 
     const res = await fetch(
       `${scriptUrl}?email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`
