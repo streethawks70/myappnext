@@ -78,6 +78,8 @@ export default function MappaLeaflet1({
       ferie: 0,
       malattia: 0,
       permesso: 0,
+      cassa_integrazione:0,
+      infortunio:0,
     };
 
     filtrati.forEach((r) => {
@@ -87,6 +89,8 @@ export default function MappaLeaflet1({
       else if (r.assenza) statoEff = "assente";
       else if (r.permessi && String(r.permessi).trim() !== "") statoEff = "permesso";
       else if (r.malattia) statoEff = "malattia";
+      else if(r.cassa_integrazione) statoEff="cassa_integrazione";
+      else if(r.infortunio) statoEff="infortunio";
       else if (r.ferie && String(r.ferie).includes("-")) {
         const [dal, al] = String(r.ferie).split("-").map((s) => s.trim());
         const oggiDate = new Date(oggi.split("/").reverse().join("-"));
@@ -138,6 +142,12 @@ export default function MappaLeaflet1({
         <div className="flex justify-between items-center text-blue-500 font-semibold">
           🔵 Permessi <span>{contatori.permesso}</span>
         </div>
+         <div className="flex justify-between items-center text-blue-500 font-semibold">
+          🔵 Cassa integrazione <span>{contatori.cassa_integrazione}</span>
+        </div>
+         <div className="flex justify-between items-center text-blue-500 font-semibold">
+          🔵 Infortunio <span>{contatori.infortunio}</span>
+        </div>
       </div>
 
       {/* 🗺️ Mappa */}
@@ -154,6 +164,8 @@ export default function MappaLeaflet1({
           else if (item.assenza) statoEff = "assente";
           else if (item.permessi && String(item.permessi).trim() !== "")
             statoEff = "permesso";
+          else if (item.cassa_integrazione) statoEff = "cassa_integrazione";
+          else if(item.infortunio) statoEff ="infortunio";
           else if (item.malattia) statoEff = "malattia";
           else if (item.ferie && String(item.ferie).includes("-")) {
             const [dal, al] = String(item.ferie)

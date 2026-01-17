@@ -21,6 +21,7 @@ const COLORI_STATO: Record<string, string> = {
   permessi: "purple",
   presente: "green",
   infortunio: "orange",
+  cassa_integrazione:"brown",
 };
 
 export default function DirettorePage() {
@@ -86,6 +87,7 @@ export default function DirettorePage() {
           else if (riga.infortunio && riga.infortunio.trim() !== "") stato = "infortunio";
           else if (riga.ferie && riga.ferie.trim() !== "") stato = "ferie";
           else if (riga.permessi && riga.permessi.trim() !== "") stato = "permessi";
+          else if (riga.cig && riga.cig.trim()  !== "") stato ="cassa_integrazione";
 
           const dataNorm = normalizzaData(riga.data || riga.Data || "");
 
@@ -168,6 +170,7 @@ export default function DirettorePage() {
       Infortunio: r.infortunio ?? "",
       Permessi: r.permessi ?? "",
       Stato: r.stato ?? "",
+      cig:r.cassa_integrazione ?? "",
     }));
 
     const ws = XLSX.utils.json_to_sheet(rows);
@@ -233,7 +236,7 @@ export default function DirettorePage() {
         <table className="min-w-full text-sm text-gray-700 font-medium">
           <thead className="bg-green-100 text-green-900 text-xs uppercase tracking-wide sticky top-0 z-10 shadow">
             <tr>
-              {["Data","Nome","Matricola","Comune","Targa","Presenze","Uscita","Assenze","Ferie","Malattia","Infortunio","Permessi"].map((header, i) => (
+              {["Data","Nome","Matricola","Comune","Targa","Presenze","Uscita","Assenze","Ferie","Malattia","Infortunio","Permessi","cig"].map((header, i) => (
                 <th key={i} className="px-3 py-3 text-center border-b border-green-300 whitespace-nowrap">{header}</th>
               ))}
             </tr>
@@ -253,6 +256,7 @@ export default function DirettorePage() {
                 <td className="px-3 py-2 border-b">{riga.malattia}</td>
                 <td className="px-3 py-2 border-b">{riga.infortunio}</td>
                 <td className="px-3 py-2 border-b">{riga.permessi}</td>
+                 <td className="px-3 py-2 border-b">{riga.cig}</td>
               </tr>
             ))}
           </tbody>
