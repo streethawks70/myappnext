@@ -69,15 +69,15 @@ const Home = () => {
     'Distretto 2': 'https://script.google.com/macros/s/AKfycbwrUO09tFPgZDFWR8Gsz-U144__0aECU3Ok9n-kPR5K5VQPv3fyd5yqDq4PU4oqJUBmzw/exec',
     'Distretto 3': 'https://script.google.com/macros/s/AKfycbzsJok6SIe7JY9hP8z2DF66pGesdtqv1rFcmCJ3437w-WnRaaO5ebcWfbhnd_FynlVR/exec',
     'Distretto 4': 'https://script.google.com/macros/s/AKfycbzz_Zm8ezcdA0TkgaNt4OLVvMseC4TD8-mi0ExVgcmGsk9L70XFRcMcJ6zMS6dXnWj7AQ/exec',
-    'Distretto 5': 'https://script.google.com/macros/s/AKfycbyIN5W6qK4EIbt84a28RsSoBH6I9ELZZdlylr_Ovg2kuHeiigr3EIeH-7Xs8O2C1zcM/exec',
-    'Distretto 6': 'https://script.google.com/macros/s/AKfycbz4f93rnFXOnffim67xhsd1wr44Lp0m_ShJUYQ_UUst14h4_Kc5BgZ0zJzBC7S1cbmp/exec',
+    'Distretto 5': 'https://script.google.com/macros/s/AKfycbzZDvr4FsHa1KCLWJ5QmST_7orluPRsROXJuPAFyP8Rp_cbjE0uyrL7wMX6pQBpl-Mc/exec',
+    'Distretto 6': 'https://script.google.com/macros/s/AKfycbzUEwkkAA2fac-QoA_8NKLPviy2hoCThlGUwxqbtq4oVB-0FoMkvh_Y1d8hWTnihby2/exec',
     'Distretto 7': 'https://script.google.com/macros/s/AKfycbwydxTmlRh9yjO0gM_dezfesi6ydXXad-gVDjf3hmHviYgY7dr4OnMAP7KmA7A1Ogi7Ww/exec',
     'Distretto 8': 'https://script.google.com/macros/s/AKfycbxn8Usq4RmRPsoPUmnU8Qt3orrzwTWltjgYilCjRTEMjhYxbZekGftFrAyXDpzzmR0nHQ/exec',
     'Distretto 9': 'https://script.google.com/macros/s/AKfycbx2vPrIQNj8syqp49yNLg-almN4XGNYuiFI4mZOZUwA0yjS6iUEh83Gsi1aI1YOH6hI4g/exec',
     'Distretto 10': 'https://script.google.com/macros/s/AKfycbwm5i-hnm8a0-iez_Z23eFdIcT4KRweq9iLEQBNIV5cMq37bB5CEG3kiUX9wQD2Tzt2/exec',
     'Distretto 11': 'https://script.google.com/macros/s/AKfycbwlL6JsZHfO4z3okPOZTx5bTeZM0ZkU_7P8jl7vtSL0IALK-5_kHYUz__8JaMea7gYw/exec',
     'Distretto 12': 'https://script.google.com/macros/s/AKfycby3fuDsAYPQI5ulosjgDF2v360_FxGeKqzEkax8Yp-MwCrLoZ2qKTzdcaekE4Kb3hO0/exec',
-    'Distretto 13': 'https://script.google.com/macros/s/AKfycbwjx44HiX5gfbMiAy0z4vwmyNo3GQSS8Y5JdQgRZFZPAu-XUaVGZ71zQXBzw5RN_NY52w/exec',
+    'Distretto 13': 'https://script.google.com/macros/s/AKfycbwyhThR6krdipl7sE8RYmwAB5LBkYYm4bLOLqpHbeizFSIfp3V4ty8U-oFA2Ajb8Hew_Q/exec',
      'Distretto 14': 'https://script.google.com/macros/s/AKfycbx5DiiPDiwwScGHOEego4Avcd99jHXHfvpl1m0CnaBOVF4PfO0MSAsv6bu7XU1-y9gxSQ/exec',
      'Distretto 15':'https://script.google.com/macros/s/AKfycbzkR8Go1lx2wkCyITVLNODmU78HMudrxG0hfJSzh2aGDsvcRB3afl926EZvOgHA-hig8w/exec',
       
@@ -566,6 +566,7 @@ if (risultato === false) {
                         <option value="RIPOSO VEDETTE">RIPOSO VEDETTE</option>
                         <option value="PERMESSO SINDACALE">PERMESSO SINDACALE</option>
                          <option value="PERMESSO DI SERVIZIO AZIENDALE">PERMESSO DI SERVIZIO AZIENDALE</option>
+                          <option value="FESTIVITA SOPPRESSE">FESTIVITA SOPPRESSE</option>
                       </select>
                     </div>
 
@@ -623,7 +624,7 @@ if (risultato === false) {
 
       </div>
      <button
- // onClick={downloadPresenze}
+  //onClick={downloadPresenze}
  // className="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded mt-2"
 >
  
