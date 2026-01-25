@@ -9,7 +9,7 @@ const MappaLeafletComponent = dynamic(() => import("@/components/MappaLeaflet"),
   ssr: false,
 });
 
-type Stato = "presente" | "assente" | "ferie" | "malattia" | "permessi"|"cassa_integrazione";
+type Stato = "presente" | "assente" | "ferie" | "malattia" | "permessi" | "cassa_integrazione";
 
 interface PosizioneDistretto {
   latitudine: number;
@@ -23,6 +23,32 @@ interface PosizioneDistretto {
   chilometri_percorsi: string;
   data?: string;
 }
+
+// 🆕 Tipi per la tabella dei fogli
+type RigaPresenzeTabella = {
+  distretto: string;
+  data: string;
+  nominativo: string;
+  matricola: string;
+  comune: string;
+  presenze: string;
+  assenze: string;
+  ferie: string;
+  malattia: string;
+  permessi_vari: string;
+  cassa_int: string;
+  festivita: string;
+  uscita: string;
+};
+const statoStylesTabella: Record<Stato, string> = {
+  presente: "bg-green-100 text-green-800",
+  assente: "bg-gray-100 text-gray-700",
+  ferie: "bg-yellow-100 text-yellow-800",
+  malattia: "bg-red-100 text-red-800",
+  permessi: "bg-blue-100 text-blue-800",
+  cassa_integrazione: "bg-purple-100 text-purple-800",
+};
+
 
 export default function MappaTuttiDistretti() {
   const searchParams = useSearchParams();
@@ -48,6 +74,13 @@ export default function MappaTuttiDistretti() {
   const [centraMappa, setCentraMappa] = useState<{ lat: number; lng: number } | null>(null);
   const [haCentrato, setHaCentrato] = useState(false);
 
+  // 🆕 Stati tabella fogli
+  const [righeTabella, setRigheTabella] = useState<RigaPresenzeTabella[]>([]);
+  const [loadingTabella, setLoadingTabella] = useState(false);
+  // 🆕 Filtro ricerca tabella
+const [filtroTabella, setFiltroTabella] = useState("");
+
+
   useEffect(() => {
     const e = searchParams.get("email") || "";
     const p = searchParams.get("password") || "";
@@ -55,7 +88,7 @@ export default function MappaTuttiDistretti() {
     setPassword(p);
   }, [searchParams]);
 
-  // 🔁 Polling ottimizzato
+  // 🔁 Polling dati mappa
   useEffect(() => {
     if (!email || !password) return;
 
@@ -69,7 +102,7 @@ export default function MappaTuttiDistretti() {
         const json = await res.json();
 
         const dati: PosizioneDistretto[] = [];
-        const statiValidi = ["presente", "assente", "ferie", "malattia", "permessi","cassa_integrazione"];
+        const statiValidi = ["presente", "assente", "ferie", "malattia", "permessi", "cassa_integrazione"];
 
         Object.entries(json).forEach(([distretto, nominativi]) => {
           if (Array.isArray(nominativi)) {
@@ -79,9 +112,7 @@ export default function MappaTuttiDistretti() {
               if (isNaN(lat) || isNaN(lng)) return;
 
               const statoNorm = (n.stato || "").toString().trim().toLowerCase();
-              const statoValido = statiValidi.includes(statoNorm)
-                ? (statoNorm as Stato)
-                : "assente";
+              const statoValido = statiValidi.includes(statoNorm) ? (statoNorm as Stato) : "assente";
 
               dati.push({
                 latitudine: lat,
@@ -99,9 +130,7 @@ export default function MappaTuttiDistretti() {
           }
         });
 
-        if (dati.length > 0) {
-          setPosizioni(dati);
-        }
+        if (dati.length > 0) setPosizioni(dati);
 
         const perDistretto: Record<string, PosizioneDistretto[]> = {};
         Object.entries(json).forEach(([distretto, nominativi]) => {
@@ -110,9 +139,7 @@ export default function MappaTuttiDistretti() {
               .filter((n: any) => !isNaN(parseFloat(n.latitudine)) && !isNaN(parseFloat(n.longitudine)))
               .map((n: any) => {
                 const statoNorm = (n.stato || "").toString().trim().toLowerCase();
-                const statoValido = statiValidi.includes(statoNorm)
-                  ? (statoNorm as Stato)
-                  : "assente";
+                const statoValido = statiValidi.includes(statoNorm) ? (statoNorm as Stato) : "assente";
                 return {
                   latitudine: parseFloat(n.latitudine),
                   longitudine: parseFloat(n.longitudine),
@@ -129,9 +156,7 @@ export default function MappaTuttiDistretti() {
           }
         });
 
-        if (Object.keys(perDistretto).length > 0) {
-          setDatiPerDistretto(perDistretto);
-        }
+        if (Object.keys(perDistretto).length > 0) setDatiPerDistretto(perDistretto);
 
         setUltimoAggiornamento(new Date().toLocaleTimeString());
       } catch (err) {
@@ -148,9 +173,44 @@ export default function MappaTuttiDistretti() {
     return () => clearInterval(interval);
   }, [email, password]);
 
+  // 🔁 Polling dati fogli (solo una volta)
+  useEffect(() => {
+    if (!email || !password) return;
+
+    setLoadingTabella(true);
+
+    fetch(`/api/tutti-distretti-fogli?email=${email}&password=${password}`)
+      .then((res) => res.json())
+      .then((json) => {
+        const righe: RigaPresenzeTabella[] = [];
+        Object.entries(json).forEach(([distretto, records]: any) => {
+          records.forEach((r: any) => {
+            righe.push({
+              distretto,
+              data: r.data ?? "",
+              nominativo: r.nominativo ?? "",
+              matricola: r.matricola ?? "",
+              comune: r.comune ?? "",
+              presenze: r.presenze ?? "",
+              assenze: r.assenze ?? "",
+              ferie: r.ferie ?? "",
+              malattia: r.malattia ?? "",
+              permessi_vari: r.permessi_vari ?? "",
+              cassa_int: r.cassa_int ?? "",
+              festivita: r.festivita ?? "",
+              uscita: r.uscita ?? "",
+            });
+          });
+        });
+        setRigheTabella(righe);
+      })
+      .catch(console.error)
+      .finally(() => setLoadingTabella(false));
+  }, [email, password]);
+
   // 🔢 Contatori per distretto
   const contatori = useMemo(() => {
-    const statiValidi = ["presente", "assente", "ferie", "malattia", "permessi","cassa_integrazione"] as const;
+    const statiValidi = ["presente", "assente", "ferie", "malattia", "permessi", "cassa_integrazione"] as const;
     type Stato = typeof statiValidi[number];
     const countsPerDistretto: Record<string, Record<Stato, number>> = {};
 
@@ -161,7 +221,7 @@ export default function MappaTuttiDistretti() {
         ferie: 0,
         malattia: 0,
         permessi: 0,
-        cassa_integrazione:0,
+        cassa_integrazione: 0,
       };
       if (Array.isArray(nominativi)) {
         nominativi.forEach((n) => {
@@ -212,6 +272,27 @@ export default function MappaTuttiDistretti() {
       return () => clearTimeout(timer);
     }
   }, [centraMappa, haCentrato]);
+  // 🔍 Filtro righe tabella (SOLO tabella)
+const righeTabellaFiltrate = useMemo(() => {
+  if (!filtroTabella) return righeTabella;
+
+  return righeTabella.filter((r) =>
+    r.nominativo.toLowerCase().includes(filtroTabella.toLowerCase()) ||
+    r.matricola.toLowerCase().includes(filtroTabella.toLowerCase()) ||
+    r.comune.toLowerCase().includes(filtroTabella.toLowerCase()) ||
+    r.distretto.toLowerCase().includes(filtroTabella.toLowerCase())
+  );
+}, [righeTabella, filtroTabella]);
+const statoDaRiga = (r: RigaPresenzeTabella): Stato | null => {
+  if (r.ferie && r.ferie !== "0") return "ferie";
+  if (r.malattia && r.malattia !== "0") return "malattia";
+  if (r.permessi_vari && r.permessi_vari !== "0") return "permessi";
+  if (r.cassa_int && r.cassa_int !== "0") return "cassa_integrazione";
+  if (r.presenze && r.presenze !== "0") return "presente";
+  return null;
+};
+
+
 
   return (
     <div className="flex h-screen">
@@ -244,7 +325,7 @@ export default function MappaTuttiDistretti() {
                   <span className="text-blue-500 font-semibold">Permessi</span>
                   <span>{contatori[distretto]?.permessi ?? 0}</span>
                 </div>
-                 <div className="flex justify-between">
+                <div className="flex justify-between">
                   <span className="text-blue-500 font-semibold"> Cassa_integrazione</span>
                   <span>{contatori[distretto]?.cassa_integrazione ?? 0}</span>
                 </div>
@@ -323,7 +404,7 @@ export default function MappaTuttiDistretti() {
                         ? "text-blue-500"
                         : n.stato === "malattia"
                         ? "text-red-500"
-                         : n.stato === "cassa_integrazione"
+                        : n.stato === "cassa_integrazione"
                         ? "text-red-500"
                         : "text-black";
 
@@ -351,41 +432,104 @@ export default function MappaTuttiDistretti() {
           ))}
         </div>
       </div>
-
-      {/* Mappa */}
-      <div className="flex-1 relative">
-        {aggiornamento && (
-          <div className="absolute top-3 right-3 bg-yellow-200 text-yellow-800 px-3 py-1 rounded shadow text-xs animate-pulse z-50">
-            🔄 Aggiornamento in corso... ({ultimoAggiornamento})
-          </div>
-        )}
-        {!aggiornamento && ultimoAggiornamento && (
-          <div className="absolute top-3 right-3 bg-green-200 text-green-800 px-3 py-1 rounded shadow text-xs z-50">
-            ✅ Ultimo aggiornamento: {ultimoAggiornamento}
-          </div>
-        )}
-
-        <MappaLeafletComponent
-          posizioni={Object.values(datiFiltrati)
-            .flat()
-            .map((p) => ({
-              nome: p.nominativo,
-              lat: p.latitudine,
-              lng: p.longitudine,
-              stato: p.stato,
-              matricola: p.matricola,
-              distretto: p.distretto,
-              comune: p.comune,
-              direttore_lavori: p.direttore_lavori,
-              chilometri_percorsi: p.chilometri_percorsi,
-              data: p.data ?? "",
-            })) as unknown as Posizione[]}
-          attivaClickPartenza={false}
-          mostraSidebar={false}
-          centraMappa={centraMappa}
-          selezionato={selezionato ? { nome: selezionato.nominativo } : null}
-        />
+       
+     <div className="flex-1 flex flex-col">
+  {/* Mappa */}
+  <div className="flex-1 relative">
+    {aggiornamento && (
+      <div className="absolute top-3 right-3 bg-yellow-200 text-yellow-800 px-3 py-1 rounded shadow text-xs animate-pulse z-50">
+        🔄 Aggiornamento in corso... ({ultimoAggiornamento})
       </div>
+    )}
+    {!aggiornamento && ultimoAggiornamento && (
+      <div className="absolute top-3 right-3 bg-green-200 text-green-800 px-3 py-1 rounded shadow text-xs z-50">
+        ✅ Ultimo aggiornamento: {ultimoAggiornamento}
+      </div>
+    )}
+
+    <MappaLeafletComponent
+      posizioni={Object.values(datiFiltrati)
+        .flat()
+        .map((p) => ({
+          nome: p.nominativo,
+          lat: p.latitudine,
+          lng: p.longitudine,
+          stato: p.stato,
+          matricola: p.matricola,
+          distretto: p.distretto,
+          comune: p.comune,
+          direttore_lavori: p.direttore_lavori,
+          chilometri_percorsi: p.chilometri_percorsi,
+          data: p.data ?? "",
+        })) as unknown as Posizione[]}
+      attivaClickPartenza={false}
+      mostraSidebar={false}
+      centraMappa={centraMappa}
+      selezionato={selezionato ? { nome: selezionato.nominativo } : null}
+    />
+  </div>
+
+  {/* Tabella Presenze */}
+  <div className="h-60 overflow-auto border-t bg-white p-2">
+    <h2 className="font-bold mb-2 text-sm">Presenze – dati da fogli</h2>
+    <input
+  type="text"
+  placeholder="🔍 Cerca in tabella (nominativo, matricola, comune, distretto)"
+  className="mb-2 w-full border rounded p-1 text-xs"
+  value={filtroTabella}
+  onChange={(e) => setFiltroTabella(e.target.value)}
+/>
+
+    {loadingTabella && <div>Caricamento tabella…</div>}
+    <table className="min-w-full text-xs border-collapse">
+      <thead className="bg-gray-100 sticky top-0 z-10">
+        <tr>
+          <th className="border px-1">Distretto</th>
+          <th className="border px-1">Data</th>
+          <th className="border px-1">Nominativo</th>
+          <th className="border px-1">Matricola</th>
+          <th className="border px-1">Comune</th>
+          <th className="border px-1">Presenze</th>
+          <th className="border px-1">Assenze</th>
+          <th className="border px-1">Ferie</th>
+          <th className="border px-1">Malattia</th>
+          <th className="border px-1">Permessi</th>
+          <th className="border px-1">Cassa Int.</th>
+          <th className="border px-1">Festività</th>
+          <th className="border px-1">Uscita</th>
+        </tr>
+      </thead>
+      <tbody>
+       {righeTabellaFiltrate.map((r, i) => (
+
+          <tr key={i} className={i % 2 ? "bg-gray-50" : ""}>
+            <td className="border px-1">{r.distretto}</td>
+            <td className="border px-1">{r.data}</td>
+           <td
+  className={`border px-1 font-semibold ${
+    statoDaRiga(r) ? statoStylesTabella[statoDaRiga(r)!] : ""
+  }`}
+>
+  {r.nominativo}
+</td>
+
+            <td className="border px-1">{r.matricola}</td>
+            <td className="border px-1">{r.comune}</td>
+            <td className="border px-1 text-center">{r.presenze}</td>
+            <td className="border px-1 text-center">{r.assenze}</td>
+            <td className="border px-1 text-center">{r.ferie}</td>
+            <td className="border px-1 text-center">{r.malattia}</td>
+            <td className="border px-1 text-center">{r.permessi_vari}</td>
+            <td className="border px-1 text-center">{r.cassa_int}</td>
+            <td className="border px-1 text-center">{r.festivita}</td>
+            <td className="border px-1 text-center">{r.uscita}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+</div>
+
     </div>
   );
 }

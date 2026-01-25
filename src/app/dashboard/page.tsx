@@ -25,6 +25,7 @@ type RigaDati = {
   festivita: string;
   uscita: string;
   posizione: string;
+  distretto:string;
 };
 
 export default function DashboardPage() {

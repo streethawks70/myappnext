@@ -150,7 +150,8 @@ export async function GET(req: Request) {
     }));
 
     if (tabella.length === 0)
-      return NextResponse.json({ message: "Nessun dato trovato" });
+  return NextResponse.json([]);
+
 
     return NextResponse.json(tabella);
   } catch (err: any) {
