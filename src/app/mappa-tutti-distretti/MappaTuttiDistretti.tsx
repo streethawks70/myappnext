@@ -273,16 +273,27 @@ const [filtroTabella, setFiltroTabella] = useState("");
     }
   }, [centraMappa, haCentrato]);
   // 🔍 Filtro righe tabella (SOLO tabella)
-const righeTabellaFiltrate = useMemo(() => {
-  if (!filtroTabella) return righeTabella;
+ const oggi = useMemo(() => {
+  const d = new Date();
+  const giorno = d.getDate().toString().padStart(2, "0");
+  const mese = (d.getMonth() + 1).toString().padStart(2, "0");
+  const anno = d.getFullYear();
+  return `${giorno}/${mese}/${anno}`;
+}, []);
 
-  return righeTabella.filter((r) =>
-    r.nominativo.toLowerCase().includes(filtroTabella.toLowerCase()) ||
-    r.matricola.toLowerCase().includes(filtroTabella.toLowerCase()) ||
-    r.comune.toLowerCase().includes(filtroTabella.toLowerCase()) ||
-    r.distretto.toLowerCase().includes(filtroTabella.toLowerCase())
-  );
-}, [righeTabella, filtroTabella]);
+
+const righeTabellaFiltrate = useMemo(() => {
+  return righeTabella
+    .filter((r) => r.data === oggi) // ✅ SOLO OGGI
+    .filter((r) =>
+      !filtroTabella ||
+      r.nominativo.toLowerCase().includes(filtroTabella.toLowerCase()) ||
+      r.matricola.toLowerCase().includes(filtroTabella.toLowerCase()) ||
+      r.comune.toLowerCase().includes(filtroTabella.toLowerCase()) ||
+      r.distretto.toLowerCase().includes(filtroTabella.toLowerCase())
+    );
+}, [righeTabella, filtroTabella, oggi]);
+
 const statoDaRiga = (r: RigaPresenzeTabella): Stato | null => {
   if (r.ferie && r.ferie !== "0") return "ferie";
   if (r.malattia && r.malattia !== "0") return "malattia";
