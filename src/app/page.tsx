@@ -1,13 +1,12 @@
 'use client';
-//import '../styles/global.css';
+import '../styles/global.css';
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import DistrettoSelector from '../components/DistrettoSelector';
 import SquadraSelector from '../components/SquadraSelector';
 import MenuPresenza from '../components/MenuPresenza';
 import { Edit } from "lucide-react";
-import jsPDF from "jspdf";
-import autoTable from "jspdf-autotable";
+
 
 
 const TabellaPresenze = ({ presenze }: { presenze: any[] }) => {
@@ -373,34 +372,30 @@ if (risultato === false) {
     return;
   }
 
-  const doc = new jsPDF();
-
-  doc.setFontSize(16);
-  doc.text("Presenze Giornaliere - Calabria Verde", 14, 15);
-
-  const tableData = presenze.map(p => [
+  // Intestazioni CSV
+  const headers = ["Nome", "Tipo Presenza", "Data", "Ora Firma"];
+  const rows = presenze.map(p => [
     p.nome,
     p.tipo,
     p.data,
     p.oraFirma || "-"
   ]);
 
-  autoTable(doc, {
-    startY: 25,
-    head: [["Nome", "Tipo Presenza", "Data", "Ora Firma"]],
-    body: tableData,
-    styles: {
-      fontSize: 9,
-    },
-    headStyles: {
-      fillColor: [22, 163, 74], // verde
-      textColor: 255,
-    },
-  });
+  // Costruisci CSV
+  const csvContent =
+    [headers, ...rows]
+      .map(row => row.map(cell => `"${cell}"`).join(",")) // wrap ogni cella tra ""
+      .join("\n");
 
-  doc.save("presenze_giornaliere.pdf");
+  // Crea blob e link per download
+  const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "presenze_giornaliere.csv";
+  a.click();
+  URL.revokeObjectURL(url);
 };
-
 
 
   return (
@@ -633,12 +628,13 @@ if (risultato === false) {
   </p>
 
       </div>
-   <button
+  <button
  // onClick={downloadPresenze}
-  //className="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded mt-4 w-full"
+ // className="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded mt-4 w-full"
 >
-  
+  /
 </button>
+
 
 
 
