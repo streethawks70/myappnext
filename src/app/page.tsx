@@ -1,5 +1,5 @@
 'use client';
-import '../styles/global.css';
+//import '../styles/global.css';
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import DistrettoSelector from '../components/DistrettoSelector';
