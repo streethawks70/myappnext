@@ -174,39 +174,50 @@ const [filtroTabella, setFiltroTabella] = useState("");
   }, [email, password]);
 
   // 🔁 Polling dati fogli (solo una volta)
-  useEffect(() => {
-    if (!email || !password) return;
+ useEffect(() => {
+  if (!email || !password) return;
 
+  const caricaTabella = async () => {
     setLoadingTabella(true);
+    try {
+      const res = await fetch(
+        `/api/tutti-distretti-fogli?email=${email}&password=${password}`
+      );
+      const json = await res.json();
 
-    fetch(`/api/tutti-distretti-fogli?email=${email}&password=${password}`)
-      .then((res) => res.json())
-      .then((json) => {
-        const righe: RigaPresenzeTabella[] = [];
-        Object.entries(json).forEach(([distretto, records]: any) => {
-          records.forEach((r: any) => {
-            righe.push({
-              distretto,
-              data: r.data ?? "",
-              nominativo: r.nominativo ?? "",
-              matricola: r.matricola ?? "",
-              comune: r.comune ?? "",
-              presenze: r.presenze ?? "",
-              assenze: r.assenze ?? "",
-              ferie: r.ferie ?? "",
-              malattia: r.malattia ?? "",
-              permessi_vari: r.permessi_vari ?? "",
-              cassa_int: r.cassa_int ?? "",
-              festivita: r.festivita ?? "",
-              uscita: r.uscita ?? "",
-            });
+      const righe: RigaPresenzeTabella[] = [];
+      Object.entries(json).forEach(([distretto, records]: any) => {
+        records.forEach((r: any) => {
+          righe.push({
+            distretto,
+            data: r.data ?? "",
+            nominativo: r.nominativo ?? "",
+            matricola: r.matricola ?? "",
+            comune: r.comune ?? "",
+            presenze: r.presenze ?? "",
+            assenze: r.assenze ?? "",
+            ferie: r.ferie ?? "",
+            malattia: r.malattia ?? "",
+            permessi_vari: r.permessi_vari ?? "",
+            cassa_int: r.cassa_int ?? "",
+            festivita: r.festivita ?? "",
+            uscita: r.uscita ?? "",
           });
         });
-        setRigheTabella(righe);
-      })
-      .catch(console.error)
-      .finally(() => setLoadingTabella(false));
-  }, [email, password]);
+      });
+
+      setRigheTabella(righe);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoadingTabella(false);
+    }
+  };
+
+  caricaTabella(); // primo caricamento
+  const interval = setInterval(caricaTabella, 40000); // 🔴 stesso intervallo della mappa
+  return () => clearInterval(interval);
+}, [email, password]);
 
   // 🔢 Contatori per distretto
   const contatori = useMemo(() => {
