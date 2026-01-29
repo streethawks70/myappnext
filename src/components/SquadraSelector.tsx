@@ -18,6 +18,7 @@ const SquadraSelector = ({
   const [squadre, setSquadre] = useState<Squadra[]>([]);
   const [matricolaInput, setMatricolaInput] = useState('');
   const [squadraTrovata, setSquadraTrovata] = useState<Squadra | null>(null);
+  const [valore, setValore] = useState("");
 
   useEffect(() => {
     if (!distretto) return;
@@ -93,7 +94,9 @@ const SquadraSelector = ({
           onChange={() => handlePersonaSelect(operaio)}
         />
         👷 {operaio}
+        
       </label>
+      
     ))}
   </div>
 )}

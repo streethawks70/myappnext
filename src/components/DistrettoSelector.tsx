@@ -16,6 +16,8 @@ const distretti = [
   { nome: 'Distretto 11', file: 'distretto11.txt' },
   { nome: 'Distretto 12', file: 'distretto12.txt' },
   { nome: 'Distretto 13', file: 'distretto13.txt' },
+  { nome: 'Distretto 14', file: 'distretto14.txt' },
+   { nome: 'Distretto 15', file: 'distretto15.txt' },
   { nome: 'Capo Cantiere', file: '' }, // ✅ Aggiunta opzione speciale
   {nome:'Servizio-custodia',file:''}
 ];
