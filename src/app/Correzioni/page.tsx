@@ -32,6 +32,12 @@ export default function Page() {
   const [emailLogin, setEmailLogin] = useState("");
   const [passwordLogin, setPasswordLogin] = useState("");
   const [loginError, setLoginError] = useState<string | null>(null);
+  const[dataInizio,setDataInizio]=useState("");
+  const[dataFine,setDataFine]=useState("");
+  const [permesso, setPermesso] = useState("");
+  const [oraPermesso, setOraPermesso] = useState("");
+
+
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
@@ -59,7 +65,7 @@ export default function Page() {
     "Distretto 8": "https://script.google.com/macros/s/AKfycbxn8Usq4RmRPsoPUmnU8Qt3orrzwTWltjgYilCjRTEMjhYxbZekGftFrAyXDpzzmR0nHQ/exec",
     "Distretto 9": "https://script.google.com/macros/s/AKfycbx2vPrIQNj8syqp49yNLg-almN4XGNYuiFI4mZOZUwA0yjS6iUEh83Gsi1aI1YOH6hI4g/exec",
     "Distretto 10": "https://script.google.com/macros/s/AKfycbwm5i-hnm8a0-iez_Z23eFdIcT4KRweq9iLEQBNIV5cMq37bB5CEG3kiUX9wQD2Tzt2/exec",
-    "Distretto 13": "https://script.google.com/macros/s/AKfycbxzK5ddO1PPo5PAoK4OY7kEpC2bc7tHV7Cf01w6Tp8jdefDhtHtT2ooZ5iLYSqk5LF0/exec",
+    "Distretto 13": "https://script.google.com/macros/s/AKfycbzNOs1Q4a9YtxbDiYJtL_iusl6URxE-pB4umqW0I6qXpumDw3qOFsrRMHtgjR3JFf9xIw/exec",
     "Distretto 14": "https://script.google.com/macros/s/AKfycbxShFke0iGHahl7bCmvkToUYWI2PBDt-N_Dsr3r1xR1xQqO8UIx3XOKYig1mJ2-IH5-Aw/exec",
   };
 
@@ -72,7 +78,7 @@ export default function Page() {
     "Distretto 8": "distretto8",
     "Distretto 9": "distretto9",
     "Distretto 10": "distretto10",
-    "Distretto 13": "distretto11",
+    "Distretto 13": "distretto13",
     "Distretto 14": "distretto14",
   };
 
@@ -127,33 +133,46 @@ export default function Page() {
   }, [loggedIn, distretto, emailLogin, passwordLogin]);
 
   // ---------------- INVIO CORREZIONE ----------------
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    const url = sheetUrls[distretto];
-    if (!url) {
-      alert("URL del distretto non configurato!");
-      return;
-    }
+const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
+  const url = sheetUrls[distretto];
+  if (!url) {
+    alert("URL del distretto non configurato!");
+    return;
+  }
 
-    const formData = new URLSearchParams();
-    formData.append("action", "correzione");
-    formData.append("nome", nome);
-    formData.append("stato", stato);
+  const formData = new URLSearchParams();
+  formData.append("action", "correzione");
+  formData.append("nome", nome);
+  formData.append("stato", stato);
+
+  if (stato === "Ferie" || stato === "Malattia") {
+  const intervallo = `${dataInizio} - ${dataFine}`;
+  formData.append("valore", intervallo); // invia solo l'intervallo
+  // NON serve aggiungere dataInizio e dataFine separati
+}
+
+  else if (stato === "Permessi Vari") {
+    formData.append("valore", `${permesso} - ${oraPermesso}`);
+  } 
+  else {
     formData.append("valore", valore);
+  }
 
-    try {
-      const res = await fetch(url, {
-        method: "POST",
-        headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        body: formData.toString(),
-      });
-      const text = await res.text();
-      alert(text);
-    } catch (err) {
-      console.error(err);
-      alert("Errore durante la correzione");
-    }
-  };
+  try {
+    const res = await fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: formData.toString(),
+    });
+    const text = await res.text();
+    alert(text);
+  } catch (err) {
+    console.error(err);
+    alert("Errore durante la correzione");
+  }
+};
+
 
   // ---------------- RENDER ----------------
   if (!loggedIn) {
@@ -214,8 +233,93 @@ export default function Page() {
           <option value="Festività">Festività</option>
           <option value="Uscita">Uscita</option>
         </select>
+        {(stato === "Ferie" || stato === "Malattia") && (
+  <div className="flex gap-2">
+    <input
+      type="date"
+      value={dataInizio}
+      onChange={(e) => setDataInizio(e.target.value)}
+      className="border rounded p-2"
+      required
+    />
+    <input
+      type="date"
+      value={dataFine}
+      onChange={(e) => setDataFine(e.target.value)}
+      className="border rounded p-2"
+      required
+    />
+  </div>
+)}
+{stato === "Permessi Vari" && (
+  <div className="flex flex-col gap-3">
 
-        <input type="text" placeholder="Valore" value={valore} onChange={(e) => setValore(e.target.value)} className="border p-2 rounded" required />
+    <div>
+      <label className="block text-sm font-medium mb-1">
+        Seleziona Tipo di Permesso
+      </label>
+      <select
+        value={permesso}
+        onChange={(e) => setPermesso(e.target.value)}
+        required
+        className="border rounded p-2 w-full"
+      >
+        <option value="" disabled>
+          -- Seleziona un permesso --
+        </option>
+        <option value="PERMESSO RETRIBUITO">PERMESSO RETRIBUITO</option>
+        <option value="LEGGE 104">LEGGE 104</option>
+        <option value="ART.20">ART.20</option>
+        <option value="DISTACCAMENTO AIB">DISTACCAMENTO AIB</option>
+        <option value="DISTACCAMENTO CONVENZIONE">DISTACCAMENTO-CONVENZIONE</option>
+        <option value="PERMESSO LUTTO">PERMESSO LUTTO</option>
+        <option value="VISITA MEDICA">VISITA MEDICA</option>
+        <option value="PERMESSO ELETTORALE">PERMESSO ELETTORALE</option>
+        <option value="ART 51">ART 51</option>
+        <option value="PERMESSO CAUSA PIOGGIA">PERMESSO CAUSA PIOGGIA</option>
+        <option value="ATTIVABILE">ATTIVABILE</option>
+        <option value="ASPETTATIVA">ASPETTATIVA</option>
+        <option value="LAVORI DISAGIATI">LAVORI DISAGIATI</option>
+        <option value="CONGEDO PARENTALE">CONGEDO PARENTALE</option>
+        <option value="RIPOSO VEDETTE">RIPOSO VEDETTE</option>
+        <option value="PERMESSO SINDACALE">PERMESSO SINDACALE</option>
+        <option value="PERMESSO DI SERVIZIO AZIENDALE">
+          PERMESSO DI SERVIZIO AZIENDALE
+        </option>
+        <option value="FESTIVITA SOPPRESSE">FESTIVITA SOPPRESSE</option>
+      </select>
+    </div>
+
+    {/* 👇 QUESTO È QUELLO CHE MANCAVA */}
+    <div>
+      <label className="block text-sm font-medium mb-1">
+        Seleziona ora permesso
+      </label>
+      <input
+        type="time"
+        value={oraPermesso}
+        onChange={(e) => setOraPermesso(e.target.value)}
+        required
+        className="border rounded p-2 w-full"
+      />
+    </div>
+
+  </div>
+)}
+
+
+
+       {stato !== "Permessi Vari" && stato !== "Ferie" && stato !== "Malattia" && (
+  <input
+    type="text"
+    placeholder="Valore"
+    value={valore}
+    onChange={(e) => setValore(e.target.value)}
+    className="border p-2 rounded"
+    required
+  />
+)}
+
 
         <button className="bg-blue-600 text-white p-2 rounded">Applica Correzione</button>
       </form>
