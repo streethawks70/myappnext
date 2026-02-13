@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 
-const CUSTODIA_URL = 'https://script.google.com/macros/s/AKfycbyKmCypu6ZVDL9wpeG-WKqQHdIDeZffn8Z68K1VzzaUXBcUgSpseifa02TTSAIkhxVs/exec';
+const CUSTODIA_URL = 'https://script.google.com/macros/s/AKfycbxotYbMafictQ6DYBmfP4w04CKloGg6aFyxofgziF_Yje8-1MvoqqnrMB6GXWarUMm5/exec';
 
 export default function ServizioCustodiaPage() {
   const [matricola, setMatricola] = useState('');
@@ -19,6 +19,11 @@ export default function ServizioCustodiaPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [targa, setTarga] = useState('');
   const [chilometri, setChilometri] = useState('');
+  const [tracking, setTracking] = useState(false);
+const [watchId, setWatchId] = useState<number | null>(null);
+const [posizioni, setPosizioni] = useState<{lat: number; lon: number}[]>([]);
+const [kmGps, setKmGps] = useState(0);
+
 
   async function handleVerifica() {
     if (!matricola.trim()) {
@@ -100,21 +105,44 @@ export default function ServizioCustodiaPage() {
       }
       tipoPermesso = permesso;
     }
+    // Se è PRESENZA → avvia tracking e non inviare ancora
+// Se è PRESENZA → avvia tracking MA continua con invio
+if (tipoPresenza === "Presenza") {
+  if (!tracking) {
+    startTracking();
+  }
+}
+
+
+// Se è USCITA → ferma tracking prima di inviare
+let kmCalcolati = 0;
+
+if (tipoPresenza === "Uscita") {
+  kmCalcolati = stopTracking();
+}
+
   
     const posizione = `${coords.latitude.toFixed(6)},${coords.longitude.toFixed(6)}`;
     //const veicolo = tipoPresenza === 'Uscita' ? `${targa}/${chilometri}` : '';
   
     const fd = new URLSearchParams({
-        matricola,
-        squadra,
-        nome: selezionato,
-        stato: tipoPresenza,
-        tipoPermesso,
-        dataInizio,
-        dataFine,
-        posizione,
-        targa: tipoPresenza === 'Uscita' ? `${targa}/${chilometri} Km` : '',
-      });
+  matricola,
+  squadra,
+  nome: selezionato,
+  stato: tipoPresenza,
+  tipoPermesso,
+  dataInizio,
+  dataFine,
+  posizione,
+  targa: tipoPresenza === 'Uscita'
+    ? `${targa}/${chilometri} Km`
+    : '',
+ kmGps: tipoPresenza === 'Uscita'
+  ? kmCalcolati.toFixed(2)
+  : '',
+
+});
+
       
       
   
@@ -135,6 +163,78 @@ export default function ServizioCustodiaPage() {
       setIsLoading(false);
     }
   }
+  function calcolaDistanza(
+  lat1: number,
+  lon1: number,
+  lat2: number,
+  lon2: number
+) {
+  const R = 6371; // km
+  const dLat = (lat2 - lat1) * Math.PI / 180;
+  const dLon = (lon2 - lon1) * Math.PI / 180;
+
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos(lat1 * Math.PI / 180) *
+    Math.cos(lat2 * Math.PI / 180) *
+    Math.sin(dLon / 2) *
+    Math.sin(dLon / 2);
+
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+  return R * c;
+}
+function startTracking() {
+  if (!navigator.geolocation) {
+    alert("Geolocalizzazione non supportata");
+    return;
+  }
+
+  const id = navigator.geolocation.watchPosition(
+    (position) => {
+      const { latitude, longitude } = position.coords;
+
+      setPosizioni(prev => [
+        ...prev,
+        { lat: latitude, lon: longitude }
+      ]);
+    },
+    (error) => {
+      console.error(error);
+    },
+    {
+      enableHighAccuracy: true,
+      maximumAge: 0,
+      timeout: 10000
+    }
+  );
+
+  setWatchId(id);
+  setTracking(true);
+}
+function stopTracking(): number {
+  if (watchId !== null) {
+    navigator.geolocation.clearWatch(watchId);
+  }
+
+  let totale = 0;
+
+  for (let i = 1; i < posizioni.length; i++) {
+    totale += calcolaDistanza(
+      posizioni[i - 1].lat,
+      posizioni[i - 1].lon,
+      posizioni[i].lat,
+      posizioni[i].lon
+    );
+  }
+
+  setTracking(false);
+  setPosizioni([]);
+
+  return totale;
+}
+
+
   
   return (
     <div className="max-w-xl mx-auto p-6">
