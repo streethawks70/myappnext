@@ -399,8 +399,33 @@ if (risultato === false) {
 
 
   return (
-    <div className="min-h-screen bg-green-50 flex flex-col items-center p-4 text-gray-800">
-      <h1 className="text-2xl font-bold mb-4">Gestione Presenze</h1>
+    <div className="relative min-h-screen bg-green-50 flex flex-col items-center p-4 text-gray-800">
+  
+
+    <div className="relative flex items-center justify-center mb-6">
+  {/* LOGO IN ALTO */}
+  <img
+    src="/logo-calabria-verde.png"
+    alt="Calabria Verde"
+    className="
+      absolute
+      left-1/2
+      -translate-x-1/2
+      top-0
+      opacity-40
+      w-28
+      sm:w-36
+      pointer-events-none
+    "
+  />
+
+  {/* TITOLO */}
+  <h1 className="relative z-10 text-2xl font-bold text-gray-800">
+    Gestione Presenze
+  </h1>
+</div>
+
+
       <h2 className='text-2xl font-bold mb-4'> Azienda</h2>
       <h1 className='text-5xl font-bold mb-4'>Calabria Verde</h1>
 
@@ -461,7 +486,10 @@ if (risultato === false) {
         </div>
       </div>
 
-      <div className="bg-white p-6 rounded-xl shadow-md w-full max-w-xl">
+     <div className="relative z-10 bg-white p-6 rounded-xl shadow-md w-full max-w-xl">
+
+
+
         <DistrettoSelector setDistretto={setDistretto} />
 
         {distretto && (
