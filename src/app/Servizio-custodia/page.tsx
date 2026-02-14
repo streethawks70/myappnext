@@ -21,9 +21,9 @@ export default function ServizioCustodiaPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [targa, setTarga] = useState('');
   const [chilometri, setChilometri] = useState('');
-  const [tracking, setTracking] = useState(false);
-const [watchId, setWatchId] = useState<number | null>(null);
-const posizioniRef = useRef<{lat: number; lon: number}[]>([]);
+ const [tracking, setTracking] = useState(false);
+const [intervalId, setIntervalId] = useState<NodeJS.Timeout | null>(null);
+const posizioniRef = useRef<{lat:number; lon:number}[]>([]);
 
 const [kmGps, setKmGps] = useState(0);
 
@@ -193,46 +193,41 @@ function startTracking() {
     return;
   }
 
-  // Reset array punti
-  posizioniRef.current = [];
+ posizioniRef.current = [];
 
-  const id = navigator.geolocation.watchPosition(
-    (position) => {
-      const { latitude, longitude } = position.coords;
-
-      posizioniRef.current.push({
-        lat: latitude,
-        lon: longitude
-      });
-
-      console.log("Punti registrati:", posizioniRef.current.length);
-    },
-    (error) => {
-      console.error(error);
-    },
-    {
-      enableHighAccuracy: true,
-      maximumAge: 0,
-      timeout: 10000
-    }
-  );
-
-  setWatchId(id);
+  setKmGps(0);
   setTracking(true);
+
+  const id = setInterval(() => {
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const { latitude, longitude } = position.coords;
+
+        posizioniRef.current.push({
+  lat: latitude,
+  lon: longitude
+});
+
+      },
+      (error) => {
+        console.error(error);
+      },
+      {
+        enableHighAccuracy: true
+      }
+    );
+  }, 5000); // ogni 5 secondi
+
+  setIntervalId(id);
 }
 
-function stopTracking(): number {
-  if (watchId !== null) {
-    navigator.geolocation.clearWatch(watchId);
+
+function stopTracking() {
+  if (intervalId) {
+    clearInterval(intervalId);
   }
 
   const punti = posizioniRef.current;
-
-  console.log("Totale punti salvati:", punti.length);
-
-  if (punti.length < 2) {
-    return 0;
-  }
 
   let totale = 0;
 
@@ -248,10 +243,9 @@ function stopTracking(): number {
   posizioniRef.current = [];
   setTracking(false);
 
-  console.log("Km calcolati:", totale);
-
   return totale;
 }
+
 
 
 
