@@ -22,10 +22,10 @@ export default function ServizioCustodiaPage() {
   const [targa, setTarga] = useState('');
   const [chilometri, setChilometri] = useState('');
  const [tracking, setTracking] = useState(false);
-const [intervalId, setIntervalId] = useState<NodeJS.Timeout | null>(null);
-const posizioniRef = useRef<{lat:number; lon:number}[]>([]);
+const watchIdRef = useRef<number | null>(null);
+const lastPointRef = useRef<{lat:number; lon:number} | null>(null);
+const kmTotaliRef = useRef(0);
 
-const [kmGps, setKmGps] = useState(0);
 
 
   async function handleVerifica() {
@@ -118,21 +118,12 @@ if (tipoPresenza === "Presenza") {
 
 
 // Se è USCITA → ferma tracking prima di inviare
-// Se è USCITA → ferma il tracking e calcola i km
+
 let kmCalcolati = 0;
 
 if (tipoPresenza === "Uscita") {
   // aggiungi anche l'ultima posizione corrente
-  try {
-    const coordsUltimi = await getPosizioneUtente();
-    posizioniRef.current.push({
-      lat: coordsUltimi.latitude,
-      lon: coordsUltimi.longitude
-    });
-  } catch (err) {
-    console.error("Impossibile prendere ultima posizione:", err);
-  }
-
+ 
   kmCalcolati = stopTracking();
 }
 
@@ -201,48 +192,56 @@ function startTracking() {
     return;
   }
 
-  posizioniRef.current = [];  // reset
-  setKmGps(0);
+  kmTotaliRef.current = 0;
+  lastPointRef.current = null;
   setTracking(true);
 
-  const id = setInterval(() => {
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        const { latitude, longitude } = position.coords;
-        // aggiunge il nuovo punto
-        posizioniRef.current.push({ lat: latitude, lon: longitude });
-      },
-      (error) => console.error(error),
-      { enableHighAccuracy: true }
-    );
-  }, 5000); // ogni 5 secondi
+  watchIdRef.current = navigator.geolocation.watchPosition(
+    (position) => {
+      const { latitude, longitude } = position.coords;
 
-  setIntervalId(id);
+      if (lastPointRef.current) {
+        const distanza = calcolaDistanza(
+          lastPointRef.current.lat,
+          lastPointRef.current.lon,
+          latitude,
+          longitude
+        );
+
+        // ignora micro movimenti (<20 metri)
+        if (distanza > 0.02) {
+          kmTotaliRef.current += distanza;
+        }
+      }
+
+      lastPointRef.current = { lat: latitude, lon: longitude };
+
+      console.log("KM accumulati:", kmTotaliRef.current);
+    },
+    (error) => console.error(error),
+    {
+      enableHighAccuracy: true,
+      maximumAge: 0,
+      timeout: 10000
+    }
+  );
 }
-
 
 
 function stopTracking(): number {
-  if (intervalId) clearInterval(intervalId);
-
-  let totale = 0;
-  const punti = posizioniRef.current;
-
-  for (let i = 1; i < punti.length; i++) {
-    totale += calcolaDistanza(
-      punti[i-1].lat, punti[i-1].lon,
-      punti[i].lat, punti[i].lon
-    );
+  if (watchIdRef.current !== null) {
+    navigator.geolocation.clearWatch(watchIdRef.current);
   }
 
-  posizioniRef.current = [];
   setTracking(false);
-  setKmGps(totale);  // opzionale se vuoi mostrarlo prima dell’invio
+
+  const totale = kmTotaliRef.current;
+
+  kmTotaliRef.current = 0;
+  lastPointRef.current = null;
 
   return totale;
 }
-
-
 
 
   
