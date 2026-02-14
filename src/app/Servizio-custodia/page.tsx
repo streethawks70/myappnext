@@ -118,17 +118,29 @@ if (tipoPresenza === "Presenza") {
 
 
 // Se è USCITA → ferma tracking prima di inviare
+// Se è USCITA → ferma il tracking e calcola i km
 let kmCalcolati = 0;
 
 if (tipoPresenza === "Uscita") {
+  // aggiungi anche l'ultima posizione corrente
+  try {
+    const coordsUltimi = await getPosizioneUtente();
+    posizioniRef.current.push({
+      lat: coordsUltimi.latitude,
+      lon: coordsUltimi.longitude
+    });
+  } catch (err) {
+    console.error("Impossibile prendere ultima posizione:", err);
+  }
+
   kmCalcolati = stopTracking();
 }
 
-  
-    const posizione = `${coords.latitude.toFixed(6)},${coords.longitude.toFixed(6)}`;
-    //const veicolo = tipoPresenza === 'Uscita' ? `${targa}/${chilometri}` : '';
-  
-    const fd = new URLSearchParams({
+// posizione attuale dell'invio
+const posizione = `${coords.latitude.toFixed(6)},${coords.longitude.toFixed(6)}`;
+
+// costruzione dati da inviare
+const fd = new URLSearchParams({
   matricola,
   squadra,
   nome: selezionato,
@@ -137,14 +149,10 @@ if (tipoPresenza === "Uscita") {
   dataInizio,
   dataFine,
   posizione,
-  targa: tipoPresenza === 'Uscita'
-    ? `${targa}/${chilometri} Km`
-    : '',
- kmGps: tipoPresenza === 'Uscita'
-  ? kmCalcolati.toFixed(2)
-  : '',
-
+  targa: tipoPresenza === 'Uscita' ? `${targa}/${chilometri} Km` : '',
+  kmGps: tipoPresenza === 'Uscita' ? kmCalcolati.toFixed(2) : '',
 });
+
 
       
       
@@ -193,8 +201,7 @@ function startTracking() {
     return;
   }
 
- posizioniRef.current = [];
-
+  posizioniRef.current = [];  // reset
   setKmGps(0);
   setTracking(true);
 
@@ -202,19 +209,11 @@ function startTracking() {
     navigator.geolocation.getCurrentPosition(
       (position) => {
         const { latitude, longitude } = position.coords;
-
-        posizioniRef.current.push({
-  lat: latitude,
-  lon: longitude
-});
-
+        // aggiunge il nuovo punto
+        posizioniRef.current.push({ lat: latitude, lon: longitude });
       },
-      (error) => {
-        console.error(error);
-      },
-      {
-        enableHighAccuracy: true
-      }
+      (error) => console.error(error),
+      { enableHighAccuracy: true }
     );
   }, 5000); // ogni 5 secondi
 
@@ -222,26 +221,23 @@ function startTracking() {
 }
 
 
-function stopTracking() {
-  if (intervalId) {
-    clearInterval(intervalId);
-  }
 
-  const punti = posizioniRef.current;
+function stopTracking(): number {
+  if (intervalId) clearInterval(intervalId);
 
   let totale = 0;
+  const punti = posizioniRef.current;
 
   for (let i = 1; i < punti.length; i++) {
     totale += calcolaDistanza(
-      punti[i - 1].lat,
-      punti[i - 1].lon,
-      punti[i].lat,
-      punti[i].lon
+      punti[i-1].lat, punti[i-1].lon,
+      punti[i].lat, punti[i].lon
     );
   }
 
   posizioniRef.current = [];
   setTracking(false);
+  setKmGps(totale);  // opzionale se vuoi mostrarlo prima dell’invio
 
   return totale;
 }
