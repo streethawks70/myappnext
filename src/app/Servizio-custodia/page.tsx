@@ -1,6 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useState,useRef } from 'react';
+
+
 
 const CUSTODIA_URL = 'https://script.google.com/macros/s/AKfycbxotYbMafictQ6DYBmfP4w04CKloGg6aFyxofgziF_Yje8-1MvoqqnrMB6GXWarUMm5/exec';
 
@@ -21,7 +23,8 @@ export default function ServizioCustodiaPage() {
   const [chilometri, setChilometri] = useState('');
   const [tracking, setTracking] = useState(false);
 const [watchId, setWatchId] = useState<number | null>(null);
-const [posizioni, setPosizioni] = useState<{lat: number; lon: number}[]>([]);
+const posizioniRef = useRef<{lat: number; lon: number}[]>([]);
+
 const [kmGps, setKmGps] = useState(0);
 
 
@@ -190,14 +193,19 @@ function startTracking() {
     return;
   }
 
+  // Reset array punti
+  posizioniRef.current = [];
+
   const id = navigator.geolocation.watchPosition(
     (position) => {
       const { latitude, longitude } = position.coords;
 
-      setPosizioni(prev => [
-        ...prev,
-        { lat: latitude, lon: longitude }
-      ]);
+      posizioniRef.current.push({
+        lat: latitude,
+        lon: longitude
+      });
+
+      console.log("Punti registrati:", posizioniRef.current.length);
     },
     (error) => {
       console.error(error);
@@ -212,27 +220,39 @@ function startTracking() {
   setWatchId(id);
   setTracking(true);
 }
+
 function stopTracking(): number {
   if (watchId !== null) {
     navigator.geolocation.clearWatch(watchId);
   }
 
+  const punti = posizioniRef.current;
+
+  console.log("Totale punti salvati:", punti.length);
+
+  if (punti.length < 2) {
+    return 0;
+  }
+
   let totale = 0;
 
-  for (let i = 1; i < posizioni.length; i++) {
+  for (let i = 1; i < punti.length; i++) {
     totale += calcolaDistanza(
-      posizioni[i - 1].lat,
-      posizioni[i - 1].lon,
-      posizioni[i].lat,
-      posizioni[i].lon
+      punti[i - 1].lat,
+      punti[i - 1].lon,
+      punti[i].lat,
+      punti[i].lon
     );
   }
 
+  posizioniRef.current = [];
   setTracking(false);
-  setPosizioni([]);
+
+  console.log("Km calcolati:", totale);
 
   return totale;
 }
+
 
 
   
