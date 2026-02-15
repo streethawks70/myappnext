@@ -3,7 +3,7 @@
 import { useState } from 'react';
 
 const CUSTODIA_URL =
-  'https://script.google.com/macros/s/AKfycbxotYbMafictQ6DYBmfP4w04CKloGg6aFyxofgziF_Yje8-1MvoqqnrMB6GXWarUMm5/exec';
+  'https://script.google.com/macros/s/AKfycbxQHuSTqcyVzl9SHq6GLDQMRti9jAr4Hpkrjv4oX_J_PN6JpI9oU_xS4qSIP94bqEpO/exec';
 
 export default function ServizioCustodiaPage() {
   const [matricola, setMatricola] = useState('');
@@ -76,45 +76,16 @@ export default function ServizioCustodiaPage() {
       tipoPermesso = permesso;
     }
 
+    if (tipoPresenza === 'Uscita' && !targa.trim()) return alert('Inserisci targa veicolo');
+
     setIsLoading(true);
 
     try {
-      // --- Firma Presenza ---
-      if (tipoPresenza === 'Presenza') {
-        await inviaGoogleSheet({
-          matricola,
-          squadra,
-          nome: selezionato,
-          stato: tipoPresenza,
-          tipoPermesso,
-          dataInizio,
-          dataFine,
-          posizione: `${coords.latitude.toFixed(6)},${coords.longitude.toFixed(6)}`,
-          targa: '',
-          kmGps: '',
-        });
+      // --- Determina stringa DA per Tasker ---
+      let daValue = '';
+      if (tipoPresenza === 'Presenza') daValue = 'INIZIO';
+      if (tipoPresenza === 'Uscita') daValue = 'FINE';
 
-        alert('✅ Firma Presenza inviata');
-
-        // Segnala a Tasker di iniziare tracking
-        await segnalaTasker('INIZIO', matricola);
-        console.log('Segnale INIZIO inviato a Tasker');
-        return;
-      }
-
-      // --- Firma Uscita ---
-      if (tipoPresenza === 'Uscita') {
-        if (!targa.trim()) return alert('Inserisci targa veicolo');
-
-        // Segnala a Tasker di fermare tracking e calcolare km
-        await segnalaTasker('FINE', matricola);
-        console.log('Segnale FINE inviato a Tasker');
-
-        // I km totali saranno inviati da Tasker direttamente al Google Sheet
-        alert('✅ Segnale Uscita inviato a Tasker. I km saranno aggiornati automaticamente.');
-      }
-
-      // Firma sempre inviata anche per USCITA
       await inviaGoogleSheet({
         matricola,
         squadra,
@@ -125,8 +96,11 @@ export default function ServizioCustodiaPage() {
         dataFine,
         posizione: `${coords.latitude.toFixed(6)},${coords.longitude.toFixed(6)}`,
         targa: tipoPresenza === 'Uscita' ? targa : '',
-        kmGps: '', // Tasker aggiornerà via POST
+        kmGps: '',    // Tasker aggiornerà via POST in CZ
+        da: daValue,  // ← colonna DA per INIZIO/FINE
       });
+
+      alert(`✅ Stato "${tipoPresenza}" inviato con successo!`);
     } catch (err) {
       console.error(err);
       alert('Errore invio dati');
@@ -144,19 +118,6 @@ export default function ServizioCustodiaPage() {
       body: fd.toString(),
     });
     return await res.text();
-  }
-
-  // --- Segnala Tasker via HTTP POST ---
-  async function segnalaTasker(tipo: 'INIZIO' | 'FINE', matricola: string) {
-    try {
-      await fetch('http://<IP_TABLET>:8080/tasker', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ matricola, tipo }),
-      });
-    } catch (err) {
-      console.error('Errore segnalazione Tasker', err);
-    }
   }
 
   return (
