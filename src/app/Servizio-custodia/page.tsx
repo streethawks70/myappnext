@@ -3,7 +3,7 @@
 import { useState } from 'react';
 
 const CUSTODIA_URL =
-  'https://script.google.com/macros/s/AKfycbx4YiHykKp20DSYkw0M2H7KgzRcQAGW8aQdH65qMnIdfk_IsqjaqVevvrvKLamPABFq/exec';
+  'https://script.google.com/macros/s/AKfycbyaRt7zDlrvjualiskVXDpxoFBwxg_jrNKfjQSeIVrEWXmn0YJ9We8Ndse_WXgbGvKc/exec';
 
 export default function ServizioCustodiaPage() {
   const [matricola, setMatricola] = useState('');
