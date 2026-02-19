@@ -19,6 +19,7 @@ export default function ServizioCustodiaPage() {
 
   const [isLoading, setIsLoading] = useState(false);
   const [targa, setTarga] = useState('');
+  const[chilometri,setChilometri]=useState('');
 
   // --- Funzione verifica matricola ---
   async function handleVerifica() {
@@ -76,7 +77,7 @@ export default function ServizioCustodiaPage() {
       tipoPermesso = permesso;
     }
 
-    if (tipoPresenza === 'Uscita' && !targa.trim()) return alert('Inserisci targa veicolo');
+    if (tipoPresenza === 'Uscita' && !targa.trim()&& chilometri) return alert('Inserisci targa veicolo');
 
     setIsLoading(true);
 
@@ -95,7 +96,11 @@ export default function ServizioCustodiaPage() {
         dataInizio,
         dataFine,
         posizione: `${coords.latitude.toFixed(6)},${coords.longitude.toFixed(6)}`,
-        targa: tipoPresenza === 'Uscita' ? targa : '',
+       targa: tipoPresenza === 'Uscita'
+  ? `${targa} - ${chilometri} km`
+  : '',
+
+       // chilometri :tipoPresenza ==='Uscita'?chilometri:'',
         kmGps: '',    // Tasker aggiornerà via POST in CZ
         da: daValue,  // ← colonna DA per INIZIO/FINE
       });
@@ -216,7 +221,20 @@ export default function ServizioCustodiaPage() {
                 className="border p-2 rounded w-full"
                 placeholder="es. AB123CD"
               />
+               
+               
+               <div className="mt-4">
+               <label className="block mb-1 font-semibold">chilometri</label>
+              <input
+                type="number"
+                value={chilometri}
+                onChange={e => setChilometri(e.target.value)}
+                className="border p-2 rounded w-full"
+                placeholder="20450"
+              />
             </div>
+            </div>
+            
           )}
 
           <button
