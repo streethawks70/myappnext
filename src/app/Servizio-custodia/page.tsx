@@ -21,6 +21,19 @@ export default function ServizioCustodiaPage() {
   const [targa, setTarga] = useState('');
   const[chilometri,setChilometri]=useState('');
 
+  function resetForm() {
+ 
+  
+
+  setTipoPresenza('');
+  setPermesso('');
+ 
+
+  setTarga('');
+  setChilometri('');
+  
+}
+
   // --- Funzione verifica matricola ---
   async function handleVerifica() {
     if (!matricola.trim()) return alert('Inserisci una matricola');
@@ -78,7 +91,9 @@ export default function ServizioCustodiaPage() {
     }
 
     if (tipoPresenza === 'Uscita' && !targa.trim()&& chilometri) return alert('Inserisci targa veicolo');
-
+    if(tipoPresenza ==='Ferie'){
+        `FERIE dal ${dataInizio} al ${dataFine}`
+    }
     setIsLoading(true);
 
     try {
@@ -106,14 +121,16 @@ export default function ServizioCustodiaPage() {
       });
 
       alert(`✅ Stato "${tipoPresenza}" inviato con successo!`);
+      resetForm();
     } catch (err) {
       console.error(err);
       alert('Errore invio dati');
     } finally {
       setIsLoading(false);
+      
     }
   }
-
+  
   // --- Invio dati al Google Sheet ---
   async function inviaGoogleSheet(dati: Record<string, string>) {
     const fd = new URLSearchParams(dati);
@@ -188,6 +205,24 @@ export default function ServizioCustodiaPage() {
               <option>Uscita</option>
             </select>
           </div>
+           {(tipoPresenza === 'Ferie' || tipoPresenza === 'Malattia') && (
+                  <>
+                    <input
+                      type="date"
+                      value={dataInizio}
+                      onChange={(e) => setDataInizio(e.target.value)}
+                      required
+                      className="border rounded p-2"
+                    />
+                    <input
+                      type="date"
+                      value={dataFine}
+                      onChange={(e) => setDataFine(e.target.value)}
+                      required
+                      className="border rounded p-2"
+                    />
+                  </>
+                )}
 
           {tipoPresenza === 'Permessi Vari' && (
             <div className="mt-4">
@@ -232,6 +267,7 @@ export default function ServizioCustodiaPage() {
                 className="border p-2 rounded w-full"
                 placeholder="20450"
               />
+              
             </div>
             </div>
             
