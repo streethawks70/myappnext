@@ -60,7 +60,7 @@ export default function Page() {
     "Distretto 2": "https://script.google.com/macros/s/AKfycbwCrLbXvsk_WFemM-AsNG0IF7nYTQP23grSZPJkusg7GMGqAugKKc8Fkid5vhzxWCYD/exec",
     "Distretto 3": "https://script.google.com/macros/s/AKfycbzsJok6SIe7JY9hP8z2DF66pGesdtqv1rFcmCJ3437w-WnRaaO5ebcWfbhnd_FynlVR/exec",
     "Distretto 5": "https://script.google.com/macros/s/AKfycbyR_aJbd6LQocR0zvjN5_dKCsyd-gimF4zq_tpF3BKhwep0EBD-5Wh15_nYH95uzELf/exec",
-    "Distretto 6": "https://script.google.com/macros/s/AKfycbyR_aJbd6LQocR0zvjN5_dKCsyd-gimF4zq_tpF3BKhwep0EBD-5Wh15_nYH95uzELf/exec",
+    "Distretto 6": "https://script.google.com/macros/s/AKfycbziLnAaWdeENKx3jVOGnM_PlqIPacL2E4Kwrg7XMoM75CAT1lWMhMDBq3XsZpM_lpXW/exec",
     "Distretto 7": "https://script.google.com/macros/s/AKfycbwGIv8vXNQFF-7z_8qlSpx0LxMe9ggeGSWanNlwfJ8pnIG-2INi5eooqjpLdCvIDtwruQ/exec",
     "Distretto 8": "https://script.google.com/macros/s/AKfycbxn8Usq4RmRPsoPUmnU8Qt3orrzwTWltjgYilCjRTEMjhYxbZekGftFrAyXDpzzmR0nHQ/exec",
     "Distretto 9": "https://script.google.com/macros/s/AKfycbx2vPrIQNj8syqp49yNLg-almN4XGNYuiFI4mZOZUwA0yjS6iUEh83Gsi1aI1YOH6hI4g/exec",
