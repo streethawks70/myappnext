@@ -311,7 +311,9 @@ if (risultato === true) {
   oraFirma: oraFirmaFormattata,
 };
 
-  setPresenze((prev) => [...prev, nuovaPresenza]);
+ const updated = [...presenze, nuovaPresenza];
+setPresenze(updated);
+localStorage.setItem("presenzeStorico", JSON.stringify(updated));
   resetForm();
   setIsLoading(false);
   return;
@@ -656,12 +658,17 @@ if (risultato === false) {
   </p>
 
       </div>
-  <button
- // onClick={downloadPresenze}
- // className="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded mt-4 w-full"
+ <Link href="/storico-squadra">
+
+<button
+className="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded w-full mt-4"
 >
-  /
+
+📊 STORICO SQUADRA
+
 </button>
+
+</Link>
 
 
 
