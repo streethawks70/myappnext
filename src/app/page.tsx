@@ -76,7 +76,7 @@ const Home = () => {
     'Distretto 7': 'https://script.google.com/macros/s/AKfycbwydxTmlRh9yjO0gM_dezfesi6ydXXad-gVDjf3hmHviYgY7dr4OnMAP7KmA7A1Ogi7Ww/exec',
     'Distretto 8': 'https://script.google.com/macros/s/AKfycbx-IrLhNwb-w0rz3bqYd_1NBDNBCgeS852nbiFavV3NfhRLS84Y6p9Kmi-QxYmOrBkj3g/exec',
     'Distretto 9': 'https://script.google.com/macros/s/AKfycbx2vPrIQNj8syqp49yNLg-almN4XGNYuiFI4mZOZUwA0yjS6iUEh83Gsi1aI1YOH6hI4g/exec',
-    'Distretto 10': 'https://script.google.com/macros/s/AKfycbwm5i-hnm8a0-iez_Z23eFdIcT4KRweq9iLEQBNIV5cMq37bB5CEG3kiUX9wQD2Tzt2/exec',
+    'Distretto 10': 'https://script.google.com/macros/s/AKfycbxHkS2TIEp-fK0fdtz74u2RbfRu-_nXDyXV--PI8xZ4tR-yNUImYzF6mOTCKUMxZGyP/exec',
     'Distretto 11': 'https://script.google.com/macros/s/AKfycbywtH-mPNO0JF9NuVvdyYJT0_FUqchWrPdzBy_qTqj7iC6v-IxoCph48R_T90IwM8BV/exec',
     'Distretto 12': 'https://script.google.com/macros/s/AKfycby3fuDsAYPQI5ulosjgDF2v360_FxGeKqzEkax8Yp-MwCrLoZ2qKTzdcaekE4Kb3hO0/exec',
     'Distretto 13': 'https://script.google.com/macros/s/AKfycbxiRMP46rBdug9VXd49mhIAEXc3z_W5Ui_KTJgoIpN8ndbrR7DDswFVA5XsBggsbwgKFQ/exec',
