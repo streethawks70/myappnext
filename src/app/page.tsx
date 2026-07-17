@@ -79,7 +79,7 @@ const Home = () => {
     'Distretto 10': 'https://script.google.com/macros/s/AKfycbxHkS2TIEp-fK0fdtz74u2RbfRu-_nXDyXV--PI8xZ4tR-yNUImYzF6mOTCKUMxZGyP/exec',
     'Distretto 11': 'https://script.google.com/macros/s/AKfycbywtH-mPNO0JF9NuVvdyYJT0_FUqchWrPdzBy_qTqj7iC6v-IxoCph48R_T90IwM8BV/exec',
     'Distretto 12': 'https://script.google.com/macros/s/AKfycby3fuDsAYPQI5ulosjgDF2v360_FxGeKqzEkax8Yp-MwCrLoZ2qKTzdcaekE4Kb3hO0/exec',
-    'Distretto 13': 'https://script.google.com/macros/s/AKfycbxiRMP46rBdug9VXd49mhIAEXc3z_W5Ui_KTJgoIpN8ndbrR7DDswFVA5XsBggsbwgKFQ/exec',
+    'Distretto 13': 'https://script.google.com/macros/s/AKfycbyAyZ8uzQK2Ii7ZHOrZ3QeHzfDlSclI9R2hr2FM5S9OvGd2qK4jhhlPcW-_cmGoLsRmuw/exec',
      'Distretto 14': 'https://script.google.com/macros/s/AKfycbx5DiiPDiwwScGHOEego4Avcd99jHXHfvpl1m0CnaBOVF4PfO0MSAsv6bu7XU1-y9gxSQ/exec',
      'Distretto 15':'https://script.google.com/macros/s/AKfycbzkR8Go1lx2wkCyITVLNODmU78HMudrxG0hfJSzh2aGDsvcRB3afl926EZvOgHA-hig8w/exec',
       
@@ -484,6 +484,13 @@ if (risultato === false) {
           ACCESSO A TUTTI I DISTRETTI
         </button>
       </Link>
+       
+<Link href="/accesso1">
+  <button className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded transition w-48">
+    Dashboard
+  </button>
+</Link>
+
 
         </div>
       </div>
