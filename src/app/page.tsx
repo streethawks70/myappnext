@@ -431,70 +431,88 @@ if (risultato === false) {
       <h2 className='text-2xl font-bold mb-4'> Azienda</h2>
       <h1 className='text-5xl font-bold mb-4'>Calabria Verde</h1>
 
-      <div className="mb-6 grid grid-cols-1 sm:grid-cols-2 gap-4 justify-items-center">
-        <Link href="/ddl">
-          <button className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded transition w-48">
-            Accesso Direttori dei Lavori
-          </button>
-        </Link>
+      <div className="mb-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 w-full max-w-5xl">
 
-        <Link href="/accesso/login">
-          <button className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded transition w-48">
-            Accesso Dashboard
-          </button>
-        </Link>
-
-        <Link href="/Notifica">
-          <button className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded transition w-48">
-            Richiesta Giustificativi
-          </button>
-        </Link>
-
-        <Link href="/Storico">
-          <button className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded transition w-48">
-            STORICO MENSILITA'
-          </button>
-        </Link>
-
-        <Link href="/admin">
-          <button className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded transition w-48">
-            Comunicazioni
-          </button>
-        </Link>
-
-        <Link href="/Capo-Operaio">
-          <button className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded transition w-48">
-            ACCESSO CAPO CANTIERE
-          </button>
-        </Link>
-
-        <div className="col-span-1 sm:col-span-2 flex justify-center">
-          <Link
-            href="/Correzioni"
-            className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded transition"
-          >
-            <Edit className="w-4 h-4" />
-            Vai a Correzioni
-          </Link>
-      
-      
-       <Link href="/login-tutti-distretti">
-        <button className="bg-blue-600 text-white px-4 py-2 rounded">
-
-          ACCESSO A TUTTI I DISTRETTI
-        </button>
-      </Link>
-       
-<Link href="/accesso1">
-  <button className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded transition w-48">
-    Dashboard
-  </button>
-</Link>
+  <Link href="/ddl">
+    <div className="bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl shadow-md p-4 text-center font-bold transition cursor-pointer">
+      👷‍♂️<br />
+      Direttori dei Lavori
+    </div>
+  </Link>
 
 
-        </div>
-      </div>
+  <Link href="/accesso/login">
+    <div className="bg-blue-600 hover:bg-blue-700 text-white rounded-xl shadow-md p-4 text-center font-bold transition cursor-pointer">
+      📊<br />
+      Dashboard
+    </div>
+  </Link>
 
+
+  <Link href="/Notifica">
+    <div className="bg-yellow-500 hover:bg-yellow-600 text-white rounded-xl shadow-md p-4 text-center font-bold transition cursor-pointer">
+      📄<br />
+      Richiesta Giustificativi
+    </div>
+  </Link>
+
+
+  <Link href="/Storico">
+    <div className="bg-green-600 hover:bg-green-700 text-white rounded-xl shadow-md p-4 text-center font-bold transition cursor-pointer">
+      📅<br />
+      Storico Mensilità
+    </div>
+  </Link>
+
+
+  <Link href="/admin">
+    <div className="bg-purple-600 hover:bg-purple-700 text-white rounded-xl shadow-md p-4 text-center font-bold transition cursor-pointer">
+      💬<br />
+      Comunicazioni
+    </div>
+  </Link>
+
+
+  <Link href="/Capo-Operaio">
+    <div className="bg-orange-600 hover:bg-orange-700 text-white rounded-xl shadow-md p-4 text-center font-bold transition cursor-pointer">
+      👷<br />
+      Capo Cantiere
+    </div>
+  </Link>
+
+
+  <Link href="/Correzioni">
+    <div className="bg-red-600 hover:bg-red-700 text-white rounded-xl shadow-md p-4 text-center font-bold transition cursor-pointer flex flex-col items-center">
+      <Edit className="w-6 h-6 mb-1" />
+      Correzioni
+    </div>
+  </Link>
+
+
+  <Link href="/login-tutti-distretti">
+    <div className="bg-cyan-600 hover:bg-cyan-700 text-white rounded-xl shadow-md p-4 text-center font-bold transition cursor-pointer">
+      🌍<br />
+      Tutti i Distretti
+    </div>
+  </Link>
+
+
+  <Link href="/accesso1">
+    <div className="bg-indigo-800 hover:bg-indigo-900 text-white rounded-xl shadow-md p-4 text-center font-bold transition cursor-pointer">
+      📈<br />
+      Dashboard Operativa
+    </div>
+  </Link>
+
+
+  <Link href="/DashboardCentrale">
+    <div className="bg-gray-700 hover:bg-gray-800 text-white rounded-xl shadow-md p-4 text-center font-bold transition cursor-pointer">
+      🏢<br />
+      Dashboard Centrale
+    </div>
+  </Link>
+
+</div>
      <div className="relative z-10 bg-white p-6 rounded-xl shadow-md w-full max-w-xl">
 
 
