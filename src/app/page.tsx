@@ -11,32 +11,120 @@ import { Edit } from "lucide-react";
 
 const TabellaPresenze = ({ presenze }: { presenze: any[] }) => {
   return (
-    <div className="mt-6">
-      <h3>Presenze del Giorno</h3>
-      <table className="table-auto border-collapse w-full text-left">
-        <thead>
-          <tr>
-            <th className="border px-4 py-2">Nome</th>
-            <th className="border px-4 py-2">Tipo di Presenza</th>
-            <th className="border px-4 py-2">Data</th>
-            <th className="border px-4 py-2">Ora Firma</th>
-          </tr>
-        </thead>
-        <tbody>
-          {presenze.map((presenza, index) => (
-            <tr key={index}>
-              <td className="border px-4 py-2">{presenza.nome}</td>
-              <td className="border px-4 py-2">{presenza.tipo}</td>
-              <td className="border px-4 py-2">{presenza.data}</td>
-              <td className="border px-4 py-2">{presenza.oraFirma || '-'}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+    <div className="mt-8 bg-white rounded-xl shadow-lg overflow-hidden border">
+
+      <div className="bg-green-600 p-4">
+        <h3 className="text-white text-xl font-bold">
+          📋 Presenze del Giorno
+        </h3>
+
+        <p className="text-green-100 text-sm">
+          Totale firme: {presenze.length}
+        </p>
+      </div>
+
+
+      {presenze.length === 0 ? (
+
+        <div className="p-5 text-center text-gray-500">
+          Nessuna presenza registrata oggi
+        </div>
+
+      ) : (
+
+        <div className="overflow-x-auto">
+
+          <table className="w-full">
+
+            <thead>
+              <tr className="bg-gray-100">
+
+                <th className="px-4 py-3 text-left">
+                  👤 Nome
+                </th>
+
+                <th className="px-4 py-3 text-left">
+                  📌 Tipo
+                </th>
+
+                <th className="px-4 py-3 text-left">
+                  📅 Data
+                </th>
+
+                <th className="px-4 py-3 text-left">
+                  ⏰ Firma
+                </th>
+
+              </tr>
+            </thead>
+
+
+            <tbody>
+
+              {presenze.map((presenza, index) => (
+
+                <tr 
+                  key={index}
+                  className="border-t hover:bg-green-50"
+                >
+
+                  <td className="px-4 py-3 font-bold">
+                    {presenza.nome}
+                  </td>
+
+
+                  <td className="px-4 py-3">
+
+                    <span className="
+                      bg-green-100
+                      text-green-700
+                      px-3
+                      py-1
+                      rounded-full
+                      text-sm
+                      font-bold
+                    ">
+                      {presenza.tipo}
+                    </span>
+
+                  </td>
+
+
+                  <td className="px-4 py-3">
+                    {presenza.data}
+                  </td>
+
+
+                  <td className="px-4 py-3">
+
+                    <span className="
+                      bg-gray-800
+                      text-white
+                      px-3
+                      py-1
+                      rounded-lg
+                      font-bold
+                    ">
+                      {presenza.oraFirma || '-'}
+                    </span>
+
+                  </td>
+
+                </tr>
+
+              ))}
+
+            </tbody>
+
+          </table>
+
+        </div>
+
+      )}
+
     </div>
   );
 };
-
 type OfflineItem = {
   data: [string, string][]; // coppie [key, value]
   distretto: string;
@@ -517,7 +605,13 @@ if (risultato === false) {
 
 
 
-        <DistrettoSelector setDistretto={setDistretto} />
+       <div className="mb-6 bg-green-50 border border-green-200 rounded-xl p-4 shadow-sm">
+  <h2 className="text-lg font-bold text-green-700 mb-3">
+    📍 Seleziona Distretto
+  </h2>
+
+  <DistrettoSelector setDistretto={setDistretto} />
+</div>
 
         {distretto && (
           <>
