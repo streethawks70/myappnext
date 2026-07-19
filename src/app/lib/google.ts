@@ -6,11 +6,9 @@ const serviceAccount = JSON.parse(
 
 const auth = new google.auth.GoogleAuth({
   credentials: {
-    client_email:
-      serviceAccount.client_email,
+    client_email: serviceAccount.client_email,
 
-    private_key:
-      serviceAccount.private_key,
+    private_key: serviceAccount.private_key?.replace(/\\n/g, "\n"),
   },
 
   scopes: [
