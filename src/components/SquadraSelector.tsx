@@ -1,5 +1,18 @@
 import { useEffect, useState } from 'react';
 
+import { db } from "@/firebase/config";
+
+import {
+  collection,
+  getDocs,
+  doc,
+  getDoc
+} from "firebase/firestore";
+// false = usa i file txt
+// true = usa Firebase
+const USA_FIREBASE_SQUADRE = false;
+
+
 interface Squadra {
   matricola: string;
   nome: string;
@@ -9,11 +22,13 @@ interface Squadra {
 const SquadraSelector = ({
   distretto,
   setSelectedName,
-  selectedName
+  selectedName,
+   setDatiSquadra
 }: {
   distretto: string;
   setSelectedName: (name: string) => void;
   selectedName: string;
+  setDatiSquadra: (dati: any) => void;
 }) => {
   const [squadre, setSquadre] = useState<Squadra[]>([]);
   const [matricolaInput, setMatricolaInput] = useState('');
@@ -21,30 +36,241 @@ const SquadraSelector = ({
   const [valore, setValore] = useState("");
 
   useEffect(() => {
-    if (!distretto) return;
-    const fileName = `/distretto${distretto.match(/\d+/)?.[0]}.txt`;
-    fetch(fileName)
-      .then((res) => res.text())
-      .then((data) => {
-        const righe = data.split('\n').filter(line => line.trim() !== '');
-        const parsed = righe.map(riga => {
-          const [matricolaParte, squadraParte] = riga.split('squadra');
-          const matricola = matricolaParte.trim().replace('matricola', '').trim();
-          const parts = squadraParte.split('/').filter(p => p.trim() !== '');
-          const nomeCapoSquadra = parts[1].trim();
-          const operai = parts.slice(2).map(op => op.trim());
-          return { matricola, nome: nomeCapoSquadra, operai };
-        });
-        setSquadre(parsed);
-      });
-  }, [distretto]);
 
-  const handleMatricolaSubmit = () => {
+
+  if (!distretto) return;
+
+
+
+  const caricaSquadre = async () => {
+
+
+    try {
+
+
+      if (USA_FIREBASE_SQUADRE) {
+
+
+        const riferimento =
+          collection(
+            db,
+            "squadre",
+            distretto,
+            "elenco"
+          );
+
+
+        const snapshot =
+          await getDocs(riferimento);
+
+
+
+        const elenco = snapshot.docs.map(doc => {
+
+
+          const dati = doc.data();
+
+
+          return {
+
+            matricola:
+              dati.matricola,
+
+            nome:
+              dati.caposquadra,
+
+            operai:
+              dati.operai || []
+
+          };
+
+
+        });
+
+
+
+        setSquadre(elenco);
+
+
+      } else {
+
+
+        const fileName =
+          `/distretto${distretto.match(/\d+/)?.[0]}.txt`;
+
+
+        const risposta =
+          await fetch(fileName);
+
+
+
+        const data =
+          await risposta.text();
+
+
+
+        const righe =
+          data
+          .split('\n')
+          .filter(
+            line => line.trim() !== ''
+          );
+
+
+
+        const parsed =
+          righe.map(riga => {
+
+
+            const [matricolaParte, squadraParte] =
+              riga.split('squadra');
+
+
+            const matricola =
+              matricolaParte
+              .trim()
+              .replace('matricola','')
+              .trim();
+
+
+
+            const parts =
+              squadraParte
+              .split('/')
+              .filter(
+                p => p.trim() !== ''
+              );
+
+
+
+            return {
+
+              matricola,
+
+              nome:
+                parts[1].trim(),
+
+              operai:
+                parts
+                .slice(2)
+                .map(
+                  op=>op.trim()
+                )
+
+            };
+
+
+          });
+
+
+
+        setSquadre(parsed);
+
+
+      }
+
+
+    }
+    catch(errore){
+
+      console.error(
+        "Errore caricamento squadre:",
+        errore
+      );
+
+
+      setSquadre([]);
+
+
+    }
+
+
+  };
+
+
+
+  caricaSquadre();
+
+
+},[distretto]);
+  const handleMatricolaSubmit = async () => {
+
+    if (USA_FIREBASE_SQUADRE) {
+
+  try {
+
+    const squadraRef = doc(
+      db,
+      "squadre",
+      distretto,
+      "elenco",
+      matricolaInput.trim()
+    );
+
+    const squadraDoc = await getDoc(squadraRef);
+
+    if (!squadraDoc.exists()) {
+
+      alert("Matricola non trovata");
+
+      return;
+
+    }
+
+    const dati = squadraDoc.data();
+
+    const squadra = {
+
+      matricola: dati.matricola,
+
+      nome: dati.caposquadra,
+
+      operai: dati.operai || []
+
+    };
+
+    setSquadraTrovata(squadra);
+
+    setSelectedName(squadra.nome);
+
+    setDatiSquadra({
+
+      matricolaSquadra: squadra.matricola,
+
+      caposquadra: squadra.nome
+
+    });
+
+    return;
+
+  }
+
+  catch (errore) {
+
+    console.error(errore);
+
+    alert("Errore Firebase");
+
+    return;
+
+  }
+
+}
+
     const squadra = squadre.find(s => s.matricola === matricolaInput.trim());
-    if (squadra) {
-      setSquadraTrovata(squadra);
-      setSelectedName(squadra.nome); // Preseleziona il caposquadra
-    } else {
+   if (squadra) {
+
+  setSquadraTrovata(squadra);
+
+  setSelectedName(squadra.nome);
+
+
+  setDatiSquadra({
+    matricolaSquadra: squadra.matricola,
+    caposquadra: squadra.nome
+  });
+
+} else {
       alert('Matricola non trovata nel distretto selezionato.');
       setSquadraTrovata(null);
       setSelectedName('');
@@ -107,3 +333,4 @@ const SquadraSelector = ({
 };
 
 export default SquadraSelector;
+

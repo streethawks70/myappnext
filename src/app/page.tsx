@@ -6,6 +6,23 @@ import DistrettoSelector from '../components/DistrettoSelector';
 import SquadraSelector from '../components/SquadraSelector';
 import MenuPresenza from '../components/MenuPresenza';
 import { Edit } from "lucide-react";
+import { db } from "@/firebase/config";
+
+import {
+  collection,
+  addDoc,
+  serverTimestamp,
+  query,
+  where,
+  getDocs,
+  updateDoc,
+  doc,
+  runTransaction
+} from "firebase/firestore";
+const MODALITA_TEST = true;
+const CONTROLLO_PERMESSI_FIREBASE = true;
+const CONTROLLO_FERIE_FIREBASE = false;
+const MATURAZIONE_FERIE_FIREBASE = false;
 
 
 
@@ -125,6 +142,42 @@ const TabellaPresenze = ({ presenze }: { presenze: any[] }) => {
     </div>
   );
 };
+//AGGIUNGO MODIFICA PER FIREBASE
+const regolePermessi: Record<string, {
+  tipo: string;
+  limite: number;
+}> = {
+  "PERMESSO RETRIBUITO": {
+    tipo: "ore",
+    limite: 19
+  },
+
+  "ART 51": {
+    tipo: "ore",
+    limite: 16
+  },
+
+  "ART.20": {
+    tipo: "ore",
+    limite: 16
+  },
+
+  "LEGGE 104": {
+    tipo: "giorni",
+    limite: 3
+  },
+
+  "FESTIVITA SOPPRESSE": {
+    tipo: "ore",
+    limite: 32
+  },
+
+  "LAVORI DISAGIATI": {
+    tipo: "ore",
+    limite: 5
+  }
+
+};
 type OfflineItem = {
   data: [string, string][]; // coppie [key, value]
   distretto: string;
@@ -140,12 +193,25 @@ const Home = () => {
   const [dataInizio, setDataInizio] = useState('');
   const [dataFine, setDataFine] = useState('');
   const [permesso, setPermesso] = useState('');
+  const [orePermesso, setOrePermesso] = useState("");//AGGIUNTA
+const [oraRientro, setOraRientro] = useState("");//AGGIUNTA
   const [posizione, setPosizione] = useState('');
   const [altitude, setAltitude] = useState('');
   const [presenze, setPresenze] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [offlineQueue, setOfflineQueue] = useState<OfflineItem[]>([]);
-  const [Codice_Progetto, setCodice_Prodetto]=useState('');
+  const [Codice_Progetto, setCodice_Prodetto]=useState('');//AGGIUNTA
+  const [datiSquadra, setDatiSquadra] = useState<any>(null);//AGGIUNTA
+  const [oraRientro1, setOraRientro1] = useState("");//aggiunta
+  const [rientro, setRientro] = useState("");//aggiunta
+  const [fasciaKm, setFasciaKm] = useState('');//aggiunta
+  const [giorniMalattia, setGiorniMalattia] = useState(0);//aggiunta
+
+const [giorniCarenza, setGiorniCarenza] = useState(0);//aggiunta
+
+const [giorniMalattia50, setGiorniMalattia50] = useState(0);//aggiunta
+
+const [giorniMalattia66, setGiorniMalattia66] = useState(0);//aggiunta
 
   const getOraFormattata = () => {
     const now = new Date();
@@ -155,17 +221,17 @@ const Home = () => {
   };
 
   const sheetUrls: Record<string, string> = {
-    'Distretto 1': 'https://script.google.com/macros/s/AKfycbx2-2Ifgz0WC5fvVeMUM_8hmj7jTTPkzKWannuAPCsKnqUBcoJ4bacw45oxkE0_DzJO6A/exec',
-    'Distretto 2': 'https://script.google.com/macros/s/AKfycbwCrLbXvsk_WFemM-AsNG0IF7nYTQP23grSZPJkusg7GMGqAugKKc8Fkid5vhzxWCYD/exec',
-    'Distretto 3': 'https://script.google.com/macros/s/AKfycbzsJok6SIe7JY9hP8z2DF66pGesdtqv1rFcmCJ3437w-WnRaaO5ebcWfbhnd_FynlVR/exec',
-    'Distretto 4': 'https://script.google.com/macros/s/AKfycbzz_Zm8ezcdA0TkgaNt4OLVvMseC4TD8-mi0ExVgcmGsk9L70XFRcMcJ6zMS6dXnWj7AQ/exec',
-    'Distretto 5': 'https://script.google.com/macros/s/AKfycbyR_aJbd6LQocR0zvjN5_dKCsyd-gimF4zq_tpF3BKhwep0EBD-5Wh15_nYH95uzELf/exec',
-    'Distretto 6': 'https://script.google.com/macros/s/AKfycbziLnAaWdeENKx3jVOGnM_PlqIPacL2E4Kwrg7XMoM75CAT1lWMhMDBq3XsZpM_lpXW/exec',
-    'Distretto 7': 'https://script.google.com/macros/s/AKfycbwydxTmlRh9yjO0gM_dezfesi6ydXXad-gVDjf3hmHviYgY7dr4OnMAP7KmA7A1Ogi7Ww/exec',
-    'Distretto 8': 'https://script.google.com/macros/s/AKfycbx-IrLhNwb-w0rz3bqYd_1NBDNBCgeS852nbiFavV3NfhRLS84Y6p9Kmi-QxYmOrBkj3g/exec',
-    'Distretto 9': 'https://script.google.com/macros/s/AKfycbx2vPrIQNj8syqp49yNLg-almN4XGNYuiFI4mZOZUwA0yjS6iUEh83Gsi1aI1YOH6hI4g/exec',
-    'Distretto 10': 'https://script.google.com/macros/s/AKfycbxHkS2TIEp-fK0fdtz74u2RbfRu-_nXDyXV--PI8xZ4tR-yNUImYzF6mOTCKUMxZGyP/exec',
-    'Distretto 11': 'https://script.google.com/macros/s/AKfycbywtH-mPNO0JF9NuVvdyYJT0_FUqchWrPdzBy_qTqj7iC6v-IxoCph48R_T90IwM8BV/exec',
+    'Distretto 1': 'https://script.google.com/macros/s/AKfycbw9dg2OcVZgzNTmx9WgHTHHZT_WMGpp0FuYBoapuuM_K-BNl36JFJQxGtfzySIFidDo6Q/exec',
+    'Distretto 2': 'https://script.google.com/macros/s/AKfycbzpGqtCZ5NgtdadtsYRghsyrVoG0dL0rRVmdUGiz4BmltlCOrJaleaf9uGLoWUbPJa4Xw/exec',
+    'Distretto 3': 'https://script.google.com/macros/s/AKfycbwzjUPmIPHjJz1HXgt1ENfNZaaGwxz-kXBN8HhBTMl7vExXef55OHZAf_CXi7QMq1r7/exec',
+    'Distretto 4': 'https://script.google.com/macros/s/AKfycbzvddCY0PJ_7NNZ2m5rajqPXxkzZhUbv8sL4_1HnyWxaXaxmRSYQ0cS9-BRniP6IrYLVQ/exec',
+    'Distretto 5': 'https://script.google.com/macros/s/AKfycbx4WgVKTKBc9Ex7ayax6Uusn46T6FX61siwB2Jc6JtIZtyl1QuvIfmJzn_wvntJKmn7/exec',
+    'Distretto 6': 'https://script.google.com/macros/s/AKfycbxiT6ienjNbhy3x9btO-18TMsaM8DXxx8umj_bxjxLsHRlZuDBC2Zn-LZ90c1INejw4/exec',
+    'Distretto 7': 'https://script.google.com/macros/s/AKfycbx0JXfJzmwwPM_xFjrWLH1faGvMuyEvG6HIhsdSXNZ7--MfREdW2Jsnebl85luAOJ6g/exec',
+    'Distretto 8': 'https://script.google.com/macros/s/AKfycbyzrpkMN_zd-tMH4LEYBiicK2JzIRkLtItV3M4-sVWLyL_aNXcKT9mtqVdRFonVEDnAhQ/exec',
+    'Distretto 9': 'https://script.google.com/macros/s/AKfycby0LsBZg6m7qI6dbPI-z-Fnyt_hCA3gdbNWCINiTorcMqdR0u7sVMDJrXfny0ud6GRY/exec',
+    'Distretto 10': 'https://script.google.com/macros/s/AKfycbwSTvD8VLsuXXimgVGo-WrITDVUFY9IJbZDMa0cfhF99t_stTlpHNTwT5Dg8ZudjxMs/exec',
+    'Distretto 11': 'https://script.google.com/macros/s/AKfycbwcXG_QTjIm73aQZOmY2rqed7271HJdVxZEyheDfLLlNyM1tt0bXN3JnbyH1lvj8x8I/exec',
     'Distretto 12': 'https://script.google.com/macros/s/AKfycby3fuDsAYPQI5ulosjgDF2v360_FxGeKqzEkax8Yp-MwCrLoZ2qKTzdcaekE4Kb3hO0/exec',
     'Distretto 13': 'https://script.google.com/macros/s/AKfycbyAyZ8uzQK2Ii7ZHOrZ3QeHzfDlSclI9R2hr2FM5S9OvGd2qK4jhhlPcW-_cmGoLsRmuw/exec',
      'Distretto 14': 'https://script.google.com/macros/s/AKfycbx5DiiPDiwwScGHOEego4Avcd99jHXHfvpl1m0CnaBOVF4PfO0MSAsv6bu7XU1-y9gxSQ/exec',
@@ -288,13 +354,16 @@ const Home = () => {
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
       body: formData.toString(),
     });
-
+    
+    
     const text = await response.text();
-
+    
     // 🔹 Caso messaggio di conferma ("⚠️ Ti restano ...")
+     
+     
     if (text.includes("⚠️ Ti restano")) {
       if (isAuto) return false;
-
+     
       const conferma = confirm(text + "\n\nVuoi procedere?");
       if (!conferma) {
         console.warn("❌ Operazione annullata dall’utente. Nessun invio né salvataggio.");
@@ -306,7 +375,7 @@ const Home = () => {
         console.warn("❌ Nessun valore ore inserito. Operazione annullata.");
         return null; // ⛔ non salvare offline
       }
-
+    
       // Se confermato, invia la seconda richiesta
       formData.append("oreRichieste", ore);
       const response2 = await fetch(url, {
@@ -343,9 +412,1116 @@ const Home = () => {
     setDataInizio('');
     setDataFine('');
     setPermesso('');
-    setSelectedName('');
+    setOrePermesso("");
+setOraRientro("");//AGGIUNTA
+setRientro("");//aggiuta
+    setSelectedName('');//AGGIUNTA
     setCodice_Prodetto('');
   };
+ const salvaSuFirebase = async () => {
+
+
+  if (MODALITA_TEST) {
+
+    console.log(
+      "MODALITA TEST ATTIVA - Firebase non viene scritto"
+    );
+
+    return;
+
+  }
+
+
+
+  try {
+
+    const oggi = new Date();
+
+    const dataLavorativa =
+      oggi.toISOString().split("T")[0];
+
+    const giorno =
+      oggi.getDate();
+
+    const mese =
+      oggi.getMonth() + 1;
+
+    const anno =
+      oggi.getFullYear();
+
+
+
+    await addDoc(
+      collection(db, "presenze"),
+      {
+
+        nome: selectedName,
+
+        distretto: distretto,
+
+        stato: tipoPresenza,
+
+
+        targa: targa,
+
+        chilometri: chilometri,
+
+
+        dataInizio:
+tipoPresenza === "Ferie" || tipoPresenza === "Malattia"
+? dataInizio
+: "",
+
+
+dataFine:
+tipoPresenza === "Ferie" || tipoPresenza === "Malattia"
+? dataFine
+: "",
+
+        tipoPermesso: permesso,
+
+        
+
+        rientro: rientro,
+
+        oraRientro: oraRientro,
+
+
+        posizione: posizione,
+
+        quota: altitude,
+
+
+        codiceProgetto: Codice_Progetto,
+
+
+        matricolaSquadra:
+          datiSquadra?.matricolaSquadra || "",
+
+
+        caposquadra:
+          datiSquadra?.caposquadra || "",
+
+
+        ruolo:
+          selectedName === datiSquadra?.caposquadra
+            ? "Caposquadra"
+            : "Operaio",
+
+
+
+        oraFirma:
+          getOraFormattata(),
+
+
+
+        // NUOVI CAMPI PER CARTELLINO
+
+        dataLavorativa:
+          dataLavorativa,
+
+
+        giorno:
+          giorno,
+
+
+        mese:
+          mese,
+
+
+        anno:
+          anno,
+
+
+        // ore giornaliere (base futura)
+
+        oreLavorate: 0,
+
+            orePermesso:
+  Number(orePermesso) || 0,
+
+  fasciaKm:
+  fasciaKm,
+
+  giorniMalattia:
+  Number(giorniMalattia) || 0,
+
+
+giorniCarenza:
+  Number(giorniCarenza) || 0,
+
+
+giorniMalattia50:
+  Number(giorniMalattia50) || 0,
+
+
+giorniMalattia66:
+  Number(giorniMalattia66) || 0,
+
+
+
+        dataCreazione:
+          serverTimestamp()
+
+      }
+    );
+
+
+    console.log("✅ Dato salvato su Firebase");
+
+
+  } catch (errore) {
+
+
+    console.error(
+      "❌ Errore Firebase:",
+      errore
+    );
+
+
+  }
+
+};
+
+const salvaUscitaFirebase = async () => {
+
+try {
+
+
+const oggi = new Date();
+
+const data =
+oggi.toISOString().split("T")[0];
+
+
+// cerca la presenza della giornata
+
+const q = query(
+
+collection(db,"presenze"),
+
+where(
+"nome",
+"==",
+selectedName
+),
+
+where(
+"dataLavorativa",
+"==",
+data
+),
+
+where(
+"stato",
+"==",
+"Presenza"
+)
+
+);
+
+
+
+const snapshot = await getDocs(q);
+
+
+
+if(snapshot.empty){
+
+console.log(
+"Nessuna presenza trovata da chiudere"
+);
+
+return;
+
+}
+
+
+
+
+const documento =
+snapshot.docs[0];
+
+
+
+const entrata =
+documento.data().oraFirma;
+
+
+
+const uscita =
+getOraFormattata();
+
+
+
+// calcolo ore
+
+const [oraE,minE] =
+entrata.split(".").map(Number);
+
+
+const [oraU,minU] =
+uscita.split(".").map(Number);
+
+
+const minutiEntrata =
+oraE * 60 + minE;
+
+
+const minutiUscita =
+oraU * 60 + minU;
+
+
+const minutiTotali =
+minutiUscita - minutiEntrata;
+
+
+
+const ore =
+Number(
+(minutiTotali / 60).toFixed(2)
+);
+
+
+
+// aggiorna documento esistente
+
+await updateDoc(
+
+doc(
+db,
+"presenze",
+documento.id
+),
+
+{
+
+
+oraUscita:
+uscita,
+
+
+oreLavorate:
+ore,
+
+
+dataChiusura:
+serverTimestamp()
+
+
+}
+
+);
+
+
+
+console.log(
+"Uscita registrata",
+ore
+);
+
+
+
+}
+
+catch(errore){
+
+console.error(
+"Errore uscita Firebase",
+errore
+);
+
+
+}
+
+};
+ const controllaLimitePermessoFirebase = async () => {
+
+    try {
+
+      const q = query(
+        collection(db, "configurazioni"),
+        where("nome", "==", permesso)
+      );
+
+
+      const snapshot = await getDocs(q);
+
+
+      if(snapshot.empty){
+
+        console.log(
+          "Nessuna configurazione trovata",
+          permesso
+        );
+
+        return true;
+
+      }
+
+
+      const configurazione =
+        snapshot.docs[0].data();
+
+        
+
+
+      console.log(
+        "Configurazione:",
+        configurazione
+      );
+      const oggi = new Date();
+
+const anno =
+  oggi.getFullYear();
+
+const mese =
+  oggi.getMonth() + 1;
+
+console.log(
+ "RICERCA:",
+ selectedName,
+ permesso,
+ anno
+);
+
+const qUsati = query(
+
+  collection(db,"presenze"),
+
+  where(
+    "nome",
+    "==",
+    selectedName
+  ),
+
+  where(
+    "tipoPermesso",
+    "==",
+    permesso
+  ),
+
+  where(
+    "anno",
+    "==",
+    anno
+  )
+
+);
+
+
+
+const usatiSnapshot =
+  await getDocs(qUsati);
+
+
+
+let oreUsate = 0;
+
+
+
+usatiSnapshot.forEach((doc)=>{
+
+  const dati = doc.data();
+
+  oreUsate +=
+    Number(dati.orePermesso) || 0;
+
+});
+
+
+
+console.log(
+  "Ore già usate:",
+  oreUsate
+);
+
+
+console.log(
+  "Limite:",
+  configurazione.limiteOre
+);
+
+const oreRichieste =
+  Number(orePermesso) || 0;
+
+
+if(
+  oreUsate + oreRichieste >
+  Number(configurazione.limiteOre)
+){
+
+  console.log(
+    "LIMITE SUPERATO"
+  );
+
+  return false;
+
+}
+
+
+      return true;
+
+
+    } catch(errore){
+
+      console.error(
+        errore
+      );
+
+      return true;
+
+    }
+
+  };
+  const controllaSaldoFerieFirebase = async () => {
+
+  try {
+
+    const q = query(
+      collection(db, "ferie"),
+      where(
+        "nome",
+        "==",
+        selectedName
+      )
+    );
+
+
+    const snapshot = await getDocs(q);
+
+
+    if(snapshot.empty){
+
+      console.log(
+        "Nessun saldo ferie trovato per",
+        selectedName
+      );
+
+      return true;
+
+    }
+
+
+   const documento =
+  snapshot.docs[0];
+
+
+let dati =
+  documento.data();
+
+  const oggi = new Date();
+
+const meseAttuale =
+  oggi.getMonth() + 1;
+
+const annoAttuale =
+  oggi.getFullYear();
+
+
+const ultimaMaturazione =
+  dati.ultimaMaturazione;
+
+
+if(
+  !ultimaMaturazione ||
+  ultimaMaturazione.anno !== annoAttuale ||
+  ultimaMaturazione.mese !== meseAttuale
+){
+
+  const saldoVecchio =
+    Number(dati.saldoFerie) || 0;
+
+
+  const nuovoSaldo =
+  Number(
+    (saldoVecchio + 1.8).toFixed(1)
+  );
+
+
+  const ferieMaturate =
+    Number(dati.ferieMaturate) || 0;
+
+
+  await updateDoc(
+    documento.ref,
+    {
+
+      saldoFerie:
+        nuovoSaldo,
+
+      ferieMaturate:
+        ferieMaturate + 1.8,
+
+      ultimaMaturazione:{
+
+        mese:
+          meseAttuale,
+
+        anno:
+          annoAttuale
+
+      }
+
+    }
+  );
+
+
+  console.log(
+    "✅ Maturazione ferie eseguita:",
+    nuovoSaldo
+  );
+
+
+  // aggiorno il valore usato sotto
+  dati.saldoFerie =
+    nuovoSaldo;
+
+}
+
+
+const saldoDisponibile =
+  Number(dati.saldoFerie) || 0;
+
+
+console.log(
+  "Saldo ferie Firebase:",
+  saldoDisponibile
+);
+
+
+// calcolo giorni richiesti
+
+const inizio =
+  new Date(dataInizio);
+
+
+const fine =
+  new Date(dataFine);
+
+
+
+const giorniRichiesti =
+  Math.floor(
+    (
+      fine.getTime() -
+      inizio.getTime()
+    )
+    /
+    (1000 * 60 * 60 * 24)
+  ) + 1;
+
+
+
+console.log(
+  "Giorni ferie richiesti:",
+  giorniRichiesti
+);
+
+
+
+if(giorniRichiesti > saldoDisponibile){
+
+  console.log(
+    "Saldo ferie insufficiente"
+  );
+
+  return false;
+
+}
+
+
+
+return true;
+
+  } catch(errore){
+
+    console.error(
+      "Errore controllo ferie Firebase",
+      errore
+    );
+
+    return true;
+
+  }
+
+};
+const scalaFerieFirebase = async () => {
+
+  try {
+
+
+    const q = query(
+      collection(db, "ferie"),
+      where(
+        "nome",
+        "==",
+        selectedName
+      )
+    );
+
+
+    const snapshot = await getDocs(q);
+
+
+    if(snapshot.empty){
+
+      console.log(
+        "Nessun documento ferie trovato per",
+        selectedName
+      );
+
+      return;
+
+    }
+
+
+
+    const documento =
+      snapshot.docs[0];
+
+
+
+    const dati =
+      documento.data();
+
+
+
+    const saldoAttuale =
+      Number(dati.saldoFerie) || 0;
+
+
+
+    const inizio =
+      new Date(dataInizio);
+
+
+    const fine =
+      new Date(dataFine);
+
+
+
+    const giorniPresi =
+      Math.floor(
+        (
+          fine.getTime() -
+          inizio.getTime()
+        )
+        /
+        (1000 * 60 * 60 * 24)
+      ) + 1;
+
+
+
+    const nuovoSaldo =
+  Number(
+    (saldoAttuale - giorniPresi).toFixed(1)
+  );
+  const ferieUsateAttuali =
+  Number(dati.ferieUsate) || 0;
+
+
+const nuoveFerieUsate =
+  ferieUsateAttuali + giorniPresi;
+
+
+    console.log(
+      "Saldo prima:",
+      saldoAttuale
+    );
+
+
+    console.log(
+      "Giorni scalati:",
+      giorniPresi
+    );
+
+
+    console.log(
+      "Nuovo saldo:",
+      nuovoSaldo
+    );
+
+
+
+    await updateDoc(
+  doc(
+    db,
+    "ferie",
+    documento.id
+  ),
+  {
+
+    saldoFerie:
+      nuovoSaldo,
+
+    ferieUsate:
+      nuoveFerieUsate
+
+  }
+);
+
+    console.log(
+      "✅ Saldo ferie aggiornato Firebase"
+    );
+
+
+  }
+  catch(errore){
+
+    console.error(
+      "Errore scalatura ferie Firebase",
+      errore
+    );
+
+  }
+
+};
+const maturaFerieFirebase = async () => {
+
+  try {
+
+    const oggi = new Date();
+
+    const mese = oggi.getMonth() + 1;
+    const anno = oggi.getFullYear();
+
+
+    const q = query(
+      collection(db,"ferie"),
+      where(
+        "nome",
+        "==",
+        selectedName
+      )
+    );
+
+
+    const snapshot = await getDocs(q);
+
+
+    if(snapshot.empty){
+
+      console.log(
+        "Nessun saldo ferie trovato per",
+        selectedName
+      );
+
+      return;
+
+    }
+
+
+    const documento =
+      snapshot.docs[0];
+
+
+    const dati =
+      documento.data();
+
+
+    const saldoAttuale =
+      Number(dati.saldoFerie) || 0;
+
+
+    const ultimoAggiornamento =
+      dati.ultimaMaturazione;
+
+
+    if(
+      ultimoAggiornamento &&
+      ultimoAggiornamento.mese === mese &&
+      ultimoAggiornamento.anno === anno
+    ){
+
+      console.log(
+        "Maturazione già effettuata",
+        mese,
+        anno
+      );
+
+      return;
+
+    }
+
+
+    const nuovoSaldo =
+      saldoAttuale + 1.8;
+
+
+    await updateDoc(
+      documento.ref,
+      {
+
+        saldoFerie:
+          nuovoSaldo,
+
+        ultimaMaturazione:{
+
+          mese: mese,
+
+          anno: anno
+
+        }
+
+      }
+    );
+
+
+    console.log(
+      "Ferie maturate:",
+      1.8
+    );
+
+
+    console.log(
+      "Nuovo saldo ferie:",
+      nuovoSaldo
+    );
+
+
+  }
+  catch(errore){
+
+    console.error(
+      "Errore maturazione ferie Firebase",
+      errore
+    );
+
+  }
+
+};
+const controlloMaturazioneFerieMensile = async () => {
+
+  try {
+
+    if (!MATURAZIONE_FERIE_FIREBASE) {
+      return;
+    }
+
+
+    const oggi = new Date();
+
+    const giorno =
+      oggi.getDate();
+
+    const mese =
+      oggi.getMonth() + 1;
+
+    const anno =
+      oggi.getFullYear();
+
+
+    // La maturazione avviene solo il primo giorno del mese
+    if (giorno !== 1) {
+
+      console.log(
+        "Oggi non è il primo del mese. Nessuna maturazione."
+      );
+
+      return;
+
+    }
+
+
+    const riferimentoSistema =
+      doc(
+        db,
+        "gestioneSistema",
+        "ferie"
+      );
+
+
+    // =====================================================
+    // BLOCCO ATOMICO
+    // =====================================================
+
+    const risultato =
+      await runTransaction(
+        db,
+        async (transaction) => {
+
+
+          const documento =
+            await transaction.get(
+              riferimentoSistema
+            );
+
+
+          if (!documento.exists()) {
+
+            console.error(
+              "Documento gestioneSistema/ferie non trovato."
+            );
+
+            return false;
+
+          }
+
+
+          const dati =
+            documento.data();
+
+
+          const ultimoMese =
+            Number(
+              dati.ultimoMese
+            ) || 0;
+
+
+          const ultimoAnno =
+            Number(
+              dati.ultimoAnno
+            ) || 0;
+
+
+          // =================================================
+          // CONTROLLO: MATURAZIONE GIÀ ESEGUITA
+          // =================================================
+
+          if (
+            ultimoMese === mese &&
+            ultimoAnno === anno
+          ) {
+
+            console.log(
+              "Maturazione ferie già eseguita per",
+              mese,
+              anno
+            );
+
+            return false;
+
+          }
+
+
+          // =================================================
+          // PRENDIAMO TUTTI GLI OPERAI
+          // =================================================
+
+          const snapshotFerie =
+            await getDocs(
+              collection(
+                db,
+                "ferie"
+              )
+            );
+
+
+          // =================================================
+          // AGGIORNIAMO IL BLOCCO CENTRALE
+          // =================================================
+
+          transaction.update(
+            riferimentoSistema,
+            {
+
+              ultimoMese:
+                mese,
+
+              ultimoAnno:
+                anno
+
+            }
+          );
+
+
+          console.log(
+            "Blocco maturazione acquisito:",
+            mese,
+            anno
+          );
+
+
+          // =================================================
+          // AGGIORNAMENTO SALDI
+          // =================================================
+
+          for (
+            const documentoFerie
+            of snapshotFerie.docs
+          ) {
+
+
+            const datiFerie =
+              documentoFerie.data();
+
+
+            const saldo =
+              Number(
+                datiFerie.saldoFerie
+              ) || 0;
+
+
+            const nuovoSaldo =
+              saldo + 1.8;
+
+
+            transaction.update(
+              documentoFerie.ref,
+              {
+
+                saldoFerie:
+                  nuovoSaldo,
+
+                ultimaMaturazione: {
+
+                  mese:
+                    mese,
+
+                  anno:
+                    anno
+
+                }
+
+              }
+            );
+
+
+            console.log(
+              "Ferie maturate per:",
+              datiFerie.nome,
+              "Saldo:",
+              nuovoSaldo
+            );
+
+
+          }
+
+
+          return true;
+
+        }
+      );
+
+
+    if (risultato) {
+
+      console.log(
+        "✅ Maturazione ferie mensile completata."
+      );
+
+    }
+    else {
+
+      console.log(
+        "ℹ️ Nessuna maturazione ferie eseguita."
+      );
+
+    }
+
+
+  }
+  catch (errore) {
+
+    console.error(
+      "❌ Errore maturazione ferie mensile:",
+      errore
+    );
+
+  }
+
+};
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -371,6 +1547,51 @@ const Home = () => {
     formData.append('oraFirma', oraFirmaFormattata);
     formData.append('Codice_Progetto',Codice_Progetto);
 
+    if(
+ CONTROLLO_PERMESSI_FIREBASE &&
+ tipoPresenza==="Permessi Vari"
+){
+
+ const controllo =
+ await controllaLimitePermessoFirebase();
+
+
+ if(!controllo){
+
+ alert(
+ "❌ Permesso non disponibile. Limite superato."
+ );
+
+ setIsLoading(false);
+
+ return;
+
+ }
+
+}
+if(
+ CONTROLLO_FERIE_FIREBASE &&
+ tipoPresenza==="Ferie"
+){
+
+ const controlloFerie =
+ await controllaSaldoFerieFirebase();
+
+
+ if(!controlloFerie){
+
+ alert(
+ "❌ Saldo ferie insufficiente."
+ );
+
+ setIsLoading(false);
+
+ return;
+
+ }
+
+}
+
     const risultato = await sendFormData(formData);
 
 // ⛔ Caso annullato o errore logico → NON salvare nulla
@@ -380,8 +1601,30 @@ if (risultato === null) {
   return;
 }
 
-// ✅ Caso riuscito online
+// ✅ Caso riuscito online//aggiunta
 if (risultato === true) {
+
+console.log("ENTRO IN FIREBASE");
+
+
+if(tipoPresenza === "Uscita"){
+
+await salvaUscitaFirebase();
+
+}
+else{
+
+await salvaSuFirebase();
+
+
+if(tipoPresenza === "Ferie"){
+
+  await scalaFerieFirebase();
+  
+
+}
+
+}
   statiSalvati[selectedName] = tipoPresenza;
   localStorage.setItem("statiPresenze", JSON.stringify(statiSalvati));
 
@@ -619,6 +1862,7 @@ if (risultato === false) {
               distretto={distretto}
               selectedName={selectedName}
               setSelectedName={setSelectedName}
+               setDatiSquadra={setDatiSquadra}
             />
             <MenuPresenza selected={tipoPresenza} onSelect={setTipoPresenza} />
 
@@ -722,6 +1966,96 @@ if (risultato === false) {
                          <option value="PERMESSO DI SERVIZIO AZIENDALE">PERMESSO DI SERVIZIO AZIENDALE</option>
                           <option value="FESTIVITA SOPPRESSE">FESTIVITA SOPPRESSE</option>
                       </select>
+                      {permesso &&
+ regolePermessi[permesso]?.tipo === "ore" && (
+
+<div>
+
+<label className="block text-sm font-medium mb-1">
+Quante ore di permesso?
+</label>
+
+<input
+ type="number"
+ min="1"
+ value={orePermesso}
+ onChange={(e)=>
+   setOrePermesso(e.target.value)
+ }
+ className="border rounded p-2 w-full"
+/>
+
+</div>//aggiunta permesso&&regolapermessi
+
+)}
+{permesso && (
+
+<div className="mt-3">
+
+<label className="block text-sm font-medium mb-1">
+Rientro in servizio?
+</label>
+
+
+<select
+
+value={rientro}
+
+onChange={(e)=>
+ setRientro(e.target.value)
+}
+
+className="border rounded p-2 w-full"
+
+>
+
+<option value="">
+-- Seleziona --
+</option>
+
+
+<option value="SI">
+SI - Rientra
+</option>
+
+
+<option value="NO">
+NO - Non rientra
+</option>
+
+
+</select>
+
+</div>//aggiunta rientro
+
+)}
+{rientro === "SI" && (
+
+<div className="mt-3">
+
+<label className="block text-sm font-medium mb-1">
+Ora rientro
+</label>
+
+
+<input
+
+type="time"
+
+value={oraRientro}
+
+onChange={(e)=>
+ setOraRientro(e.target.value)
+}
+
+className="border rounded p-2 w-full"
+
+/>
+
+
+</div>//aggiunta ora rientro
+
+)}
                     </div>
 
                     {permesso === 'DISTACCAMENTO AIB' && (

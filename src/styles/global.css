@@ -94,4 +94,4 @@ input[type="date"] {
     -webkit-appearance: none; /* compatibilità iOS */
     -moz-appearance: none;
   }
-  
+  @import "leaflet/dist/leaflet.css";
