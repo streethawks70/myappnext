@@ -19,7 +19,7 @@ import {
   doc,
   runTransaction
 } from "firebase/firestore";
-const MODALITA_TEST = true;
+const MODALITA_TEST = false;
 const CONTROLLO_PERMESSI_FIREBASE = true;
 const CONTROLLO_FERIE_FIREBASE = false;
 const MATURAZIONE_FERIE_FIREBASE = false;

@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from 'react';
 
 import { db } from "@/firebase/config";
@@ -8,10 +9,6 @@ import {
   doc,
   getDoc
 } from "firebase/firestore";
-// false = usa i file txt
-// true = usa Firebase
-const USA_FIREBASE_SQUADRE = false;
-
 
 interface Squadra {
   matricola: string;
@@ -23,314 +20,324 @@ const SquadraSelector = ({
   distretto,
   setSelectedName,
   selectedName,
-   setDatiSquadra
+  setDatiSquadra
 }: {
   distretto: string;
   setSelectedName: (name: string) => void;
   selectedName: string;
   setDatiSquadra: (dati: any) => void;
 }) => {
-  const [squadre, setSquadre] = useState<Squadra[]>([]);
+
+  const [squadreTXT, setSquadreTXT] = useState<Squadra[]>([]);
+  const [squadreFirebase, setSquadreFirebase] = useState<Squadra[]>([]);
+
   const [matricolaInput, setMatricolaInput] = useState('');
   const [squadraTrovata, setSquadraTrovata] = useState<Squadra | null>(null);
-  const [valore, setValore] = useState("");
+
+  // CARICAMENTO INDIPENDENTE TXT E FIREBASE
 
   useEffect(() => {
 
+    if (!distretto) return;
 
-  if (!distretto) return;
+    let attivo = true;
 
+    const caricaTXT = async () => {
 
+      try {
 
-  const caricaSquadre = async () => {
+        const numeroDistretto = distretto.match(/\d+/)?.[0];
 
+        if (!numeroDistretto) {
+          throw new Error("Distretto non valido");
+        }
 
-    try {
+        const fileName = `/distretto${numeroDistretto}.txt`;
 
+        const risposta = await fetch(fileName);
 
-      if (USA_FIREBASE_SQUADRE) {
+        if (!risposta.ok) {
+          throw new Error("File TXT non disponibile");
+        }
 
+        const data = await risposta.text();
 
-        const riferimento =
-          collection(
-            db,
-            "squadre",
-            distretto,
-            "elenco"
-          );
+        const righe = data
+          .split('\n')
+          .filter(line => line.trim() !== '');
 
+        const parsed: Squadra[] = righe.map(riga => {
 
-        const snapshot =
-          await getDocs(riferimento);
+          const [matricolaParte, squadraParte] = riga.split('squadra');
 
+          if (!matricolaParte || !squadraParte) {
+            throw new Error("Formato TXT non valido: " + riga);
+          }
 
+          const matricola = matricolaParte
+            .trim()
+            .replace('matricola', '')
+            .trim();
 
-        const elenco = snapshot.docs.map(doc => {
-
-
-          const dati = doc.data();
-
+          const parts = squadraParte
+            .split('/')
+            .filter(p => p.trim() !== '');
 
           return {
-
-            matricola:
-              dati.matricola,
-
-            nome:
-              dati.caposquadra,
-
-            operai:
-              dati.operai || []
-
+            matricola,
+            nome: parts[1]?.trim() || '',
+            operai: parts.slice(2).map(op => op.trim())
           };
-
 
         });
 
+        if (attivo) {
+          setSquadreTXT(parsed);
+          console.log("Squadre TXT caricate:", parsed.length);
+        }
 
+      } catch (errore) {
 
-        setSquadre(elenco);
+        console.error("Errore caricamento TXT:", errore);
 
-
-      } else {
-
-
-        const fileName =
-          `/distretto${distretto.match(/\d+/)?.[0]}.txt`;
-
-
-        const risposta =
-          await fetch(fileName);
-
-
-
-        const data =
-          await risposta.text();
-
-
-
-        const righe =
-          data
-          .split('\n')
-          .filter(
-            line => line.trim() !== ''
-          );
-
-
-
-        const parsed =
-          righe.map(riga => {
-
-
-            const [matricolaParte, squadraParte] =
-              riga.split('squadra');
-
-
-            const matricola =
-              matricolaParte
-              .trim()
-              .replace('matricola','')
-              .trim();
-
-
-
-            const parts =
-              squadraParte
-              .split('/')
-              .filter(
-                p => p.trim() !== ''
-              );
-
-
-
-            return {
-
-              matricola,
-
-              nome:
-                parts[1].trim(),
-
-              operai:
-                parts
-                .slice(2)
-                .map(
-                  op=>op.trim()
-                )
-
-            };
-
-
-          });
-
-
-
-        setSquadre(parsed);
-
+        if (attivo) {
+          setSquadreTXT([]);
+        }
 
       }
 
+    };
 
-    }
-    catch(errore){
+    const caricaFirebase = async () => {
 
-      console.error(
-        "Errore caricamento squadre:",
-        errore
-      );
+      try {
 
+        const riferimento = collection(
+          db,
+          "squadre",
+          distretto,
+          "elenco"
+        );
 
-      setSquadre([]);
+        const snapshot = await getDocs(riferimento);
 
+        const elenco: Squadra[] = snapshot.docs.map(documento => {
 
-    }
+          const dati = documento.data();
 
+          return {
+            matricola: String(dati.matricola || documento.id),
+            nome: dati.caposquadra || '',
+            operai: dati.operai || []
+          };
 
-  };
+        });
 
+        if (attivo) {
+          setSquadreFirebase(elenco);
+          console.log("Squadre Firebase caricate:", elenco.length);
+        }
 
+      } catch (errore) {
 
-  caricaSquadre();
+        console.error("Errore caricamento Firebase:", errore);
 
+        if (attivo) {
+          setSquadreFirebase([]);
+        }
 
-},[distretto]);
-  const handleMatricolaSubmit = async () => {
-
-    if (USA_FIREBASE_SQUADRE) {
-
-  try {
-
-    const squadraRef = doc(
-      db,
-      "squadre",
-      distretto,
-      "elenco",
-      matricolaInput.trim()
-    );
-
-    const squadraDoc = await getDoc(squadraRef);
-
-    if (!squadraDoc.exists()) {
-
-      alert("Matricola non trovata");
-
-      return;
-
-    }
-
-    const dati = squadraDoc.data();
-
-    const squadra = {
-
-      matricola: dati.matricola,
-
-      nome: dati.caposquadra,
-
-      operai: dati.operai || []
+      }
 
     };
 
-    setSquadraTrovata(squadra);
+    // I DUE CARICAMENTI SONO INDIPENDENTI
 
-    setSelectedName(squadra.nome);
+    caricaTXT();
+    caricaFirebase();
 
-    setDatiSquadra({
+    return () => {
+      attivo = false;
+    };
 
-      matricolaSquadra: squadra.matricola,
-
-      caposquadra: squadra.nome
-
-    });
-
-    return;
-
-  }
-
-  catch (errore) {
-
-    console.error(errore);
-
-    alert("Errore Firebase");
-
-    return;
-
-  }
-
-}
-
-    const squadra = squadre.find(s => s.matricola === matricolaInput.trim());
-   if (squadra) {
-
-  setSquadraTrovata(squadra);
-
-  setSelectedName(squadra.nome);
+  }, [distretto]);
 
 
-  setDatiSquadra({
-    matricolaSquadra: squadra.matricola,
-    caposquadra: squadra.nome
-  });
+  // RICERCA MATRICOLA: PRIMA TXT, POI FIREBASE
 
-} else {
-      alert('Matricola non trovata nel distretto selezionato.');
-      setSquadraTrovata(null);
-      setSelectedName('');
+  const handleMatricolaSubmit = async () => {
+
+    const matricola = matricolaInput.trim();
+
+    if (!matricola) {
+      alert("Inserisci una matricola");
+      return;
     }
+
+    // 1. CERCA NEL TXT
+
+    let squadra = squadreTXT.find(
+      s => s.matricola === matricola
+    );
+
+    // 2. SE NON TROVATA, CERCA IN FIREBASE
+
+    if (!squadra) {
+
+      squadra = squadreFirebase.find(
+        s => s.matricola === matricola
+      );
+
+    }
+
+    // 3. SE ANCORA NON TROVATA, INTERROGA FIREBASE DIRETTAMENTE
+
+    if (!squadra) {
+
+      try {
+
+        const squadraRef = doc(
+          db,
+          "squadre",
+          distretto,
+          "elenco",
+          matricola
+        );
+
+        const squadraDoc = await getDoc(squadraRef);
+
+        if (squadraDoc.exists()) {
+
+          const dati = squadraDoc.data();
+
+          squadra = {
+            matricola: String(dati.matricola || squadraDoc.id),
+            nome: dati.caposquadra || '',
+            operai: dati.operai || []
+          };
+
+        }
+
+      } catch (errore) {
+
+        console.error("Errore ricerca Firebase:", errore);
+
+      }
+
+    }
+
+    // 4. GESTIONE RISULTATO
+
+    if (squadra) {
+
+      setSquadraTrovata(squadra);
+
+      setSelectedName(squadra.nome);
+
+      setDatiSquadra({
+        matricolaSquadra: squadra.matricola,
+        caposquadra: squadra.nome
+      });
+
+    } else {
+
+      alert('Matricola non trovata nel TXT né in Firebase.');
+
+      setSquadraTrovata(null);
+
+      setSelectedName('');
+
+    }
+
   };
+
+
+  // SELEZIONE PERSONA
 
   const handlePersonaSelect = (persona: string) => {
+
     setSelectedName(persona);
+
   };
 
+
   return (
+
     <div className="form-group">
+
       <h3>Inserisci Matricola Caposquadra</h3>
+
       <div className="flex gap-2">
-        <input 
-          type="text" 
-          placeholder ="Inserisci matricola"
+
+        <input
+          type="text"
+          placeholder="Inserisci matricola"
           value={matricolaInput}
           onChange={(e) => setMatricolaInput(e.target.value)}
-           className="placeholder-red-500 border border-gray-300 p-2"
+          className="placeholder-red-500 border border-gray-300 p-2"
         />
-        <button className="bg-blue-600 text-white px-4 py-2 rounded-none hover:bg-blue-700"type="button" onClick={handleMatricolaSubmit}>
+
+        <button
+          className="bg-blue-600 text-white px-4 py-2 rounded-none hover:bg-blue-700"
+          type="button"
+          onClick={handleMatricolaSubmit}
+        >
           Verifica
         </button>
+
       </div>
 
+
       {squadraTrovata && (
-  <div className="radio-group mt-4">
-    <p>Seleziona Persona:</p>
 
-    {/* Caposquadra (primo della lista) */}
-    <label className="flex items-center gap-2">
-      <input
-        type="radio"
-        checked={selectedName === squadraTrovata.nome}
-        onChange={() => handlePersonaSelect(squadraTrovata.nome)}
-      />
-      👷‍♂️ {squadraTrovata.nome} <span className="text-sm text-gray-500">(Caposquadra)</span>
-    </label>
+        <div className="radio-group mt-4">
 
-    {/* Operai */}
-    {squadraTrovata.operai.map((operaio, i) => (
-      <label key={i} className="flex items-center gap-2">
-        <input
-          type="radio"
-          checked={selectedName === operaio}
-          onChange={() => handlePersonaSelect(operaio)}
-        />
-        👷 {operaio}
-        
-      </label>
-      
-    ))}
-  </div>
-)}
+          <p>Seleziona Persona:</p>
 
+          {/* CAPOSQUADRA */}
+
+          <label className="flex items-center gap-2">
+
+            <input
+              type="radio"
+              checked={selectedName === squadraTrovata.nome}
+              onChange={() => handlePersonaSelect(squadraTrovata.nome)}
+            />
+
+            👷‍♂️ {squadraTrovata.nome}
+
+            <span className="text-sm text-gray-500">
+              (Caposquadra)
+            </span>
+
+          </label>
+
+
+          {/* OPERAI */}
+
+          {squadraTrovata.operai.map((operaio, i) => (
+
+            <label key={i} className="flex items-center gap-2">
+
+              <input
+                type="radio"
+                checked={selectedName === operaio}
+                onChange={() => handlePersonaSelect(operaio)}
+              />
+
+              👷 {operaio}
+
+            </label>
+
+          ))}
+
+        </div>
+
+      )}
 
     </div>
+
   );
+
 };
 
 export default SquadraSelector;
-
